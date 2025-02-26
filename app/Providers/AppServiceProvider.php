@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Model::shouldBeStrict();
+        Model::unguard();
+
+        Gate::define('can-participate', function ($user, $conference) {
+            return ! $user->conferences()->where('conference_id', $conference->id)->exists();
+        });
     }
 }

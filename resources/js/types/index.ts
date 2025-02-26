@@ -1,4 +1,5 @@
 import { LucideIcon } from 'lucide-react';
+import * as ConferenceTypes from '@/types/conferences'
 
 export interface Auth {
     user: User;

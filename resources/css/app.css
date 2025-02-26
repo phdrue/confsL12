@@ -5,10 +5,35 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @custom-variant dark (&:is(.dark *));
+/* @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *)); */
 
 @theme {
+    /* my */
+    /* --color-border: #E4E4E7; */
+    /* darker D90041 */
+    /* --color-brand-red: #E60045;
+    --color-brand-darkBlue: #1b50b3;
+    --color-brand-blue: #0c74bb;
+    --color-brand-green: #67E65C;
+    --color-brand-darkGreen: #85CC00;
+
+    --color-brand-lime: #95E600;
+
+    --color-brand-cyan: #5CDAE6;
+    --color-brand-neutral: theme(colors.neutral.50);
+    --color-brand-white: #FFFFFF;
+
+    --color-brand-textGray: #B3B3B3;
+    --color-brand-textSecondary: theme(colors.gray.600); */
+
+    /* end my */
+
+    /* brand colors */
+    --color-brand-darkBlue: var(--brand-darkBlue);
+    --color-brand-darkBlue-foreground: var(--brand-darkBlue-foreground);
+
     --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+        'Onest', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -67,6 +92,7 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
     *,
     ::after,
     ::before,
@@ -77,6 +103,10 @@
 }
 
 :root {
+    /*brand*/
+    --brand-darkBlue: hsl(219, 74%, 40%);
+    --brand-darkBlue-foreground: hsl(0, 0%, 98%);
+
     --background: hsl(0, 0%, 100%);
     --foreground: hsl(0, 0%, 3.9%);
     --card: hsl(0, 0%, 100%);
@@ -113,6 +143,10 @@
 }
 
 .dark {
+    /*brand*/
+    --brand-darkBlue: hsl(0, 0%, 98%);
+    --brand-darkBlue-foreground: hsl(219, 74%, 40%);
+
     --background: hsl(0, 0%, 3.9%);
     --foreground: hsl(0, 0%, 98%);
     --card: hsl(0, 0%, 3.9%);

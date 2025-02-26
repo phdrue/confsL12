@@ -30,9 +30,13 @@ export function useAppearance() {
     const [appearance, setAppearance] = useState<Appearance>('system');
 
     const updateAppearance = (mode: Appearance) => {
-        setAppearance(mode);
-        localStorage.setItem('appearance', mode);
-        applyTheme(mode);
+        // setAppearance(mode);
+        // localStorage.setItem('appearance', mode);
+        // applyTheme(mode);
+
+        setAppearance("light");
+        localStorage.setItem('appearance', "light");
+        applyTheme("light");
     };
 
     useEffect(() => {
