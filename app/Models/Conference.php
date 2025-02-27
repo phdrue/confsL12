@@ -8,6 +8,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Conference extends Model
 {
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'date' => 'date:d.m.Y',
+        ];
+    }
+
     public function state(): BelongsTo
     {
         return $this->belongsTo(ConferenceState::class);

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('front_page')->default(false);
             $table->string('name', 1000);
             $table->string('description', 1500);
+            $table->date('date');
             $table->string('img_path')->default('storage/img/conferences/2.png');
             $table->string('primary_color', 100)->default('#548FC7');
             $table->timestamps();

@@ -11,17 +11,39 @@ class ClientController extends Controller
 {
     public function landing()
     {
-        return Inertia::render('client/landing');
+        return Inertia::render('client/landing', [
+            'conferences' => Conference::query()
+                ->where('front_page', true)
+                ->orderBy('date', 'asc')
+                ->limit(4)
+                ->get()
+        ]);
     }
 
-    public function conferences() {}
+    public function dashboard()
+    {
+        return Inertia::render('dashboard', [
+            'conferences' => auth()->user()->conferences
+        ]);
+    }
+
+    public function conferences()
+    {
+        return Inertia::render(
+            'client/conferences/index',
+            [
+                'conferences' => Conference::all()
+            ]
+        );
+    }
 
     public function conference(Conference $conference)
     {
         return Inertia::render(
             'client/conferences/show',
             [
-                'conference' => $conference
+                'conference' => $conference,
+                'blocks' => $conference->blocks
             ]
         );
     }

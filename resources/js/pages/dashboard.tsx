@@ -1,6 +1,8 @@
+import ConferencesClientDataTable from '@/components/tables/conferences-client-data-table';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
+import { Conference } from '@/types/conferences';
 import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -10,7 +12,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard() {
+export default function Dashboard({ conferences }: { conferences: Array<Conference> }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Личный кабинет" />
@@ -26,6 +28,7 @@ export default function Dashboard() {
                         <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                     </div>
                 </div>
+                <ConferencesClientDataTable conferences={conferences}/>
             </div>
         </AppLayout>
     );

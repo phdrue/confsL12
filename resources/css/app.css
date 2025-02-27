@@ -32,6 +32,23 @@
     --color-brand-darkBlue: var(--brand-darkBlue);
     --color-brand-darkBlue-foreground: var(--brand-darkBlue-foreground);
 
+    /* --color-border: #E4E4E7; */
+    /* darker D90041 */
+    --color-brand-red: #E60045;
+    --color-brand-darkBlue: #1b50b3;
+    --color-brand-blue: #0c74bb;
+    --color-brand-green: #67E65C;
+    --color-brand-darkGreen: #85CC00;
+
+    --color-brand-lime: #95E600;
+
+    --color-brand-cyan: #5CDAE6;
+    --color-brand-neutral: theme(colors.neutral.50);
+    --color-brand-white: #FFFFFF;
+
+    --color-brand-textGray: #B3B3B3;
+    --color-brand-textSecondary: theme(colors.gray.600);
+
     --font-sans:
         'Onest', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
