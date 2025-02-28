@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Role as RoleEnum;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -57,5 +58,10 @@ class User extends Authenticatable
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
+    }
+
+    public function hasRole(RoleEnum $role): bool
+    {
+        return $this->roles()->where('role_id', $role->value)->exists();
     }
 }

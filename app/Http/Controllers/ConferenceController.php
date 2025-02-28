@@ -16,18 +16,25 @@ use Illuminate\Support\Facades\Storage;
 
 class ConferenceController extends Controller
 {
+    public function participations(Conference $conference)
+    {
+        return Inertia::render('admin/conferences/participations', [
+            'conference' => $conference,
+            'regular' => $conference->regularParticipants()->get(),
+            'report' => $conference->reportParticipants()->get(),
+            'thesis' => $conference->thesisParticipants()->get(),
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(): Response
     {
-        return Inertia::render('Conferences/Admin/Index', [
+        return Inertia::render('admin/conferences/index', [
             'conferences' => Conference::all(),
             'types' => ConferenceType::select('id', 'name')->get(),
             'states' => ConferenceState::select('id', 'name')->get(),
-            'breadcrumbs' => [
-                'item' => 'Конференции'
-            ]
         ]);
     }
 

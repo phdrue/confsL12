@@ -15,6 +15,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Link } from "@inertiajs/react"
+import { User } from "@/types"
 
 const columns: ColumnDef<Conference>[] = [
     {
@@ -22,28 +23,12 @@ const columns: ColumnDef<Conference>[] = [
         header: "#",
         cell: ({ row }) => {
             const index = row.index + 1
-            return <div className="text-center font-medium">{index}</div>
+            return <div className="text-left font-medium">{index}</div>
         },
     },
     {
-        accessorKey: "type_id",
-        header: "Тип конференции",
-        filterFn: 'equalsString',
-        cell: ({ row }) => {
-            return <ConferenceTypeBadge type_id={row.getValue("type_id")} />
-        }
-    },
-    {
-        accessorKey: "pivot.type_id",
-        header: "Участие",
-        filterFn: 'equals',
-        cell: ({ row }) => {
-            return <ConferenceParticipationBadge type_id={row.getValue("pivot_type_id")} />
-        }
-    },
-    {
-        accessorKey: "name",
-        header: "Название",
+        accessorKey: "email",
+        header: "Адрес электронной почты",
         filterFn: 'includesString'
     },
     // {
@@ -78,20 +63,20 @@ const columns: ColumnDef<Conference>[] = [
     // },
 ]
 
-export default function ConferencesClientDataTable({
-    conferences,
+export default function ParticipationsAdminDataTable({
+    participants,
 }: {
-    conferences: Array<Conference>,
+    participants: Array<User>,
 }) {
     const filters: Array<DataTableFilter> = [
         {
-            name: 'name',
+            name: 'email',
             type: 'text',
             data: {
-                placeholder: 'Фильтр по названию...'
+                placeholder: 'Фильтр по электронной почте...'
             }
         }
     ]
 
-    return <DataTable columns={columns} data={conferences} filters={filters} />
+    return <DataTable columns={columns} data={participants} filters={filters} />
 }

@@ -11,6 +11,7 @@ use App\Models\ConferenceState;
 use App\Models\Image;
 use App\Models\ParticipationType;
 use App\Models\Role;
+use App\Enums\Role as RoleEnum;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -21,11 +22,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-
-        User::factory()->create([
-            // 'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
 
         $conferenceTypes = collect([
             1 => 'Региональный',
@@ -145,5 +141,14 @@ class DatabaseSeeder extends Seeder
             'path' => $img[0],
             'name' => $img[1]
         ]));
+
+
+        $user = User::factory()->create([
+            // 'name' => 'Test User',
+            'email' => 'a@a.com',
+            'password' => '111111'
+        ]);
+
+        $user->roles()->attach(RoleEnum::ADMIN->value);
     }
 }

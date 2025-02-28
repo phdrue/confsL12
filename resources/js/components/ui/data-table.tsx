@@ -16,6 +16,8 @@ import {
 
 import {
     ColumnDef,
+    getSortedRowModel,
+    SortingState,
     ColumnFiltersState,
     flexRender,
     getCoreRowModel,
@@ -49,6 +51,8 @@ export function DataTable<TData, TValue>({
         []
     )
 
+    const [sorting, setSorting] = React.useState<SortingState>([])
+
     const table = useReactTable({
         data,
         columns,
@@ -56,12 +60,15 @@ export function DataTable<TData, TValue>({
         getPaginationRowModel: getPaginationRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
+        onSortingChange: setSorting,
+        getSortedRowModel: getSortedRowModel(),
         initialState: {
             pagination: {
                 pageSize: 15,
             },
         },
         state: {
+            sorting,
             columnFilters,
         },
     })

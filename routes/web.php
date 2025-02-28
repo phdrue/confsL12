@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Role;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
@@ -15,23 +16,23 @@ Route::get('conferences', [ClientController::class, 'conferences'])
 Route::get('conferences/{conference}', [ClientController::class, 'conference'])
     ->name('conferences.show');
 
-
-
-// конференции
-Route::as('adm.')->prefix('adm')->group(function () {
-    Route::resource('conferences', ConferenceController::class)
-        ->only('index', 'show', 'store', 'edit', 'update');
-
-    Route::put('toggle-front-page/{conference}', [ConferenceController::class, 'toggleFrontPage'])
-        ->name('conferences.toggle-front-page');
-
-    Route::put('change-state/{conference}', [ConferenceController::class, 'changeState'])
-        ->name('conferences.change-state');
-});
-
-
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
+
+    // конференции
+    Route::as('adm.')->prefix('adm')->group(function () {
+        Route::resource('conferences', ConferenceController::class)
+            ->only('index', 'show', 'store', 'edit', 'update');
+
+        Route::get('conferences/{conference}/participations', [ConferenceController::class, 'participations'])
+            ->name('conferences.participations');
+
+        Route::put('toggle-front-page/{conference}', [ConferenceController::class, 'toggleFrontPage'])
+            ->name('conferences.toggle-front-page');
+
+        Route::put('change-state/{conference}', [ConferenceController::class, 'changeState'])
+            ->name('conferences.change-state');
+    });
 
     // client
     Route::as('client.')->group(function () {

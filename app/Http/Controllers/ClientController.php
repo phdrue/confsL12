@@ -20,13 +20,6 @@ class ClientController extends Controller
         ]);
     }
 
-    public function dashboard()
-    {
-        return Inertia::render('dashboard', [
-            'conferences' => auth()->user()->conferences
-        ]);
-    }
-
     public function conferences()
     {
         return Inertia::render(

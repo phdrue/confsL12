@@ -1,6 +1,6 @@
 import { Conference, ConferenceState, ConferenceType } from "@/types/conferences"
-import { DataTableSelectFilter } from "@/types/other"
-import { Star } from "lucide-react"
+import { DataTableFilter } from "@/types/other"
+import { Star, ArrowUpDown } from "lucide-react"
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@/components/ui/data-table"
 import { ConferenceTypeBadge, ConferenceStateBadge } from "@/components/conferences/utils"
@@ -15,6 +15,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Link } from "@inertiajs/react"
+import { parseDateString } from "@/parse-date-string"
 
 const columns: ColumnDef<Conference>[] = [
     {
@@ -52,6 +53,25 @@ const columns: ColumnDef<Conference>[] = [
         }
     },
     {
+        accessorKey: "date",
+        sortingFn: (rowA, rowB, columnId) => {
+            const dateA = parseDateString(rowA.getValue(columnId))
+            const dateB = parseDateString(rowB.getValue(columnId))
+            return dateA.getTime() - dateB.getTime()
+        },
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Дата
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+    },
+    {
         accessorKey: "name",
         header: "Название",
     },
@@ -70,11 +90,16 @@ const columns: ColumnDef<Conference>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Действия</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
+                            <Link href={route('adm.conferences.participations', conference.id)}>
+                                Участники
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
                             <Link href={route('adm.conferences.show', conference.id)}>
                                 Блоки
                             </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                             <Link href={route('adm.conferences.edit', conference.id)}>
                                 Изменить
@@ -96,20 +121,33 @@ export default function ConferencesAdminDataTable({
     states: Array<ConferenceState>,
     types: Array<ConferenceType>,
 }) {
-    const filters: Array<DataTableSelectFilter> = [
+    const filters: Array<DataTableFilter> = [
+        {
+            name: 'name',
+            type: 'text',
+            data: {
+                placeholder: 'Фильтр по названию...'
+            }
+        },
         {
             name: 'type_id',
-            selectLabel: "Типы",
-            selectPlaceholder: "Фильтр типа",
-            options: types
+            type: 'select',
+            data: {
+                label: "Тип",
+                options: types,
+                placeholder: "Фильтр типа"
+            }
         },
         {
             name: 'state_id',
-            selectLabel: "Статусы",
-            selectPlaceholder: "Фильтр статуса",
-            options: states
+            type: 'select',
+            data: {
+                label: "Статус",
+                options: states,
+                placeholder: "Фильтр статуса"
+            }
         },
     ]
 
-    return <DataTable columns={columns} data={conferences} selectFilters={filters} />
+    return <DataTable columns={columns} data={conferences} filters={filters} />
 }

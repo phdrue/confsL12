@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('name', 1000);
             $table->string('description', 1500);
             $table->date('date');
+            $table->boolean('allow_thesis')->default(false);
+            $table->boolean('allow_report')->default(false);
             $table->string('img_path')->default('storage/img/conferences/2.png');
             $table->string('primary_color', 100)->default('#548FC7');
             $table->timestamps();

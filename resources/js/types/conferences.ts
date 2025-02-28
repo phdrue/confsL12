@@ -8,7 +8,10 @@ export interface Conference {
     state_id: number,
     type_id: number,
     primary_color: string,
+    allow_thesis: boolean,
+    allow_report: boolean,
     pivot?: {
+        confirmed: boolean,
         type_id: number,
         state_id: number,
         conference_id: number,
