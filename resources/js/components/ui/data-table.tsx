@@ -83,9 +83,9 @@ export function DataTable<TData, TValue>({
                                 {filter.type === "text" ?
                                     <Input
                                         placeholder={filter.data.placeholder}
-                                        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                                        value={(table.getColumn(filter.name)?.getFilterValue() as string) ?? ""}
                                         onChange={(event) =>
-                                            table.getColumn("name")?.setFilterValue(event.target.value)
+                                            table.getColumn(filter.name)?.setFilterValue(event.target.value)
                                         }
                                         className="max-w-sm"
                                     /> : filter.type === "select" &&

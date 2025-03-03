@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\ConferenceStateEnum;
 use App\Enums\Role;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Model;
@@ -25,8 +26,31 @@ class AppServiceProvider extends ServiceProvider
         Model::shouldBeStrict();
         Model::unguard();
 
+        $this->gates();
+    }
+
+    private function gates()
+    {
         Gate::define('can-participate', function ($user, $conference) {
-            return ! $user->conferences()->where('conference_id', $conference->id)->exists();
+            $doesNotParticipate = ! $user->conferences()->where('conference_id', $conference->id)->exists();
+            $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
+            return $doesNotParticipate && $conferenceIsActive;
+        });
+
+        Gate::define('can-submit-document', function ($user, $conference, $documentTypeId) {
+            $participation = $user->conferences()->where('conference_id', $conference->id)->first();
+
+            $participates = !is_null($participation);
+            $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
+            $didntSubmitYet = is_null($participation->document_id);
+
+            $thisDocumentIsAllowed = false;
+            if ($documentTypeId === 1 && $conference->allow_report) {
+                $thisDocumentIsAllowed = true;
+            } elseif ($documentTypeId === 2 && $conference->allow_thesis) {
+                $thisDocumentIsAllowed = true;
+            }
+            return $participates && $conferenceIsActive && $thisDocumentIsAllowed && $didntSubmitYet;
         });
 
         Gate::define('is-admin', function ($user) {

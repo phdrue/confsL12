@@ -46,36 +46,36 @@ const columns: ColumnDef<Conference>[] = [
         header: "Название",
         filterFn: 'includesString'
     },
-    // {
-    //     id: "actions",
-    //     cell: ({ row }) => {
-    //         const conference = row.original
-    //         return (
-    //             <DropdownMenu>
-    //                 <DropdownMenuTrigger asChild>
-    //                     <Button variant="ghost" className="h-8 w-8 p-0">
-    //                         <span className="sr-only">Открыть меню</span>
-    //                         <MoreHorizontal className="h-4 w-4" />
-    //                     </Button>
-    //                 </DropdownMenuTrigger>
-    //                 <DropdownMenuContent align="end">
-    //                     <DropdownMenuLabel>Действия</DropdownMenuLabel>
-    //                     <DropdownMenuItem asChild>
-    //                         <Link href={route('adm.conferences.show', conference.id)}>
-    //                             Блоки
-    //                         </Link>
-    //                     </DropdownMenuItem>
-    //                     <DropdownMenuSeparator />
-    //                     <DropdownMenuItem asChild>
-    //                         <Link href={route('adm.conferences.edit', conference.id)}>
-    //                             Изменить
-    //                         </Link>
-    //                     </DropdownMenuItem>
-    //                 </DropdownMenuContent>
-    //             </DropdownMenu>
-    //         )
-    //     },
-    // },
+    {
+        id: "actions",
+        cell: ({ row }) => {
+            const conference = row.original
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Открыть меню</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Действия</DropdownMenuLabel>
+                        <DropdownMenuItem asChild>
+                            <Link href={route('adm.conferences.show', conference.id)}>
+                                Блоки
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                            <Link href={route('adm.conferences.edit', conference.id)}>
+                                Изменить
+                            </Link>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            )
+        },
+    },
 ]
 
 export default function ConferencesClientDataTable({

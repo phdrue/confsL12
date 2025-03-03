@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class ConferenceUser extends Pivot
@@ -16,9 +14,9 @@ class ConferenceUser extends Pivot
      */
     public $incrementing = true;
 
-    public function user(): BelongsToMany
+    public function user(): BelongsTo
     {
-        return $this->belongsToMany(User::class)->using(ConferenceUser::class);
+        return $this->belongsTo(User::class);
     }
 
     public function conference(): BelongsTo
@@ -29,5 +27,10 @@ class ConferenceUser extends Pivot
     public function type(): BelongsTo
     {
         return $this->belongsTo(ParticipationType::class);
+    }
+
+    public function document(): BelongsTo
+    {
+        return $this->belongsTo(Document::class);
     }
 }

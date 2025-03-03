@@ -1,6 +1,6 @@
 export default function ConferenceLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="mx-auto max-w-screen-xl pt-16 mb-24">
+        <div className="mx-auto max-w-screen-xl pt-16 mb-24 w-full">
             <div className="mb-16">
                 <h2 className="text-center text-4xl font-semibold">Платформа конференций</h2>
                 <p className="text-brand-textSecondary text-center mt-2">Какие блага получает участник научных мероприятий, принимая в них участие?</p>

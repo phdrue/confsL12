@@ -28,3 +28,10 @@ export interface ConferenceType {
     id: number,
     name: string
 }
+
+export interface Author {
+    name: string,
+    organization: string,
+    city: string,
+    country_id: number
+}

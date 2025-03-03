@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ConferenceParticipateRequest;
+use App\Http\Requests\SubmitDocumentRequest;
 use App\Models\Conference;
+use App\Models\Country;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -22,23 +24,18 @@ class ClientController extends Controller
 
     public function conferences()
     {
-        return Inertia::render(
-            'client/conferences/index',
-            [
-                'conferences' => Conference::all()
-            ]
-        );
+        return Inertia::render('client/conferences/index', [
+            'conferences' => Conference::all()
+        ]);
     }
 
     public function conference(Conference $conference)
     {
-        return Inertia::render(
-            'client/conferences/show',
-            [
-                'conference' => $conference,
-                'blocks' => $conference->blocks
-            ]
-        );
+        return Inertia::render('client/conferences/show', [
+            'conference' => $conference,
+            'blocks' => $conference->blocks,
+            'countries' => Country::select('id', 'name')->get()
+        ]);
     }
 
     public function participate(ConferenceParticipateRequest $request, Conference $conference)
@@ -46,5 +43,10 @@ class ClientController extends Controller
         auth()->user()->conferences()->attach($conference);
 
         return to_route('conferences.show', $conference);
+    }
+
+    public function submitDocument(SubmitDocumentRequest $request, Conference $conference)
+    {
+        dd("wfe");
     }
 }

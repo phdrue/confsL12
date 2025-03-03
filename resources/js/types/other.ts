@@ -17,3 +17,8 @@ export type DataTableTextFilter = {
         placeholder: string
     }
 }
+
+export type Country = {
+    id: number
+    name: string
+}

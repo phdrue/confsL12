@@ -12,6 +12,9 @@ use App\Models\Image;
 use App\Models\ParticipationType;
 use App\Models\Role;
 use App\Enums\Role as RoleEnum;
+use App\Models\Country;
+use App\Models\DocumentType;
+use App\Models\ReportType;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -55,6 +58,23 @@ class DatabaseSeeder extends Seeder
             'name' => $name
         ]));
 
+        $documentTypes = collect([
+            1 => 'Доклад',
+            2 => 'Тезисы',
+        ])->each(fn($name, $id) => DocumentType::create([
+            'id' => $id,
+            'name' => $name
+        ]));
+
+        $reportTypes = collect([
+            1 => 'Очная презентация / Offline presentation',
+            2 => 'Онлайн презентация / Online presentation',
+            3 => 'Онлайн постер / Online poster'
+        ])->each(fn($name, $id) => ReportType::create([
+            'id' => $id,
+            'name' => $name
+        ]));
+
         $roles = collect([
             1 => 'Участник',
             2 => 'Администратор',
@@ -76,6 +96,17 @@ class DatabaseSeeder extends Seeder
             9 => 'Картинки'
         ])->each(function ($name, $id) {
             ConferenceBlockType::create([
+                'id' => $id,
+                'name' => $name
+            ]);
+        });
+
+        $countries = collect([
+            1 => 'Россия',
+            2 => 'Не россия',
+            3 => 'США',
+        ])->each(function ($name, $id) {
+            Country::create([
                 'id' => $id,
                 'name' => $name
             ]);

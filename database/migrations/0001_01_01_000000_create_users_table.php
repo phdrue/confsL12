@@ -14,6 +14,17 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             // $table->string('name');
+
+            // ФИО раздельно
+            // телефон
+            // учреждение или организация
+            // ?должность
+            // город
+            // страна
+            // полное имя
+            // степень
+            // звание
+
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

@@ -41,7 +41,7 @@ class Conference extends Model
     {
         return $this->belongsToMany(User::class)
             ->using(ConferenceUser::class)
-            ->withPivot('type_id', 'confirmed');
+            ->withPivot('type_id', 'confirmed', 'document_id');
     }
 
     public function regularParticipants(): BelongsToMany

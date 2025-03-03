@@ -36,8 +36,12 @@ Route::middleware(['auth'])->group(function () {
 
     // client
     Route::as('client.')->group(function () {
+        // участвовать
         Route::post('participate/{conference}', [ClientController::class, 'participate'])
             ->name('conferences.participate');
+        // заявить доклад / тезисы
+        Route::post('submit-document/{conference}', [ClientController::class, 'submitDocument'])
+            ->name('conferences.submit-document');
     });
 });
 
