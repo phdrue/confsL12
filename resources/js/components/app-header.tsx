@@ -19,7 +19,15 @@ import AppLogoIcon from './app-logo-icon';
 const mainNavItems: NavItem[] = [
     {
         title: 'Мероприятия',
-        url: route('conferences.index'),
+        url: route('conferences.index', [], false),
+    },
+    {
+        title: 'Рассылка',
+        url: route('subscribe', [], false),
+    },
+    {
+        title: 'Контакты',
+        url: route('contacts', [], false),
     },
 ];
 
@@ -79,16 +87,10 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
                                         <div className="flex flex-col space-y-4">
                                             {rightNavItems.map((item) => (
-                                                <a
-                                                    key={item.title}
-                                                    href={item.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-center space-x-2 font-medium"
-                                                >
+                                                <Link key={item.title} href={item.url} className="flex items-center space-x-2 font-medium">
                                                     {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
                                                     <span>{item.title}</span>
-                                                </a>
+                                                </Link>
                                             ))}
                                         </div>
                                     </div>
@@ -97,7 +99,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         </Sheet>
                     </div>
 
-                    <Link href="/dashboard" prefetch className="flex items-center space-x-2">
+                    <Link href={route('home')} prefetch className="flex items-center space-x-2">
                         <AppLogo name={page.props.name} />
                     </Link>
 
@@ -108,6 +110,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 {mainNavItems.map((item, index) => (
                                     <NavigationMenuItem key={index} className="relative flex h-full items-center">
                                         <Link
+                                            prefetch
                                             href={item.url}
                                             className={cn(
                                                 navigationMenuTriggerStyle(),
@@ -129,6 +132,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                     {rightNavItems.map((item, index) => (
                                         <NavigationMenuItem key={index} className="relative flex h-full items-center">
                                             <Link
+                                                prefetch
                                                 href={item.url}
                                                 className={cn(
                                                     navigationMenuTriggerStyle(),

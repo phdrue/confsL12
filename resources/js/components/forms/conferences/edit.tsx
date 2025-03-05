@@ -159,11 +159,11 @@ export default function EditConferenceForm({
                                     <InputError message={errors.img} className="mt-2" />
                                 </div>
                                 <div className="flex items-center space-x-3">
-                                    <Checkbox id="allow_report" checked={data.allow_report} onCheckedChange={(e) => setData('allow_report', e === true)} name="allow_report" tabIndex={3} />
+                                    <Checkbox id="allow_report" checked={Boolean(data.allow_report)} onCheckedChange={(e) => setData('allow_report', e === true)} name="allow_report" tabIndex={3} />
                                     <Label htmlFor="allow_report">Можно доклад</Label>
                                 </div>
                                 <div className="flex items-center space-x-3">
-                                    <Checkbox id="allow_thesis" checked={data.allow_thesis} onCheckedChange={(e) => setData('allow_thesis', e === true)} name="allow_thesis" tabIndex={3} />
+                                    <Checkbox id="allow_thesis" checked={Boolean(data.allow_thesis)} onCheckedChange={(e) => setData('allow_thesis', e === true)} name="allow_thesis" tabIndex={3} />
                                     <Label htmlFor="allow_thesis">Можно тезис</Label>
                                 </div>
 

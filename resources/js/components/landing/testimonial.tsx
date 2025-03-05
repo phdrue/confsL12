@@ -39,61 +39,62 @@ const testimonials: Testimonial[] = [
 
 export default function Testimonial() {
     return (
-        <motion.section
-            initial={{ translateY: 120, opacity: 0 }}
-            whileInView={{ translateY: 0, opacity: 1 }}
-            transition={{
-                delay: 0.2,
-                duration: 0.8,
-                ease: "easeInOut",
-            }}
-            viewport={{ once: true }}
-            className="max-w-screen-xl py-20">
-            <div className="px-4 sm:px-6">
-                <h2 className="text-center text-3xl sm:text-4xl font-semibold">Слово от наших руководителей</h2>
-                <p className="text-brand-textSecondary text-center mt-2">
-                    Какие блага получает участник научных мероприятий, принимая в них участие?
-                </p>
-            </div>
-            <div className="max-w-screen-xl mx-auto px-4 sm:px-6 mt-12">
-                <Carousel
-                    className="w-full"
-                    opts={{
-                        align: "start",
-                        // loop: true,
-                    }}
-                >
-                    <CarouselContent className="mr-0">
-                        <CarouselItem className="basis-auto md:basis-sm md:mr-8" key={0}>
-                            <TestimonialCard testimonial={testimonials[0]} />
-                        </CarouselItem>
-                        <CarouselItem className="basis-auto md:basis-sm md:mr-8" key={1}>
-                            <TestimonialCard testimonial={testimonials[1]} />
-                        </CarouselItem>
-                        <CarouselItem className="basis-auto md:basis-sm md:mr-8" key={2}>
-                            <TestimonialCard testimonial={testimonials[2]} />
-                        </CarouselItem>
-                        <CarouselItem className="basis-auto md:basis-sm md:mr-8" key={3}>
-                            <TestimonialCard testimonial={testimonials[0]} />
-                        </CarouselItem>
-                    </CarouselContent>
-                    <div className="">
-                        <div className="mt-6 flex gap-4">
-                            <CarouselPrevious className="relative -left-0 top-0 -translate-y-0" />
-                            <CarouselNext className="relative -left-0 top-0 -translate-y-0" />
+        <div className="py-20 w-full max-w-screen-xl mx-auto">
+            <motion.div
+                initial={{ translateY: 120, opacity: 0 }}
+                whileInView={{ translateY: 0, opacity: 1 }}
+                transition={{
+                    delay: 0.2,
+                    duration: 0.8,
+                    ease: "easeInOut",
+                }}
+                viewport={{ once: true }}
+                className="w-full">
+                <div className="px-4 sm:px-6">
+                    <h2 className="text-center text-3xl sm:text-4xl font-semibold">Слово от наших руководителей</h2>
+                    <p className="text-brand-textSecondary text-center mt-2">
+                        Какие блага получает участник научных мероприятий, принимая в них участие?
+                    </p>
+                </div>
+                <div className="px-4 sm:px-6 mt-12">
+                    <Carousel
+                        opts={{
+                            align: "start",
+                            // loop: true,
+                        }}
+                    >
+                        <CarouselContent className="mr-0">
+                            <CarouselItem className="basis-auto md:basis-sm md:mr-8" key={0}>
+                                <TestimonialCard testimonial={testimonials[0]} />
+                            </CarouselItem>
+                            <CarouselItem className="basis-auto md:basis-sm md:mr-8" key={1}>
+                                <TestimonialCard testimonial={testimonials[1]} />
+                            </CarouselItem>
+                            <CarouselItem className="basis-auto md:basis-sm md:mr-8" key={2}>
+                                <TestimonialCard testimonial={testimonials[2]} />
+                            </CarouselItem>
+                            <CarouselItem className="basis-auto md:basis-sm md:mr-8" key={3}>
+                                <TestimonialCard testimonial={testimonials[0]} />
+                            </CarouselItem>
+                        </CarouselContent>
+                        <div className="">
+                            <div className="mt-6 flex gap-4">
+                                <CarouselPrevious className="relative -left-0 top-0 -translate-y-0" />
+                                <CarouselNext className="relative -left-0 top-0 -translate-y-0" />
+                            </div>
+                            <div className="space-y-3 mt-6">
+                                <p className="max-w-sm text-brand-textSecondary">
+                                    Узнайте больше о Курском Государственном Медицинском Университете
+                                </p>
+                                <Link href="#" className="text-brand-red flex gap-2 items-center text-sm font-medium">
+                                    Основной сайт университета <MoveRight size={20} />
+                                </Link>
+                            </div>
                         </div>
-                        <div className="space-y-3 mt-6">
-                            <p className="max-w-sm text-brand-textSecondary">
-                                Узнайте больше о Курском Государственном Медицинском Университете
-                            </p>
-                            <Link href="#" className="text-brand-red flex gap-2 items-center text-sm font-medium">
-                                Основной сайт университета <MoveRight size={20} />
-                            </Link>
-                        </div>
-                    </div>
-                </Carousel>
-            </div>
-        </motion.section>
+                    </Carousel>
+                </div>
+            </motion.div>
+        </div>
     )
 }
 

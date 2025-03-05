@@ -7,6 +7,7 @@ import Testimonial from "@/components/landing/testimonial";
 import CTA from "@/components/landing/cta";
 import Hero from "@/components/landing/hero"
 import Features from "@/components/landing/features";
+import Footer from "@/components/landing/footer";
 
 export default function Landing({
     conferences
@@ -24,6 +25,7 @@ export default function Landing({
             <PartnersInfo />
             <Testimonial />
             <CTA />
+            <Footer />
         </ClientLayout>
     );
 }

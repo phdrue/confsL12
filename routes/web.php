@@ -17,6 +17,12 @@ Route::get('conferences', [ClientController::class, 'conferences'])
 Route::get('conferences/{conference}', [ClientController::class, 'conference'])
     ->name('conferences.show');
 
+Route::get('contacts', [ClientController::class, 'contacts'])
+    ->name('contacts');
+
+Route::get('subscribe', [ClientController::class, 'subscribe'])
+    ->name('subscribe');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 

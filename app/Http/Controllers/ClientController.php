@@ -22,6 +22,16 @@ class ClientController extends Controller
         ]);
     }
 
+    public function contacts()
+    {
+        return Inertia::render('client/contacts');
+    }
+
+    public function subscribe()
+    {
+        return Inertia::render('client/subscribe');
+    }
+
     public function conferences()
     {
         return Inertia::render('client/conferences/index', [

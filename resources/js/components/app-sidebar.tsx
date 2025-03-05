@@ -6,10 +6,11 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
+import AppLogoIcon from './app-logo-icon';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Конференции',
         url: '/dashboard',
         icon: LayoutGrid,
     },
@@ -34,9 +35,10 @@ export function AppSidebar() {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
+                        <SidebarMenuButton asChild>
                             <Link href="/dashboard" prefetch>
-                                <AppLogo />
+                                <AppLogoIcon className='size-4 aspect-square mr-0' />
+                                Администрирование
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

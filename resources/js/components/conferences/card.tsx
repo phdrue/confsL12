@@ -14,11 +14,11 @@ export function ConferenceCard({ conference }: { conference: Conference }) {
     }
 
     return (
-        <article className="max-w-full flex flex-col">
+        <article className="max-w-full flex flex-col w-full">
             <div className="self-center aspect-[584/384] w-full xl:w-[584px] bg-white rounded-md overflow-hidden">
-                <img src={conference.img_path} className="size-full object-cover" alt={conference.name} />
+                <img src={`storage/${conference.img_path}`} className="size-full object-cover" alt={conference.name} />
             </div>
-            <div className="pt-5 lg:pt-6">
+            <div className="pt-5 lg:pt-6 w-full">
                 <div className="space-y-3">
                     <span className="flex gap-2 items-baseline text-center uppercase text-sm font-semibold text-brand-textSecondary">
                         <ConferenceTypeSpan />
@@ -26,7 +26,7 @@ export function ConferenceCard({ conference }: { conference: Conference }) {
                     </span>
                     <h3 className="text-xl sm:text-2xl font-semibold leading-tight dark:text-white text-black">{conference.name}</h3>
                     <p className="">{conference.description}</p>
-                    <Link href={route('conferences.show', conference.id)} className="text-brand-red flex gap-2 items-center text-sm font-medium">
+                    <Link prefetch href={route('conferences.show', conference.id)} className="text-brand-red flex gap-2 items-center text-sm font-medium">
                         На страницу конференции <MoveRight size={20} />
                     </Link>
                 </div>
