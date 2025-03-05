@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Enums\Role as RoleEnum;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -46,6 +47,20 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isProfileFilled(): bool
+    {
+        return $this->first_name
+            && $this->last_name
+            && $this->second_name
+            && $this->organization
+            && $this->position
+            && $this->city
+            && $this->country_id
+            && $this->degree_id
+            && $this->title_id
+            && $this->phone;
     }
 
     public function conferences(): BelongsToMany

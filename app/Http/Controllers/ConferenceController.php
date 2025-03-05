@@ -84,7 +84,7 @@ class ConferenceController extends Controller
      */
     public function edit(Conference $conference)
     {
-        return Inertia::render('Conferences/Admin/Edit', [
+        return Inertia::render('admin/conferences/edit', [
             'conference' => $conference,
             'types' => ConferenceType::select('id', 'name')->get(),
             'states' => ConferenceState::select('id', 'name')->get(),

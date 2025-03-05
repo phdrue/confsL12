@@ -82,9 +82,7 @@ export type SeparatorBlock = {
     name: string;
     position: number;
     type_id: 7,
-    content: {
-
-    }
+    content: {}
 }
 
 export type ButtonsBlock = {
@@ -92,9 +90,7 @@ export type ButtonsBlock = {
     name: string;
     position: number;
     type_id: 8,
-    content: {
-
-    }
+    content: {}
 }
 
 export type ImagesBlock = {

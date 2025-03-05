@@ -98,7 +98,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                     </div>
 
                     <Link href="/dashboard" prefetch className="flex items-center space-x-2">
-                        <AppLogo />
+                        <AppLogo name={page.props.name} />
                     </Link>
 
                     {/* Desktop Navigation */}

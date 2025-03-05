@@ -22,3 +22,13 @@ export type Country = {
     id: number
     name: string
 }
+
+export type Degree = {
+    id: number
+    name: string
+}
+
+export type Title = {
+    id: number
+    name: string
+}

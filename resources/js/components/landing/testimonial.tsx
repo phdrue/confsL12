@@ -37,30 +37,6 @@ const testimonials: Testimonial[] = [
     },
 ];
 
-function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
-    return (
-        <div className="relative flex aspect-9/16 w-72 shrink-0 snap-start flex-col justify-end overflow-hidden rounded-3xl sm:aspect-3/4 sm:w-96">
-            <img loading="lazy" alt="" src={testimonial.src} className="absolute inset-x-0 top-0 aspect-square w-full object-cover" />
-            <div aria-hidden="true" className="absolute inset-0 rounded-3xl bg-linear-to-t from-black from-[calc(7/16*100%)] ring-1 ring-gray-950/10 ring-inset sm:from-25%"></div>
-            <figure className="relative p-10">
-                <blockquote>
-                    <p className="relative text-white">
-                        <span aria-hidden="true" className="absolute -translate-x-full">“</span>
-                        {testimonial.quote}
-                        <span aria-hidden="true" className="absolute">”</span>
-                    </p>
-                </blockquote>
-                <figcaption className="mt-6 border-t text-brand-white border-border pt-6">
-                    <p className="text-sm/6 font-medium ">{testimonial.name}</p>
-                    <p className="text-sm/6 text-brand-white/80">
-                        {testimonial.designation}
-                    </p>
-                </figcaption>
-            </figure>
-        </div>
-    )
-}
-
 export default function Testimonial() {
     return (
         <motion.section
@@ -72,7 +48,7 @@ export default function Testimonial() {
                 ease: "easeInOut",
             }}
             viewport={{ once: true }}
-            className="max-w-screen-xl mx-auto py-20">
+            className="max-w-screen-xl py-20">
             <div className="px-4 sm:px-6">
                 <h2 className="text-center text-3xl sm:text-4xl font-semibold">Слово от наших руководителей</h2>
                 <p className="text-brand-textSecondary text-center mt-2">
@@ -118,5 +94,29 @@ export default function Testimonial() {
                 </Carousel>
             </div>
         </motion.section>
+    )
+}
+
+function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
+    return (
+        <div className="relative flex aspect-9/16 w-72 shrink-0 snap-start flex-col justify-end overflow-hidden rounded-3xl sm:aspect-3/4 sm:w-96">
+            <img loading="lazy" alt="" src={testimonial.src} className="absolute inset-x-0 top-0 aspect-square w-full object-cover" />
+            <div aria-hidden="true" className="absolute inset-0 rounded-3xl bg-linear-to-t from-black from-[calc(7/16*100%)] ring-1 ring-gray-950/10 ring-inset sm:from-25%"></div>
+            <figure className="relative p-10">
+                <blockquote>
+                    <p className="relative text-white">
+                        <span aria-hidden="true" className="absolute -translate-x-full">“</span>
+                        {testimonial.quote}
+                        <span aria-hidden="true" className="absolute">”</span>
+                    </p>
+                </blockquote>
+                <figcaption className="mt-6 border-t text-brand-white border-border pt-6">
+                    <p className="text-sm/6 font-medium ">{testimonial.name}</p>
+                    <p className="text-sm/6 text-brand-white/80">
+                        {testimonial.designation}
+                    </p>
+                </figcaption>
+            </figure>
+        </div>
     )
 }

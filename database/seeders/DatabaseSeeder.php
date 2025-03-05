@@ -13,8 +13,10 @@ use App\Models\ParticipationType;
 use App\Models\Role;
 use App\Enums\Role as RoleEnum;
 use App\Models\Country;
+use App\Models\Degree;
 use App\Models\DocumentType;
 use App\Models\ReportType;
+use App\Models\Title;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -107,6 +109,28 @@ class DatabaseSeeder extends Seeder
             3 => 'США',
         ])->each(function ($name, $id) {
             Country::create([
+                'id' => $id,
+                'name' => $name
+            ]);
+        });
+
+        $degrees = collect([
+            1 => 'Не имею / I do not have',
+            2 => 'Кандидат наук / PhD',
+            3 => 'Доктор наук / Doctor of Sciences',
+        ])->each(function ($name, $id) {
+            Degree::create([
+                'id' => $id,
+                'name' => $name
+            ]);
+        });
+
+        $titles = collect([
+            1 => 'Не имею / I do not have',
+            2 => 'Доцент / Associate Professor',
+            3 => 'Профессор / Professor',
+        ])->each(function ($name, $id) {
+            Title::create([
                 'id' => $id,
                 'name' => $name
             ]);

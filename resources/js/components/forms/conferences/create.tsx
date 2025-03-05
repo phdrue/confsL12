@@ -50,7 +50,6 @@ export default function CreateConferenceForm({
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        e.preventDefault()
         post(route('adm.conferences.store'), {
             forceFormData: true,
             onSuccess: () => {

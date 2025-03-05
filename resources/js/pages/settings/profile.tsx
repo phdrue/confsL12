@@ -3,14 +3,23 @@ import { Transition } from '@headlessui/react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
-import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AppLayout from '@/layouts/app-layout';
+import AppLayout from '@/layouts/user-layout';
 import SettingsLayout from '@/layouts/settings/layout';
+import { Country, Degree, Title } from '@/types/other';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -19,12 +28,32 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
+export default function Profile({
+    mustVerifyEmail,
+    status,
+    countries,
+    degrees,
+    titles
+}: {
+    mustVerifyEmail: boolean;
+    status?: string,
+    countries: Array<Country>,
+    degrees: Array<Degree>,
+    titles: Array<Title>
+}) {
     const { auth } = usePage<SharedData>().props;
 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
-        name: auth.user.name,
-        email: auth.user.email,
+        first_name: auth.user.first_name ?? "",
+        last_name: auth.user.last_name ?? "",
+        second_name: auth.user.second_name ?? "",
+        organization: auth.user.organization ?? "",
+        position: auth.user.position ?? "",
+        city: auth.user.city ?? "",
+        country_id: auth.user.country_id ?? "",
+        degree_id: auth.user.degree_id ?? "",
+        title_id: auth.user.title_id ?? "",
+        phone: auth.user.phone ?? "",
     });
 
     const submit: FormEventHandler = (e) => {
@@ -46,20 +75,160 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                     <form onSubmit={submit} className="space-y-6">
 
                         <div className="grid gap-2">
-                            <Label htmlFor="email">Email address</Label>
+                            <Label htmlFor="last_name">Фамилия</Label>
 
                             <Input
-                                id="email"
-                                type="email"
+                                id="last_name"
+                                type="text"
                                 className="mt-1 block w-full"
-                                value={data.email}
-                                onChange={(e) => setData('email', e.target.value)}
+                                value={data.last_name}
+                                onChange={(e) => setData('last_name', e.target.value)}
                                 required
-                                autoComplete="username"
-                                placeholder="Email address"
+                                placeholder="Фамилия"
                             />
 
-                            <InputError className="mt-2" message={errors.email} />
+                            <InputError className="mt-2" message={errors.last_name} />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="first_name">Имя</Label>
+
+                            <Input
+                                id="first_name"
+                                type="text"
+                                className="mt-1 block w-full"
+                                value={data.first_name}
+                                onChange={(e) => setData('first_name', e.target.value)}
+                                required
+                                placeholder="Имя"
+                            />
+
+                            <InputError className="mt-2" message={errors.first_name} />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="second_name">Отчество</Label>
+
+                            <Input
+                                id="second_name"
+                                type="text"
+                                className="mt-1 block w-full"
+                                value={data.second_name}
+                                onChange={(e) => setData('second_name', e.target.value)}
+                                required
+                                placeholder="Отчество"
+                            />
+
+                            <InputError className="mt-2" message={errors.second_name} />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="organization">Организация</Label>
+
+                            <Input
+                                id="organization"
+                                type="text"
+                                className="mt-1 block w-full"
+                                value={data.organization}
+                                onChange={(e) => setData('organization', e.target.value)}
+                                required
+                                placeholder="Организация"
+                            />
+
+                            <InputError className="mt-2" message={errors.organization} />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="position">Должность</Label>
+
+                            <Input
+                                id="position"
+                                type="text"
+                                className="mt-1 block w-full"
+                                value={data.position}
+                                onChange={(e) => setData('position', e.target.value)}
+                                required
+                                placeholder="Должность"
+                            />
+
+                            <InputError className="mt-2" message={errors.position} />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="city">Город</Label>
+
+                            <Input
+                                id="city"
+                                type="text"
+                                className="mt-1 block w-full"
+                                value={data.city}
+                                onChange={(e) => setData('city', e.target.value)}
+                                required
+                                placeholder="Город"
+                            />
+
+                            <InputError className="mt-2" message={errors.city} />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="phone">Телефон</Label>
+
+                            <Input
+                                id="phone"
+                                type="text"
+                                className="mt-1 block w-full"
+                                value={data.phone}
+                                onChange={(e) => setData('phone', e.target.value)}
+                                required
+                                placeholder="Телефон"
+                            />
+
+                            <InputError className="mt-2" message={errors.phone} />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="country_id">Страна</Label>
+                            <Select name="country_id" value={String(data.country_id)} onValueChange={(country_id) => setData('country_id', Number(country_id))}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Выберите страну" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Страны</SelectLabel>
+                                        {countries.map((country) => (
+                                            <SelectItem key={country.id} value={String(country.id)}>{country.name}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <InputError message={errors.country_id} className="mt-2" />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="degree_id">Ученая степень</Label>
+                            <Select name="degree_id" value={String(data.degree_id)} onValueChange={(degree_id) => setData('degree_id', Number(degree_id))}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Выберите степень" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Ученые степени</SelectLabel>
+                                        {degrees.map((degree) => (
+                                            <SelectItem key={degree.id} value={String(degree.id)}>{degree.name}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <InputError message={errors.degree_id} className="mt-2" />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="title_id">Ученое звание</Label>
+                            <Select name="title_id" value={String(data.title_id)} onValueChange={(title_id) => setData('title_id', Number(title_id))}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Выберите звание" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Ученые звания</SelectLabel>
+                                        {titles.map((title) => (
+                                            <SelectItem key={title.id} value={String(title.id)}>{title.name}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <InputError message={errors.title_id} className="mt-2" />
                         </div>
 
                         {mustVerifyEmail && auth.user.email_verified_at === null && (
@@ -85,7 +254,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                         )}
 
                         <div className="flex items-center gap-4">
-                            <Button disabled={processing}>Save</Button>
+                            <Button disabled={processing}>Сохранить</Button>
 
                             <Transition
                                 show={recentlySuccessful}
@@ -94,7 +263,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 leave="transition ease-in-out"
                                 leaveTo="opacity-0"
                             >
-                                <p className="text-sm text-neutral-600">Saved</p>
+                                <p className="text-sm text-neutral-600">Сохранено</p>
                             </Transition>
                         </div>
                     </form>

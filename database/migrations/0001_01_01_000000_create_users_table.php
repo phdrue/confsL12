@@ -13,17 +13,18 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            // $table->string('name');
 
-            // ФИО раздельно
-            // телефон
-            // учреждение или организация
-            // ?должность
-            // город
-            // страна
-            // полное имя
-            // степень
-            // звание
+            // profile data
+            $table->string('first_name', 255)->nullable();
+            $table->string('last_name', 255)->nullable();
+            $table->string('second_name', 255)->nullable();
+            $table->string('organization', 255)->nullable();
+            $table->string('position', 255)->nullable();
+            $table->string('city', 255)->nullable();
+            $table->unsignedBigInteger('country_id')->nullable();
+            $table->unsignedBigInteger('degree_id')->nullable();
+            $table->unsignedBigInteger('title_id')->nullable();
+            $table->string('phone', 50)->nullable();
 
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

@@ -62,7 +62,7 @@ export default function Register() {
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
                             disabled={processing}
-                            placeholder="Password"
+                            placeholder="Пароль"
                         />
                         <InputError message={errors.password} />
                     </div>
@@ -78,7 +78,7 @@ export default function Register() {
                             value={data.password_confirmation}
                             onChange={(e) => setData('password_confirmation', e.target.value)}
                             disabled={processing}
-                            placeholder="Confirm password"
+                            placeholder="Подтверждение пароля"
                         />
                         <InputError message={errors.password_confirmation} />
                     </div>
@@ -90,9 +90,9 @@ export default function Register() {
                 </div>
 
                 <div className="text-muted-foreground text-center text-sm">
-                    Already have an account?{' '}
+                    Уже зарегистрированы?{' '}
                     <TextLink href={route('login')} tabIndex={6}>
-                        Log in
+                        Войти
                     </TextLink>
                 </div>
             </form>
