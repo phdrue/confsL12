@@ -7,61 +7,61 @@ import AutoScroll from 'embla-carousel-auto-scroll'
 
 const partnersInfo: { imgPath: string }[] = [
     {
-        imgPath: "storage/img/partners/info/1.png",
+        imgPath: "img/partners/info/1.png",
     },
     {
-        imgPath: "storage/img/partners/info/2.png",
+        imgPath: "img/partners/info/2.png",
     },
     {
-        imgPath: "storage/img/partners/info/3.png",
+        imgPath: "img/partners/info/3.png",
     },
     {
-        imgPath: "storage/img/partners/info/4.png",
+        imgPath: "img/partners/info/4.png",
     },
     {
-        imgPath: "storage/img/partners/info/5.png",
+        imgPath: "img/partners/info/5.png",
     },
     {
-        imgPath: "storage/img/partners/info/6.png",
+        imgPath: "img/partners/info/6.png",
     },
 ]
 
 const partnersOff: { imgPath: string }[] = [
     {
-        imgPath: "storage/img/partners/off/1.png",
+        imgPath: "img/partners/off/1.png",
     },
     {
-        imgPath: "storage/img/partners/off/2.jpg",
+        imgPath: "img/partners/off/2.jpg",
     },
     {
-        imgPath: "storage/img/partners/off/3.jpg",
+        imgPath: "img/partners/off/3.jpg",
     },
     {
-        imgPath: "storage/img/partners/off/4.jpg",
+        imgPath: "img/partners/off/4.jpg",
     },
     {
-        imgPath: "storage/img/partners/off/5.png",
+        imgPath: "img/partners/off/5.png",
     },
     {
-        imgPath: "storage/img/partners/off/6.jpg",
+        imgPath: "img/partners/off/6.jpg",
     },
     {
-        imgPath: "storage/img/partners/off/7.png",
+        imgPath: "img/partners/off/7.png",
     },
 ]
 
 const partnersStrat: { imgPath: string }[] = [
     {
-        imgPath: "storage/img/partners/strat/1.png",
+        imgPath: "img/partners/strat/1.png",
     },
     {
-        imgPath: "storage/img/partners/strat/2.png",
+        imgPath: "img/partners/strat/2.png",
     },
     {
-        imgPath: "storage/img/partners/strat/3.png",
+        imgPath: "img/partners/strat/3.png",
     },
     {
-        imgPath: "storage/img/partners/strat/4.png",
+        imgPath: "img/partners/strat/4.png",
     },
 ]
 

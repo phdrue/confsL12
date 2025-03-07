@@ -4,7 +4,7 @@ import InputError from '@/components/input-error';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from "@/components/ui/button"
-import { Plus, BadgeCheck, CircleX, Trash2 } from "lucide-react"
+import { Plus, BadgeCheck, CircleX, Trash2, WandSparkles } from "lucide-react"
 import { Author } from "@/types/conferences";
 import {
     Select,
@@ -16,6 +16,8 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Country } from "@/types/other";
+import type { SharedData } from "@/types";
+import { usePage } from "@inertiajs/react";
 
 export default function AuthorsFormPartial({
     authors,
@@ -28,6 +30,7 @@ export default function AuthorsFormPartial({
     errors: any,
     countries: Array<Country>
 }) {
+    const { auth } = usePage<SharedData>().props;
     const [name, setName] = useState('');
     const [organization, setOrganization] = useState('');
     const [city, setCity] = useState('');
@@ -51,6 +54,12 @@ export default function AuthorsFormPartial({
     function addAuthor(): void {
         setData('authors', [...authors, { name: name, organization: organization, city: city, country_id: countryId }]);
         hideAndResetForm();
+    }
+
+    function addUserAsAuthor(): void {
+        if (auth.user) {
+            setData('authors', [...authors, { name: auth.user.first_name, organization: auth.user.organization, city: auth.user.city, country_id: auth.user.country_id }]);
+        }
     }
 
     return (
@@ -80,6 +89,14 @@ export default function AuthorsFormPartial({
                         </div>
                     }
                     <div>
+                        <Button
+                            onClick={addUserAsAuthor}
+                            type="button"
+                            variant={"outline"}
+                            size={"iconSmall"}
+                            className="mr-2">
+                            <WandSparkles />
+                        </Button>
                         {!showForm ? <Button
                             onClick={() => setShowForm(true)}
                             type="button"
@@ -87,7 +104,7 @@ export default function AuthorsFormPartial({
                             size={"iconSmall"}>
                             <Plus />
                         </Button> :
-                            <div className="grid gap-6">
+                            <div className="">
                                 <Button
                                     onClick={hideAndResetForm}
                                     type="button"
@@ -95,72 +112,72 @@ export default function AuthorsFormPartial({
                                     size={"iconSmall"}>
                                     <CircleX />
                                 </Button>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="name">Имя</Label>
-                                    <Input
-                                        id="name"
-                                        type="text"
-                                        required
-                                        tabIndex={1}
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                    />
-                                    <InputError message={errors.name} />
+                                <div className="grid gap-6">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="name">Имя</Label>
+                                        <Input
+                                            id="name"
+                                            type="text"
+                                            required
+                                            tabIndex={1}
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                        />
+                                        <InputError message={errors.name} />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="organization">Организация</Label>
+                                        <Input
+                                            id="organization"
+                                            type="text"
+                                            required
+                                            tabIndex={1}
+                                            value={organization}
+                                            onChange={(e) => setOrganization(e.target.value)}
+                                        />
+                                        <InputError message={errors.name} />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="city">Город</Label>
+                                        <Input
+                                            id="city"
+                                            type="text"
+                                            required
+                                            tabIndex={1}
+                                            value={city}
+                                            onChange={(e) => setCity(e.target.value)}
+                                        />
+                                        <InputError message={errors.name} />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="country_id">Страна</Label>
+                                        <Select name="country_id" value={countryId} onValueChange={(country_id) => setCountryId(country_id)}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Выберите страну автора" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>Страны</SelectLabel>
+                                                    {countries.map((country) => (
+                                                        <SelectItem key={country.id} value={String(country.id)}>{country.name}</SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                        <InputError message={errors.type_id} className="mt-2" />
+                                    </div>
+                                    {(name && organization && city && countryId) &&
+                                        <Button
+                                            className="text-sm"
+                                            onClick={addAuthor}
+                                            type="button"
+                                            variant={"outline"}
+                                        // size={"iconSmall"}
+                                        >
+                                            Добавить соавтора
+                                        </Button>
+                                    }
                                 </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="organization">Организация</Label>
-                                    <Input
-                                        id="organization"
-                                        type="text"
-                                        required
-                                        tabIndex={1}
-                                        value={organization}
-                                        onChange={(e) => setOrganization(e.target.value)}
-                                    />
-                                    <InputError message={errors.name} />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="city">Город</Label>
-                                    <Input
-                                        id="city"
-                                        type="text"
-                                        required
-                                        tabIndex={1}
-                                        value={city}
-                                        onChange={(e) => setCity(e.target.value)}
-                                    />
-                                    <InputError message={errors.name} />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="country_id">Страна</Label>
-                                    <Select name="country_id" value={countryId} onValueChange={(country_id) => setCountryId(country_id)}>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Выберите страну автора" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectLabel>Страны</SelectLabel>
-                                                {countries.map((country) => (
-                                                    <SelectItem key={country.id} value={String(country.id)}>{country.name}</SelectItem>
-                                                ))}
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                    <InputError message={errors.type_id} className="mt-2" />
-                                </div>
-
-
-                                {(name && organization && city && countryId) &&
-                                    <Button
-                                        className="text-sm"
-                                        onClick={addAuthor}
-                                        type="button"
-                                        variant={"outline"}
-                                    // size={"iconSmall"}
-                                    >
-                                        <BadgeCheck className="text-emerald-600" /> Добавить
-                                    </Button>
-                                }
                             </div>}
                         <InputError message={errors.content} className="mt-2" />
                         <InputError message={errors["content.items"]} className="mt-2" />

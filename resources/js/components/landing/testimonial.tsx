@@ -21,19 +21,19 @@ const testimonials: Testimonial[] = [
         quote: "Данная площадка, особенно в эру цифровизации, надеюсь станет полезным инструментом как для организаторов научных мероприятий, так и для их участников.",
         name: "Виктор Лазаренко",
         designation: "Ректор профессор КГМУ",
-        src: "storage/img/landing/testimonials/1.webp",
+        src: "img/landing/testimonials/1.webp",
     },
     {
         quote: "Данная площадка, особенно в эру цифровизации, надеюсь станет полезным инструментом как для организаторов научных мероприятий, так и для их участников.",
         name: "Вячеслав Липатов",
         designation: "Проректор по научной работе и инновационному развитию КГМУ",
-        src: "storage/img/landing/testimonials/3.webp",
+        src: "img/landing/testimonials/3.webp",
     },
     {
         quote: "Данная площадка, особенно в эру цифровизации, надеюсь станет полезным инструментом как для организаторов научных мероприятий, так и для их участников.",
         name: "Виктор Лазаренко",
         designation: "Operations Director at CloudScale",
-        src: "storage/img/landing/testimonials/2.webp",
+        src: "img/landing/testimonials/2.webp",
     },
 ];
 

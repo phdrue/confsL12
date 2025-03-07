@@ -44,7 +44,6 @@ export interface User {
     organization: string;
     position: string;
     city: string;
-    full_name: string;
     country_id: number;
     degree_id: number;
     title_id: number;

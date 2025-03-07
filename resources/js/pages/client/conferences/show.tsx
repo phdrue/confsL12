@@ -1,11 +1,11 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import ClientLayout from '@/layouts/client-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Conference } from '@/types/conferences';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Conference, ReportType } from '@/types/conferences';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 import { Button } from '@/components/ui/button';
-import { LoaderCircle } from 'lucide-react';
+import { LoaderCircle, Lock } from 'lucide-react';
 import ShowConference from '@/components/conferences/show';
 import { ConferenceBlock as ConferenceBlockType } from '@/types/blocks';
 import InputError from '@/components/input-error';
@@ -14,15 +14,19 @@ import { ConferenceCard } from '@/components/conferences/card';
 import ConferenceLayout from '@/components/conferences/layout';
 import ReportParticipationForm from '@/components/forms/participations/report';
 import { Country } from '@/types/other';
+import ThesisParticipationForm from "@/components/forms/participations/thesis";
+import Footer from '@/components/landing/footer';
 
 export default function Show({
     conference,
     blocks,
-    countries
+    countries,
+    reportTypes
 }: {
     conference: Conference,
     blocks: Array<ConferenceBlockType>,
-    countris: Array<Country>
+    countries: Array<Country>,
+    reportTypes: Array<ReportType>
 }) {
     const { auth } = usePage<SharedData>().props;
     const { toast } = useToast()
@@ -57,46 +61,38 @@ export default function Show({
         <ClientLayout breadcrumbs={breadcrumbs}>
             <Head title={conference.name} />
             <ConferenceLayout>
-                <div className="w-full flex flex-col items-center gap-12 px-16">
-                    <ShowConference conference={conference} blocks={blocks} />
+                <div className="w-full flex flex-col items-center gap-12">
+                    <div className="px-4 sm:px-6 lg:px-16">
+                        <ShowConference conference={conference} blocks={blocks} />
+                    </div>
 
-
-                    {!auth.user ?
-                        <div className='gap-6 flex flex-col'>
-                            Войдите, чтобы участвовать
-                            {Boolean(conference.allow_report) &&
-                                <p>Можно подать доклад</p>
-                            }
-                            {Boolean(conference.allow_thesis) &&
-                                <p>Можно подать тезисы</p>
-                            }
-                        </div> :
-                        <div className="gap-6 flex">
-                            <form className="flex flex-col gap-6" onSubmit={submit}>
+                    <div className="relative flex flex-col py-12 items-center w-full lg:px-16">
+                        {!auth.user &&
+                            <div className="absolute inset-0 flex items-center gap-3 font-semibold backdrop-blur-lg justify-center">
+                                <Lock size={20} /><span className=""><span className="underline underline-offset-2"><Link href={route('login')}>Войдите</Link></span>, чтобы участвовать</span>
+                            </div>
+                        }
+                        <div className="lg:gap-6 justify-center items-center gap-3 flex md:flex-row flex-wrap w-full">
+                            <form className="" onSubmit={submit}>
                                 {/* <InputError message={errors.?authorization ?? ""} /> */}
-                                <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
+                                <Button type="submit" variant={"brandDarkBlue"} className="" tabIndex={4} disabled={processing}>
                                     {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                                     Участвовать
                                 </Button>
                             </form>
                             {Boolean(conference.allow_report) &&
-                                <ReportParticipationForm countries={countries} />
+                                <ReportParticipationForm reportTypes={reportTypes} countries={countries} />
                             }
                             {Boolean(conference.allow_thesis) &&
-                                <form className="flex flex-col gap-6" onSubmit={submit}>
-                                    {/* <InputError message={errors.?authorization ?? ""} /> */}
-                                    <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
-                                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                        Подать тезисы
-                                    </Button>
-                                </form>
+                                <ThesisParticipationForm countries={countries} />
                             }
                         </div>
-                    }
 
+                    </div>
 
                 </div>
             </ConferenceLayout>
+            <Footer />
         </ClientLayout >
     );
 }

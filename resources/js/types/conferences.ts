@@ -35,3 +35,8 @@ export interface Author {
     city: string,
     country_id: number
 }
+
+export interface ReportType {
+    id: number,
+    name: string
+}

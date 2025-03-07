@@ -14,7 +14,7 @@ export default function CTA() {
                 </div>
                 <div className="order-1 overflow-hidden rounded-3xl">
                     <div className="w-full h-full ">
-                        <img loading="lazy" src="storage/img/landing/cta.png" className="size-full object-center object-cover" alt="" />
+                        <img loading="lazy" src="img/landing/cta.png" className="size-full object-center object-cover" alt="" />
                     </div>
                 </div>
             </div>

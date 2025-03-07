@@ -6,6 +6,7 @@ use App\Http\Requests\ConferenceParticipateRequest;
 use App\Http\Requests\SubmitDocumentRequest;
 use App\Models\Conference;
 use App\Models\Country;
+use App\Models\ReportType;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -44,7 +45,8 @@ class ClientController extends Controller
         return Inertia::render('client/conferences/show', [
             'conference' => $conference,
             'blocks' => $conference->blocks,
-            'countries' => Country::select('id', 'name')->get()
+            'countries' => Country::select('id', 'name')->get(),
+            'reportTypes' => ReportType::select('id', 'name')->get(),
         ]);
     }
 

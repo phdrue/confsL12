@@ -36,7 +36,7 @@ export default function Hero() {
             </div>
             <div className="flex justify-center xl:px-16">
                 <div className="aspect-square w-full xl:w-auto sm:max-md:max-h-[400px] xl:h-[600px]">
-                    <img className="size-full object-cover" src="storage/img/landing/hero.jpg" alt="hero" />
+                    <img className="size-full object-cover" src="/img/landing/hero.jpg" alt="hero" />
                 </div>
             </div>
         </section>
