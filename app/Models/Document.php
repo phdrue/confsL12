@@ -15,9 +15,11 @@ class Document extends Model
     protected function casts(): array
     {
         return [
-            'options' => 'array',
+            'authors' => 'array',
         ];
     }
+
+    protected $guarded = [];
 
     public function documentType(): BelongsTo
     {

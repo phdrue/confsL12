@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProposalController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 
 Route::get('/', [ClientController::class, 'landing'])
@@ -26,8 +27,9 @@ Route::get('subscribe', [ClientController::class, 'subscribe'])
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 
-    // конференции
+    // admin
     Route::middleware([EnsureUserIsAdmin::class])->as('adm.')->prefix('adm')->group(function () {
+        // конференции
         Route::resource('conferences', ConferenceController::class)
             ->only('index', 'show', 'store', 'edit', 'update');
 
@@ -39,6 +41,10 @@ Route::middleware(['auth'])->group(function () {
 
         Route::put('change-state/{conference}', [ConferenceController::class, 'changeState'])
             ->name('conferences.change-state');
+
+        // предложения
+        Route::resource('proposals', ProposalController::class)
+            ->only('index', 'show', 'store');
     });
 
     // client

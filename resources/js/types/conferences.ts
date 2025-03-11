@@ -19,6 +19,34 @@ export interface Conference {
     }
 }
 
+export interface Proposal {
+    id: number,
+    name: string,
+    engName: string,
+    level: string,
+    form: string,
+    type: string,
+    lang: string,
+    date: Date,
+    endDate: Date,
+    place: string,
+    // phone: string,
+    department: string,
+    organization: string,
+    organizationOther: string,
+    participationsTotal: number,
+    participationsForeign: number,
+    audience: Array<string>,
+     bookType: string,
+    topics: string,
+     amenities: Array<string>,
+    budget: string,
+    budgetSource: string,
+    coverageInPerson: string,
+    coverageOnline: string,
+    coverageProfession: string
+}
+
 export interface ConferenceState {
     id: number,
     name: string

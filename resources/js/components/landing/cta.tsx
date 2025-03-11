@@ -3,7 +3,7 @@ import { Link } from "@inertiajs/react"
 
 export default function CTA() {
     return (
-        <div className="text-white overflow-hidden mb-20 bg-brand-darkBlue py-24">
+        <div className="text-white overflow-hidden mb-0 bg-brand-darkBlue py-24">
             <div className="max-w-screen-xl mx-auto grid lg:grid-cols-2 gap-12 px-4 sm:px-6">
                 <div className="lg:py-16 order-2 xl:px-12">
                     <p className="text-4xl lg:text-5xl font-bold">Станьте частью научного сообщества с КГМУ</p>

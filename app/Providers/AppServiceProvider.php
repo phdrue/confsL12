@@ -26,10 +26,51 @@ class AppServiceProvider extends ServiceProvider
         Model::shouldBeStrict();
         Model::unguard();
 
-        $this->gates();
+        $this->rolesGates();
+        $this->participationGates();
     }
 
-    private function gates()
+    private function participationGates()
+    {
+        Gate::define('can-participate', function ($user, $conference) {
+            $doesNotParticipate = ! $user->conferences()->where('conference_id', $conference->id)->exists();
+            $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
+            return $doesNotParticipate && $conferenceIsActive;
+        });
+
+        // сразу участие с документом
+        Gate::define('can-submit-document', function ($user, $conference, $documentTypeId) {
+            $doesNotParticipate = ! $user->conferences()->where('conference_id', $conference->id)->exists();
+            $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
+
+            $thisDocumentIsAllowed = false;
+            if ($documentTypeId == 1 && $conference->allow_report) {
+                $thisDocumentIsAllowed = true;
+            } elseif ($documentTypeId == 2 && $conference->allow_thesis) {
+                $thisDocumentIsAllowed = true;
+            }
+
+            // dd($doesNotParticipate , $conferenceIsActive , $thisDocumentIsAllowed, $conference, $documentTypeId);
+            return $doesNotParticipate && $conferenceIsActive && $thisDocumentIsAllowed;
+        });
+    }
+
+    private function rolesGates()
+    {
+        Gate::define('is-admin', function ($user) {
+            return $user->hasRole(Role::ADMIN);
+        });
+
+        Gate::define('is-user', function ($user) {
+            return $user->hasRole(Role::USER);
+        });
+
+        Gate::define('is-responsible', function ($user) {
+            return $user->hasRole(Role::RESPONSIBLE);
+        });
+    }
+
+    public function old()
     {
         Gate::define('can-participate', function ($user, $conference) {
             $doesNotParticipate = ! $user->conferences()->where('conference_id', $conference->id)->exists();
@@ -51,18 +92,6 @@ class AppServiceProvider extends ServiceProvider
                 $thisDocumentIsAllowed = true;
             }
             return $participates && $conferenceIsActive && $thisDocumentIsAllowed && $didntSubmitYet;
-        });
-
-        Gate::define('is-admin', function ($user) {
-            return $user->hasRole(Role::ADMIN);
-        });
-
-        Gate::define('is-user', function ($user) {
-            return $user->hasRole(Role::USER);
-        });
-
-        Gate::define('is-responsible', function ($user) {
-            return $user->hasRole(Role::RESPONSIBLE);
         });
     }
 }

@@ -18,7 +18,7 @@ type Testimonial = {
 
 const testimonials: Testimonial[] = [
     {
-        quote: "Данная площадка, особенно в эру цифровизации, надеюсь станет полезным инструментом как для организаторов научных мероприятий, так и для их участников.",
+        quote: "Накопив опыт в определенной научной сфере, исследователь не может не поделиться им с единомышленниками, соратниками, учениками. Желаю не останавливаться на достигнутом, расширять спектр исследований, проводить более углубленные и качественные изыскания, а их результаты сообщать на конференциях, организуемых на базе Курского государственного медицинского университета, публиковаться на страницах наших изданий.",
         name: "Виктор Лазаренко",
         designation: "Ректор профессор КГМУ",
         src: "img/landing/testimonials/1.webp",
@@ -39,7 +39,7 @@ const testimonials: Testimonial[] = [
 
 export default function Testimonial() {
     return (
-        <div className="py-20 w-full max-w-screen-xl mx-auto">
+        <div className="py-16 w-full max-w-screen-xl mx-auto">
             <motion.div
                 initial={{ translateY: 120, opacity: 0 }}
                 whileInView={{ translateY: 0, opacity: 1 }}
@@ -86,7 +86,7 @@ export default function Testimonial() {
                                 <p className="max-w-sm text-brand-textSecondary">
                                     Узнайте больше о Курском Государственном Медицинском Университете
                                 </p>
-                                <Link href="#" className="text-brand-red flex gap-2 items-center text-sm font-medium">
+                                <Link href="#" className="text-brand-red flex gap-2 items-center w-max text-sm font-medium focus:outline-none focus:underline">
                                     Основной сайт университета <MoveRight size={20} />
                                 </Link>
                             </div>

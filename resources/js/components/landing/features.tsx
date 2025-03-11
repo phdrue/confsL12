@@ -14,7 +14,7 @@ import * as motion from "motion/react-client";
 const cards: { title: string, content: string, iconName: LucideIcon }[] = [
     {
         iconName: FileCheck,
-        title: "Сертификаты участника",
+        title: "Сертификат участника",
         content: "Все зарегистрированные участники конференций получают сертификаты участников, а в случае аккредитации мероприятия – свидетельство комиссии НМО Минздрава России! Помимо регистрации оргкомитет проводит обязательный контроль присутствия, внимания и остаточных знаний аудитории. При удаленной форме участия все документы направляются в электронном виде."
     },
     {
@@ -70,8 +70,8 @@ function Card({ title, content, className, Icon, textColor = "dark:text-white te
 
 export default function Features() {
     return (
-        <motion.section
-            className="bg-slate-50 w-full py-28 overflow-hidden">
+        <div
+            className="bg-slate-50 w-full pt-16 pb-16 overflow-hidden">
             <div className="max-w-screen-xl mx-auto">
                 <div className="px-4 sm:px-6">
                     <h2 className="text-center text-4xl font-semibold">Платформа конференций</h2>
@@ -148,6 +148,6 @@ export default function Features() {
                     </motion.div>
                 </div>
             </div>
-        </motion.section >
+        </div>
     )
 }

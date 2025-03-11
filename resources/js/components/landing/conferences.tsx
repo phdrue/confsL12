@@ -19,7 +19,7 @@ export default function Conferences({
                 ease: "easeInOut",
             }}
             viewport={{ once: true }}
-            className="max-w-screen-xl mx-auto py-20">
+            className="max-w-screen-xl mx-auto py-16">
             <div>
                 <div className="max-w-2xl mx-auto px-4 sm:px-6">
                     <h2 className="text-center text-3xl sm:text-4xl font-semibold">Наши <span className="relative inline-block before:absolute before:-inset-1 before:block before:-skew-y-3 before:bg-brand-red">

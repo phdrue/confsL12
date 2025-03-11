@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class CreateDocumentRequest extends FormRequest
 {
@@ -11,7 +13,14 @@ class CreateDocumentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('can-submit-document', [$this->route('conference'), $this->type_id]);
+    }
+
+    protected function failedAuthorization()
+    {
+        throw ValidationException::withMessages([
+            'authorization' => 'You are not authorized to update this post.'
+        ]);
     }
 
     /**
@@ -24,7 +33,7 @@ class CreateDocumentRequest extends FormRequest
         return [
             'type_id' => 'required|numeric|exists:document_types,id',
             'topic' => 'required|string|max:2000',
-            'full_name' => 'required|string|max:500',
+            // 'full_name' => 'required|string|max:500',
             'text' => 'required_if:type_id,2|string|max:23000',
             'literature' => 'required_if:type_id,2|string|max:23000',
             'report_type_id' => 'required_if:type_id,1|numeric|exists:report_types,id',

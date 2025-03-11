@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('type_id')->constrained('document_types');
             $table->unsignedBigInteger('report_type_id')->nullable();
             $table->string('topic', 2000);
-            $table->string('full_name', 500);
+            // $table->string('full_name', 500);
             $table->string('text', 23000)->nullable();
             $table->string('literature', 23000)->nullable();
             $table->json('authors')->nullable();

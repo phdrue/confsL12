@@ -67,7 +67,7 @@ const partnersStrat: { imgPath: string }[] = [
 
 export function PartnersInfo() {
     return (
-        <div className="mx-auto max-w-screen-xl px-4 sm:px-6 mt-10 pb-16">
+        <div className="mx-auto max-w-screen-xl px-4 sm:px-6 mt-0 pb-8">
             <p className="text-center uppercase text-sm font-semibold text-brand-textSecondary">Информационные партнеры</p>
             <Carousel className="w-full mt-6"
                 opts={{
@@ -100,7 +100,7 @@ export function PartnersInfo() {
 
 export function PartnersOff() {
     return (
-        <div className="mx-auto max-w-screen-xl px-4 sm:px-6 mt-10 pb-16">
+        <div className="mx-auto max-w-screen-xl px-4 sm:px-6 mt-12 pb-8">
             <p className="text-center uppercase text-sm font-semibold text-brand-textSecondary">Официальные партнеры</p>
             <Carousel className="w-full mt-6"
                 opts={{
@@ -133,9 +133,9 @@ export function PartnersOff() {
 
 export function PartnersStrat() {
     return (
-        <div className="mx-auto max-w-screen-xl px-4 sm:px-6 mt-10 pb-16">
+        <div className="mx-auto max-w-screen-xl px-4 sm:px-6 mt-0 pb-8">
             <p className="text-center uppercase text-sm font-semibold text-brand-textSecondary">Стратегические партнеры</p>
-            <Carousel className="w-full mt-6"
+            <Carousel className="w-full mt-4"
                 opts={{
                     loop: true,
                     watchDrag: false

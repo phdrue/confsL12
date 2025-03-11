@@ -26,7 +26,7 @@ export function ConferenceCard({ conference }: { conference: Conference }) {
                     </span>
                     <h3 className="text-xl sm:text-2xl font-semibold leading-tight dark:text-white text-black">{conference.name}</h3>
                     <p className="">{conference.description}</p>
-                    <Link prefetch href={route('conferences.show', conference.id)} className="text-brand-red flex gap-2 items-center text-sm font-medium">
+                    <Link prefetch href={route('conferences.show', conference.id)} className="text-brand-red flex gap-2 items-center text-sm font-medium focus:outline-none focus:underline">
                         На страницу конференции <MoveRight size={20} />
                     </Link>
                 </div>

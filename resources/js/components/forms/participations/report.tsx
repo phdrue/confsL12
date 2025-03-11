@@ -1,10 +1,8 @@
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle, WandSparkles } from 'lucide-react';
 import { FormEventHandler, useState, ChangeEvent } from 'react';
-import { Author, ConferenceType, ReportType } from '@/types/conferences';
 import { useToast } from "@/hooks/use-toast"
 
-import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -31,11 +29,15 @@ import {
 } from "@/components/ui/select"
 import AuthorsFormPartial from './authors';
 import { Country } from '@/types/other';
+import { Conference, ReportType } from "@/types/conferences";
+import InputError from "@/components/input-error";
 
 export default function ReportParticipationForm({
+    conference,
     reportTypes,
     countries
 }: {
+    conference: Conference,
     reportTypes: Array<ReportType>,
     countries: Array<Country>
 }) {
@@ -46,22 +48,29 @@ export default function ReportParticipationForm({
     const { data, setData, post, processing, errors, reset } = useForm({
         'type_id': 1,
         'report_type_id': '',
-        'full_name': '',
+        // 'full_name': '',
         'topic': '',
-        'text': '',
-        'literature': '',
         'authors': Array(0),
+        'authorization': ''
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('adm.conferences.store'), {
+        post(route('client.conferences.submit-document', conference.id), {
             forceFormData: true,
+            onError: (err) => {
+                if (err.authorization) {
+                    toast({
+                        variant: 'destructive',
+                        title: 'Вы уже участвуете в конференции',
+                    })
+                }
+            },
             onSuccess: () => {
                 handleClose()
                 toast({
                     variant: "success",
-                    title: "Конференция успешно создана!",
+                    title: "Доклад успешно подан!",
                 })
                 reset()
             }
@@ -82,7 +91,10 @@ export default function ReportParticipationForm({
                 </DialogHeader>
                 <form className="flex flex-col gap-6" onSubmit={submit}>
                     <div className="grid gap-6">
-                        <AuthorsFormPartial countries={countries} setData={setData} authors={data.authors} errors={errors} />
+                        <div>
+                            <AuthorsFormPartial countries={countries} setData={setData} authors={data.authors} errors={errors} />
+                            <InputError message={errors.authors} className="mt-2" />
+                        </div>
                         <div className="grid gap-2">
                             <Label htmlFor="report_type_id">Вид доклада</Label>
                             <Select
@@ -103,7 +115,7 @@ export default function ReportParticipationForm({
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
-                            <InputError message={errors.type_id} className="mt-2" />
+                            <InputError message={errors.report_type_id} className="mt-2" />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="topic">Тема доклада</Label>
@@ -119,35 +131,7 @@ export default function ReportParticipationForm({
                             />
                             <InputError message={errors.topic} className="mt-2" />
                         </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="text">Полный текст доклада {data.text.length} / 23000</Label>
-                            <Textarea
-                                id="text"
-                                maxLength={23000}
-                                name="text"
-                                value={data.text}
-                                className="w-full"
-                                autoComplete="text"
-                                required
-                                onChange={(e) => setData('text', e.target.value)}
-                            />
-                            <InputError message={errors.text} className="mt-2" />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="literature">Список литературы {data.literature.length} / 23000</Label>
-                            <Textarea
-                                id="literature"
-                                maxLength={23000}
-                                name="literature"
-                                value={data.literature}
-                                className="w-full"
-                                autoComplete="literature"
-                                required
-                                onChange={(e) => setData('literature', e.target.value)}
-                            />
-                            <InputError message={errors.literature} className="mt-2" />
-                        </div>
-                        <div className="grid gap-2">
+                        {/* <div className="grid gap-2">
                             <Label htmlFor="full_name">Полное имя заявителя</Label>
                             <Input
                                 id="full_name"
@@ -158,7 +142,7 @@ export default function ReportParticipationForm({
                                 onChange={(e) => setData('full_name', e.target.value)}
                             />
                             <InputError message={errors.full_name} />
-                        </div>
+                        </div> */}
                         <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
                             {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                             Подать доклад

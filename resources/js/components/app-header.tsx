@@ -54,7 +54,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const getInitials = useInitials();
     return (
         <>
-            <div className="border-sidebar-border/80 border-b sticky top-0 z-50 bg-white">
+            <div className="sticky top-0 z-50 bg-white">
                 <div className="mx-auto flex h-16 items-center px-4 md:max-w-screen-xl">
                     {/* Mobile Menu */}
                     <div className="lg:hidden">
@@ -160,9 +160,9 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" className="size-10 rounded-full p-1">
                                         <Avatar className="size-8 overflow-hidden rounded-full">
-                                            <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
+                                            <AvatarImage src={auth.user.avatar} alt="" />
                                             <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                                                {getInitials(auth.user.name ?? "")}
+                                                {getInitials(auth.user.email ?? "")}
                                             </AvatarFallback>
                                         </Avatar>
                                     </Button>

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ConferenceParticipateRequest;
+use App\Http\Requests\CreateDocumentRequest;
 use App\Http\Requests\SubmitDocumentRequest;
 use App\Models\Conference;
 use App\Models\Country;
+use App\Models\Document;
 use App\Models\ReportType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ClientController extends Controller
@@ -57,8 +60,26 @@ class ClientController extends Controller
         return to_route('conferences.show', $conference);
     }
 
-    public function submitDocument(SubmitDocumentRequest $request, Conference $conference)
+    public function submitDocument(CreateDocumentRequest $request, Conference $conference)
     {
-        dd("wfe");
+        DB::transaction(function () use ($request, $conference) {
+            $document = Document::create([
+                ...$request->safe()->only([
+                    'type_id',
+                    'report_type_id',
+                    'topic',
+                    'text',
+                    'literature',
+                    'authors'
+                ]),
+            ]);
+
+            auth()->user()->conferences()->attach($conference, [
+                'document_id' => $document->id,
+                'type_id' => $request->validated('type_id') + 1
+            ]);
+        });
+
+        return to_route('conferences.show', $conference);
     }
 }
