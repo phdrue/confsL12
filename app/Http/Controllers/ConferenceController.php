@@ -43,7 +43,7 @@ class ConferenceController extends Controller
      */
     public function show(Conference $conference)
     {
-        return Inertia::render('Conferences/Admin/Show', [
+        return Inertia::render('admin/conferences/show', [
             'breadcrumbs' => [
                 'link' => [
                     'url' => route('adm.conferences.index'),
