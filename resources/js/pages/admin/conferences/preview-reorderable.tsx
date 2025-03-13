@@ -1,15 +1,14 @@
 import { useForm } from "@inertiajs/react";
 import { useToast } from "@/hooks/use-toast";
-import AdminLayout from "@/Layouts/AdminLayout"
-import { RenderBlock } from "@/Components/Utils/Blocks";
-import { PreviewItem } from "@/Components/Utils/PreviewItem";
-import CreateConferenceBlockForm from "@/Components/Forms/CreateConferenceBlockForm";
-import { Card, CardHeader, CardContent, CardTitle, CardFooter } from "@/Components/ui/card";
-import { Button } from "@/Components/ui/button";
+import { PreviewItem } from "@/pages/admin/conferences/preview-item";
+import CreateConferenceBlockForm from "@/components/forms/blocks/create";
+import { Card, CardHeader, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { type BreadcrumbItem } from "@/types"
 import { Conference } from "@/types/conferences"
-import { ConferenceBlock as ConferenceBlockType } from "@/types/blocks"
+import { ConferenceBlock, ConferenceBlockType } from "@/types/blocks"
 import { Reorder } from "framer-motion"
+import { useState } from "react";
 
 import { GripVertical, Pencil, Loader2 } from "lucide-react";
 
@@ -76,7 +75,7 @@ export default function PreviewReorderComponent({
             <CardFooter className="flex justify-between">
                 <CreateConferenceBlockForm conferenceId={conferenceId} blockTypes={blockTypes} />
                 <form onSubmit={submit}>
-                    <Button disabled={processing} variant="brandCyan" type="submit">{processing ? (
+                    <Button disabled={processing} type="submit">{processing ? (
                         <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             Сохраняю...

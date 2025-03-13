@@ -149,10 +149,10 @@ export default function ProposalCreateForm({ }) {
                                 </SelectTrigger>
                                 <SelectContent>
                                     {/* <SelectGroup> */}
-                                        {/* <SelectLabel>Виды</SelectLabel> */}
-                                        {options.levels.map((level) => (
-                                            <SelectItem key={level} value={level}>{level}</SelectItem>
-                                        ))}
+                                    {/* <SelectLabel>Виды</SelectLabel> */}
+                                    {options.levels.map((level) => (
+                                        <SelectItem key={level} value={level}>{level}</SelectItem>
+                                    ))}
                                     {/* </SelectGroup> */}
                                 </SelectContent>
                             </Select>

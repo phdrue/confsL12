@@ -4,10 +4,11 @@ use App\Enums\Role;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
-use App\Http\Controllers\ConferenceController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProposalController;
 use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ConferenceController;
+use App\Http\Controllers\ConferenceBlockController;
 
 Route::get('/', [ClientController::class, 'landing'])
     ->name('home');
@@ -45,6 +46,12 @@ Route::middleware(['auth'])->group(function () {
         // предложения
         Route::resource('proposals', ProposalController::class)
             ->only('index', 'show', 'store');
+
+        // блоки
+        Route::put('blocks/reorder/{conference}', [ConferenceBlockController::class, 'reorder'])
+            ->name('blocks.reorder');
+        Route::resource('blocks', ConferenceBlockController::class)
+            ->only('store', 'update', 'destroy');
     });
 
     // client

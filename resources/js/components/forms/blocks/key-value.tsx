@@ -1,13 +1,21 @@
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card"
-import InputError from "@/Components/InputError"
-import InputLabel from "@/Components/InputLabel"
-import TextInput from "@/Components/TextInput"
-import Checkbox from "@/Components/Checkbox"
-import { Button } from "@/Components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import InputError from '@/components/input-error';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Plus, BadgeCheck, CircleX, Trash2 } from "lucide-react"
 
-export default function KeyValueTextBlockFormComponent({ content, setData, errors }: { content: any, setData: any, errors: any }) {
+export default function KeyValueTextBlockFormComponent({
+    content,
+    setData,
+    errors
+}: {
+    content: any,
+    setData: any,
+    errors: any
+}) {
     const [key, setKey] = useState('');
     const [value, setValue] = useState('');
 
@@ -19,20 +27,6 @@ export default function KeyValueTextBlockFormComponent({ content, setData, error
         setData('content', newContent);
     }
 
-    function handleTableDisplayChange(e: React.ChangeEvent<HTMLInputElement>) {
-        // const newContent = content
-        // newContent.tableDisplay = e.target.checked
-        // setData('content', newContent)
-        setData('content', { ...content, tableDisplay: e.target.checked })
-    }
-
-    function handleColorDisplayChange(e: React.ChangeEvent<HTMLInputElement>) {
-        // const newContent = content
-        // newContent.tableDisplay = e.target.checked
-        // setData('content', newContent)
-        setData('content', { ...content, colorDisplay: e.target.checked })
-    }
-
     function hideAndResetForm(): void {
         setShowForm(false)
         setKey('')
@@ -42,7 +36,7 @@ export default function KeyValueTextBlockFormComponent({ content, setData, error
     function addToContent(): void {
         if (content.items.length === 0) {
             const newContent = content
-            newContent.items = [{ key, value }]
+            newContent.items = [{ key, value }] 
             setData('content', newContent);
         } else {
             const newContent = content
@@ -61,27 +55,15 @@ export default function KeyValueTextBlockFormComponent({ content, setData, error
             </CardHeader>
             <CardContent className="p-4 pt-0">
                 <div className="space-y-2">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={content.tableDisplay}
-                            onChange={handleTableDisplayChange}
-                        />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Табличный вариант
-                        </span>
-                    </label>
+                    <div className="flex items-center space-x-3">
+                        <Checkbox id="table-display" checked={content.tableDisplay} onCheckedChange={(e) => setData('content', { ...content, tableDisplay: e === true })} name="table-display" tabIndex={3} />
+                        <Label htmlFor="table-display">Табличный вариант</Label>
+                    </div>
 
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={content.colorDisplay}
-                            onChange={handleColorDisplayChange}
-                        />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Цветной вариант
-                        </span>
-                    </label>
+                    <div className="flex items-center space-x-3">
+                        <Checkbox id="color-display" checked={content.colorDisplay} onCheckedChange={(e) => setData('content', { ...content, colorDisplay: e === true })} name="color-display" tabIndex={3} />
+                        <Label htmlFor="color-display">Цветной вариант</Label>
+                    </div>
 
                     {(content.items.length > 0) &&
                         <div className="space-y-1">
@@ -119,32 +101,30 @@ export default function KeyValueTextBlockFormComponent({ content, setData, error
                                     size={"iconSmall"}>
                                     <CircleX />
                                 </Button>
-                                <fieldset className="space-y-2">
-                                    <InputLabel htmlFor="key" value="Ключ" />
-                                    <TextInput
+                                <div className="grid gap-2">
+                                    <Label htmlFor="key">Ключ</Label>
+                                    <Input
                                         id="key"
+                                        type="text"
                                         required
-                                        name="key"
+                                        tabIndex={1}
                                         value={key}
-                                        className="w-full"
-                                        autoComplete="key"
-                                        isFocused={true}
                                         onChange={(e) => setKey(e.target.value)}
                                     />
-                                </fieldset>
-                                <fieldset className="space-y-2">
-                                    <InputLabel htmlFor="value" value="Значение" />
-                                    <TextInput
+                                    <InputError message={errors.key} />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="value">Значение</Label>
+                                    <Input
                                         id="value"
+                                        type="text"
                                         required
-                                        name="value"
+                                        tabIndex={1}
                                         value={value}
-                                        className="w-full"
-                                        autoComplete="value"
-                                        isFocused={true}
-                                        onChange={(e) => setValue(e.target.value)}
+                                        onChange={(e) => setKey(e.target.value)}
                                     />
-                                </fieldset>
+                                    <InputError message={errors.value} />
+                                </div>
                                 {(key && value) &&
                                     <Button
                                         className="text-sm"

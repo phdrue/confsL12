@@ -102,3 +102,8 @@ export type ImagesBlock = {
         images: Array<string>
     }
 }
+
+export interface ConferenceBlockType {
+    id: number,
+    name: string,
+}
