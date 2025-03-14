@@ -85,14 +85,17 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                             ))}
                                         </div>
 
-                                        <div className="flex flex-col space-y-4">
-                                            {rightNavItems.map((item) => (
-                                                <Link key={item.title} href={item.url} className="flex items-center space-x-2 font-medium">
-                                                    {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
-                                                    <span>{item.title}</span>
-                                                </Link>
-                                            ))}
-                                        </div>
+                                        {!auth.user && (
+                                            <div className="flex flex-col space-y-4">
+                                                {rightNavItems.map((item) => (
+                                                    <Link key={item.title} href={item.url} className="flex items-center space-x-2 font-medium">
+                                                        {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
+                                                        <span>{item.title}</span>
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        )}
+
                                     </div>
                                 </div>
                             </SheetContent>

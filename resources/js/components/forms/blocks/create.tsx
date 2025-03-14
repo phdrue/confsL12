@@ -66,14 +66,17 @@ export default function CreateConferenceBlockForm({
         switch (type_id) {
             case "1": {
                 setData('content', { text: '' })
+                setData('name', `Текст 1`)
                 break
             }
             case "2": {
                 setData('content', [])
+                setData('name', `Список 1`)
                 break
             }
             case "3": {
                 setData('content', [])
+                setData('name', `Ссылки 1`)
                 break
             }
             case "4": {
@@ -82,24 +85,30 @@ export default function CreateConferenceBlockForm({
                     colorDisplay: false,
                     items: []
                 })
+                setData('name', `Ключ-значение 1`)
                 break
             }
             case "5": {
                 setData('content', { colorDisplay: false, text: '' })
+                setData('name', `Заголовок 1`)
                 break
             }
             case "6": {
                 setData('content', { text: '' })
+                setData('name', `Дисклеймер 1`)
                 break
             }
             case "7":
                 setData('content', {})
+                setData('name', `Разделитель 1`)
                 break
             case "8":
                 setData('content', { images: [] })
+                setData('name', `Кнопки`)
                 break
             case "9":
                 setData('content', {})
+                setData('name', `Изображения 1`)
                 break
             default:
                 return null;
@@ -147,6 +156,7 @@ export default function CreateConferenceBlockForm({
                             </Select>
                             <InputError message={errors.type_id} className="mt-2" />
                         </div>
+                        {/* main */}
                         <RenderBlockForm errors={errors} content={data.content} setData={setData} blockTypeId={Number(data.type_id)} />
                         <Button disabled={processing} type="submit">{processing ? (
                             <>

@@ -11,11 +11,11 @@ export default function Footer() {
                         <div className="flex flex-col gap-2">
                             <Link className="px-3" href={route('home')}>Главная</Link>
                             <Link className="px-3" href={route('conferences.index')}>Мероприятия</Link>
-                            <Link className="px-3" href="#">Рассылка</Link>
+                            <Link className="px-3" href={route('subscribe')}>Рассылка</Link>
                         </div>
                         <div className="flex flex-col gap-2">
                             <Link className="px-3" href={route('dashboard')}>Личный кабинет</Link>
-                            <Link className="px-3" href="#">Контакты</Link>
+                            <Link className="px-3" href={route('contacts')}>Контакты</Link>
                         </div>
                     </div>
                 </div>

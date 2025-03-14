@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, BadgeCheck, CircleX, Trash2 } from "lucide-react"
 
-export default function KeyValueTextBlockFormComponent({
+export default function LinksTextBlockFormComponent({
     content,
     setData,
     errors
@@ -16,61 +16,47 @@ export default function KeyValueTextBlockFormComponent({
     setData: any,
     errors: any
 }) {
-    const [key, setKey] = useState('');
-    const [value, setValue] = useState('');
+    const [text, setText] = useState('');
+    const [url, setUrl] = useState('');
 
     const [showForm, setShowForm] = useState(false);
 
-    function remove(itemRemove: { key: string; value: string }): void {
+    function remove(itemRemove: { text: string; url: string }): void {
         const newContent = content
-        newContent.items = newContent.items.filter((item: { key: string; value: string }, index: number) => index !== newContent.items.indexOf(itemRemove))
+        newContent.items = newContent.items.filter((item: { text: string; url: string }, index: number) => index !== newContent.items.indexOf(itemRemove))
         setData('content', newContent);
     }
 
     function hideAndResetForm(): void {
         setShowForm(false)
-        setKey('')
-        setValue('')
+        setText('')
+        setUrl('')
     }
 
     function addToContent(): void {
-        if (content.items.length === 0) {
-            const newContent = content
-            newContent.items = [{ key, value }]
-            setData('content', newContent);
+        if (content.length === 0) {
+            setData('content', [{ text, url }]);
         } else {
-            const newContent = content
-            newContent.items = [...content.items, { key, value }]
-            setData('content', newContent);
+            setData('content', [...content, { text, url }]);
         }
-        hideAndResetForm()
+        hideAndResetForm();
     }
 
     return (
         <Card>
             <CardHeader className="p-4">
-                <CardTitle className="text-base">Содержимое поля ключ-значение</CardTitle>
+                <CardTitle className="text-base">Содержимое поля ссылок</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
                 <div className="space-y-2">
-                    <div className="flex items-center space-x-3">
-                        <Checkbox id="table-display" checked={content.tableDisplay} onCheckedChange={(e) => setData('content', { ...content, tableDisplay: e === true })} name="table-display" tabIndex={3} />
-                        <Label htmlFor="table-display">Табличный вариант</Label>
-                    </div>
-
-                    <div className="flex items-center space-x-3">
-                        <Checkbox id="color-display" checked={content.colorDisplay} onCheckedChange={(e) => setData('content', { ...content, colorDisplay: e === true })} name="color-display" tabIndex={3} />
-                        <Label htmlFor="color-display">Цветной вариант</Label>
-                    </div>
-
-                    {(content.items.length > 0) &&
+                    {(content.length > 0) &&
                         <div className="space-y-1">
-                            {content.items.map((item: {
-                                key: string
-                                value: string
+                            {content.map((item: {
+                                text: string
+                                url: string
                             }) => (
-                                <div className="flex gap-2 items-center justify-between" key={item.value}>
-                                    <p className="break-all">{item.key} - {item.value}</p>
+                                <div className="flex gap-2 items-center justify-between" key={item.text}>
+                                    <p className="break-all">{item.text} - {item.url}</p>
                                     <Button
                                         onClick={() => remove(item)}
                                         type="button"
@@ -100,30 +86,30 @@ export default function KeyValueTextBlockFormComponent({
                                     <CircleX />
                                 </Button>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="key">Ключ</Label>
+                                    <Label htmlFor="text">Текст</Label>
                                     <Input
-                                        id="key"
+                                        id="text"
                                         type="text"
                                         required
                                         tabIndex={1}
-                                        value={key}
-                                        onChange={(e) => setKey(e.target.value)}
+                                        value={text}
+                                        onChange={(e) => setText(e.target.value)}
                                     />
-                                    <InputError message={errors.key} />
+                                    <InputError message={errors.text} />
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="value">Значение</Label>
+                                    <Label htmlFor="url">Ссылка</Label>
                                     <Input
-                                        id="value"
+                                        id="url"
                                         type="text"
                                         required
                                         tabIndex={1}
-                                        value={value}
-                                        onChange={(e) => setValue(e.target.value)}
+                                        value={url}
+                                        onChange={(e) => setUrl(e.target.value)}
                                     />
-                                    <InputError message={errors.value} />
+                                    <InputError message={errors.url} />
                                 </div>
-                                {(key && value) &&
+                                {(text && url) &&
                                     <Button
                                         className="text-sm"
                                         onClick={addToContent}

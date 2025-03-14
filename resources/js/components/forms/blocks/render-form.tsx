@@ -1,6 +1,6 @@
 import { JSX } from "react";
 import RegularTextBlockFormComponent from "@/components/forms/blocks/regular-text";
-// import LinksTextBlockFormComponent from "@/components/forms/blocks/links";
+import LinksTextBlockFormComponent from "@/components/forms/blocks/links";
 // import ListTextBlockFormComponent from "@/components/forms/blocks/list";
 import KeyValueTextBlockFormComponent from "@/components/forms/blocks/key-value";
 import HeadingTextBlockFormComponent from "@/components/forms/blocks/heading";
@@ -25,8 +25,8 @@ export default function RenderBlockForm({
             return <RegularTextBlockFormComponent content={content} setData={setData} errors={errors} />
         // case 2:
         //     return <ListTextBlockFormComponent content={content} setData={setData} errors={errors} />
-        // case 3:
-        //     return <LinksTextBlockFormComponent content={content} setData={setData} errors={errors} />
+        case 3:
+            return <LinksTextBlockFormComponent content={content} setData={setData} errors={errors} />
         case 4:
             return <KeyValueTextBlockFormComponent content={content} setData={setData} errors={errors} />
         case 5:
