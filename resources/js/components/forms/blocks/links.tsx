@@ -22,8 +22,7 @@ export default function LinksTextBlockFormComponent({
     const [showForm, setShowForm] = useState(false);
 
     function remove(itemRemove: { text: string; url: string }): void {
-        const newContent = content
-        newContent.items = newContent.items.filter((item: { text: string; url: string }, index: number) => index !== newContent.items.indexOf(itemRemove))
+        const newContent = content.filter((item: { text: string; url: string }, index: number) => index !== content.indexOf(itemRemove))
         setData('content', newContent);
     }
 
@@ -115,9 +114,8 @@ export default function LinksTextBlockFormComponent({
                                         onClick={addToContent}
                                         type="button"
                                         variant={"outline"}
-                                    // size={"iconSmall"}
                                     >
-                                        <BadgeCheck className="text-emerald-600" /> Добавить
+                                     Добавить
                                     </Button>
                                 }
                             </div>}

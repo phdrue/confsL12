@@ -99,11 +99,19 @@ export type ImagesBlock = {
     position: number
     type_id: 9
     content: {
-        images: Array<string>
+        images: Array<Image>
     }
 }
 
 export interface ConferenceBlockType {
     id: number,
     name: string,
+}
+
+export interface Image {
+    id: number,
+    default: boolean,
+    name: string,
+    url: string,
+    path: string
 }

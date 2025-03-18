@@ -5,15 +5,8 @@ namespace App\Http\Requests;
 use App\Helpers\BlockValidators;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateConferenceBlockRequest extends FormRequest
+class UpdateConferenceBlockRequest extends FormRequest
 {
-    /**
-     * Indicates if the validator should stop on the first rule failure.
-     *
-     * @var bool
-     */
-    protected $stopOnFirstFailure = false;
-
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -32,11 +25,9 @@ class CreateConferenceBlockRequest extends FormRequest
         $rules = [
             'type_id' => 'required|numeric|exists:conference_block_types,id',
             'name' => 'required|string|max:255',
-            'conference_id' => 'required|numeric|exists:conferences,id',
-            // 'content' => 'required|array',
         ];
 
-        match ((int) $this->request->get('type_id')) {
+        match ($this->request->get('type_id')) {
             1 => BlockValidators::getRegularTextBlockValidation($rules),
             2 => BlockValidators::getListBlockValidation($rules),
             3 => BlockValidators::getLinksBlockValidation($rules),

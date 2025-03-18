@@ -47,7 +47,7 @@ class ClientController extends Controller
     {
         return Inertia::render('client/conferences/show', [
             'conference' => $conference,
-            'blocks' => $conference->blocks,
+            'blocks' => $conference->blocks()->orderBy('position')->get(),
             'countries' => Country::select('id', 'name')->get(),
             'reportTypes' => ReportType::select('id', 'name')->get(),
         ]);

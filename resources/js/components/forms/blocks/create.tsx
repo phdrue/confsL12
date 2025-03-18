@@ -1,8 +1,8 @@
 import { useForm } from "@inertiajs/react";
 import { useToast } from "@/hooks/use-toast";
 import RenderBlockForm from "@/components/forms/blocks/render-form";
-import { useState, JSX } from "react";
-import { Link, Dot, Heading, Loader2, Plus, BadgeCheck } from "lucide-react";
+import { useState, JSX, FormEventHandler } from "react";
+import { LoaderCircle } from "lucide-react";
 import {
     Dialog,
     DialogClose,
@@ -46,7 +46,7 @@ export default function CreateConferenceBlockForm({
 
     const { toast } = useToast()
 
-    function submit(e: React.FormEvent<HTMLFormElement>) {
+    const submit: FormEventHandler = (e) => {
         e.preventDefault()
         post(route('adm.blocks.store'), {
             onSuccess: () => {
@@ -120,7 +120,7 @@ export default function CreateConferenceBlockForm({
             <DialogTrigger asChild>
                 <Button variant="outline">Создать</Button>
             </DialogTrigger>
-            <DialogContent aria-description="Создание блока конференции" className="max-w-full sm:max-w-lg">
+            <DialogContent aria-description="Создание блока конференции" className="max-w-full sm:max-w-3xl">
                 <DialogHeader>
                     <DialogTitle>Создание блока конференции</DialogTitle>
                     <DialogDescription />
@@ -158,14 +158,10 @@ export default function CreateConferenceBlockForm({
                         </div>
                         {/* main */}
                         <RenderBlockForm errors={errors} content={data.content} setData={setData} blockTypeId={Number(data.type_id)} />
-                        <Button disabled={processing} type="submit">{processing ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Сохраняю...
-                            </>
-                        ) : (
-                            "Сохранить"
-                        )}</Button>
+                        <Button type="submit" className="w-full" tabIndex={4} disabled={processing}>
+                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                            Создать
+                        </Button>
                     </form>
                 </div>
                 <DialogFooter className="sm:justify-start">

@@ -9,6 +9,7 @@ use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\ConferenceBlockController;
+use App\Http\Controllers\ImageController;
 
 Route::get('/', [ClientController::class, 'landing'])
     ->name('home');
@@ -46,6 +47,10 @@ Route::middleware(['auth'])->group(function () {
         // предложения
         Route::resource('proposals', ProposalController::class)
             ->only('index', 'show', 'store');
+
+        // банк изображений
+        Route::resource('images', ImageController::class)
+            ->only('index', 'store');
 
         // блоки
         Route::put('blocks/reorder/{conference}', [ConferenceBlockController::class, 'reorder'])

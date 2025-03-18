@@ -47,15 +47,15 @@ function SeparatorBlockComponent() {
 function ListTextBlockComponent({ block }: { block: ListTextBlock }) {
     return (
         <ul className="px-11 space-y-2 pb-8 w-full">
-            {block.content.map((item) => (
-                <li key={item.header} className="flex flex-col gap-0">
+            {block.content.map((item, index) => (
+                <li key={index} className="flex flex-col gap-0">
                     <div className="flex gap-2">
                         <Dot className="shrink-0" />
                         <p>{item.header}</p>
                     </div>
                     <div className="pl-6">
-                        {item.items.map((subitem) => (
-                            <div key={subitem} className="flex gap-2">
+                        {item.items.map((subitem, subIndex) => (
+                            <div key={subIndex} className="flex gap-2">
                                 <Dot className="shrink-0" />
                                 <p>{subitem}</p>
                             </div>
@@ -79,8 +79,8 @@ function KeyValueTextBlockComponent({ primaryColor, block }: { primaryColor: str
     function DefaultRender() {
         return (
             <ul className="px-11 w-full">
-                {block.content.items.map((pair) => (
-                    <li key={pair.key}>
+                {block.content.items.map((pair, index) => (
+                    <li key={index}>
                         <p><span className="font-semibold">{pair.key}</span> {pair.value}</p>
                     </li>
                 ))}
@@ -91,8 +91,8 @@ function KeyValueTextBlockComponent({ primaryColor, block }: { primaryColor: str
     function TableRender() {
         return (
             <ul className="w-full">
-                {block.content.items.map((pair) => (
-                    <li key={pair.key} className="flex justify-between py-4 px-11 odd:bg-brand-neutral">
+                {block.content.items.map((pair, index) => (
+                    <li key={index} className="flex justify-between py-4 px-11 odd:bg-brand-neutral">
                         <span className="text-pretty">{pair.key}</span>
                         <span className="whitespace-nowrap">{pair.value}</span>
                     </li>
@@ -104,8 +104,8 @@ function KeyValueTextBlockComponent({ primaryColor, block }: { primaryColor: str
     function ColorRender() {
         return (
             <ul className="mb-8 w-full py-8 px-11" style={{ backgroundColor: primaryColor, color: 'white' }}>
-                {block.content.items.map((pair) => (
-                    <li key={pair.key}>
+                {block.content.items.map((pair, index) => (
+                    <li key={index}>
                         <p><span className="font-semibold">{pair.key}</span> {pair.value}</p>
                     </li>
                 ))}
@@ -144,8 +144,8 @@ function RegularTextBlockComponent({ block }: { block: RegularTextBlock }) {
 function LinksTextBlockComponent({ block }: { block: LinksTextBlock }) {
     return (
         <ul className="px-11 pb-8 w-full">
-            {block.content.map((link) => (
-                <li key={link.text}>
+            {block.content.map((link, index) => (
+                <li key={index}>
                     <a href={link.url} className="flex gap-2 items-center underline underline-offset-4 hover:text-blue-600 transition-all">
                         <Link size={14} />
                         {link.text}

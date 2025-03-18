@@ -4,25 +4,23 @@ import { PreviewItem } from "@/pages/admin/conferences/preview-item";
 import CreateConferenceBlockForm from "@/components/forms/blocks/create";
 import { Card, CardHeader, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { type BreadcrumbItem } from "@/types"
-import { Conference } from "@/types/conferences"
 import { ConferenceBlock, ConferenceBlockType } from "@/types/blocks"
 import { Reorder } from "framer-motion"
-import { useState } from "react";
+import { FormEventHandler, useState } from "react";
 
-import { GripVertical, Pencil, Loader2 } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
+
+import { EditConferenceBlockForm } from "@/components/forms/blocks/edit";
 
 export default function PreviewReorderComponent({
     handleReorder,
     conferenceId,
     blocks,
-    setBlocks,
     blockTypes
 }: {
     handleReorder: (values: Array<ConferenceBlock>) => void,
     conferenceId: number,
     blocks: Array<ConferenceBlock>,
-    setBlocks: (blocks: Array<ConferenceBlock>) => void,
     blockTypes: Array<ConferenceBlockType>
 }) {
     const { data, setData, put, processing, transform } = useForm({
@@ -40,9 +38,14 @@ export default function PreviewReorderComponent({
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
 
+    const [openEdit, setOpenEdit] = useState(false);
+    const handleCloseEdit = () => setOpenEdit(false);
+
+    const [blockToEdit, setBlockToEdit] = useState<ConferenceBlock | null>(null);
+
     const { toast } = useToast()
 
-    function submit(e: React.FormEvent<HTMLFormElement>) {
+    const handleReorderSubmit: FormEventHandler = (e) => {
         e.preventDefault()
         put(route('adm.blocks.reorder', conferenceId), {
             onSuccess: () => {
@@ -68,21 +71,24 @@ export default function PreviewReorderComponent({
                     onReorder={handleReorder}
                 >
                     {blocks.map((block) => (
-                        <PreviewItem key={block.id} block={block} toast={toast} />
+                        <PreviewItem
+                            key={block.id}
+                            block={block}
+                            toast={toast}
+                            setOpenEdit={setOpenEdit}
+                            setBlockToEdit={setBlockToEdit}
+                        />
                     ))}
                 </Reorder.Group>
             </CardContent>
             <CardFooter className="flex justify-between">
                 <CreateConferenceBlockForm conferenceId={conferenceId} blockTypes={blockTypes} />
-                <form onSubmit={submit}>
-                    <Button disabled={processing} type="submit">{processing ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Сохраняю...
-                        </>
-                    ) : (
-                        "Сохранить"
-                    )}</Button>
+                <EditConferenceBlockForm toast={toast} block={blockToEdit} openEdit={openEdit} setOpenEdit={setOpenEdit} />
+                <form onSubmit={handleReorderSubmit}>
+                    <Button type="submit" className="w-full" tabIndex={4} disabled={processing}>
+                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                        Сохранить
+                    </Button>
                 </form>
             </CardFooter>
         </Card >

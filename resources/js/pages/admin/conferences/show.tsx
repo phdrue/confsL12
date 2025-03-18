@@ -44,7 +44,7 @@ export default function Show({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Администрирование" />
             <div className="">
-                <div className="flex flex-col-reverse xl:flex-row gap-8">
+                <div className="flex flex-col-reverse xl:flex-row gap-8 p-4">
                     <div className="xl:max-w-[936px] flex flex-col grow items-center gap-12">
                         <ShowConference conference={conference} blocks={blocks} />
                     </div>

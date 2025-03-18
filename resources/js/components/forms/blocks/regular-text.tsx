@@ -1,6 +1,7 @@
 import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from "@/components/ui/textarea";
 
 export default function RegularTextBlockFormComponent({
     content,
@@ -14,9 +15,8 @@ export default function RegularTextBlockFormComponent({
     return (
         <div className="grid gap-2">
             <Label htmlFor="text">Текст</Label>
-            <Input
-                id="name"
-                type="text"
+            <Textarea
+                id="text"
                 required
                 tabIndex={1}
                 value={content.text}

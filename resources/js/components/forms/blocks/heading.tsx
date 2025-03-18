@@ -2,6 +2,7 @@ import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function HeadingTextBlockFormComponent({
     content,
@@ -20,9 +21,8 @@ export default function HeadingTextBlockFormComponent({
             </div>
             <div className="grid gap-2">
                 <Label htmlFor="text">Заголовок</Label>
-                <Input
+                <Textarea
                     id="name"
-                    type="text"
                     required
                     tabIndex={1}
                     value={content.text}

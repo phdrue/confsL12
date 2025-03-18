@@ -129,9 +129,8 @@ export default function KeyValueTextBlockFormComponent({
                                         onClick={addToContent}
                                         type="button"
                                         variant={"outline"}
-                                    // size={"iconSmall"}
                                     >
-                                        <BadgeCheck className="text-emerald-600" /> Добавить
+                                        Добавить
                                     </Button>
                                 }
                             </div>}

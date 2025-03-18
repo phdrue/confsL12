@@ -2,22 +2,23 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Conference;
-use App\Models\ConferenceBlockType;
-use App\Models\ConferenceType;
-use App\Models\ConferenceState;
-use App\Models\Image;
-use App\Models\ParticipationType;
 use App\Models\Role;
-use App\Enums\Role as RoleEnum;
-use App\Models\Country;
-use App\Models\Degree;
-use App\Models\DocumentType;
-use App\Models\ReportType;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
+use App\Models\Image;
 use App\Models\Title;
+use App\Models\Degree;
+use App\Models\Country;
+use App\Models\Conference;
+use App\Models\ReportType;
+use App\Models\DocumentType;
+use App\Models\ImageCategory;
+use App\Models\ConferenceType;
+use App\Enums\Role as RoleEnum;
+use App\Models\ConferenceState;
 use Illuminate\Database\Seeder;
+use App\Models\ParticipationType;
+use App\Models\ConferenceBlockType;
 
 class DatabaseSeeder extends Seeder
 {
@@ -175,28 +176,38 @@ class DatabaseSeeder extends Seeder
             Conference::create($conference);
         });
 
+        $imageCategories = collect([
+            'Информационные партнеры',
+            'Официальные партнеры',
+            'Стратегические партнеры',
+            'Другие парнерты',
+            'Люди',
+            'Другое'
+        ])->each(fn($category) => ImageCategory::create(['name' => $category]));
+
         $images = collect([
-            ["storage/img/partners/info/1.png", 'Картинка 1'],
-            ["storage/img/partners/info/2.png", 'Картинка 2'],
-            ["storage/img/partners/info/3.png", 'Картинка 3'],
-            ["storage/img/partners/info/4.png", 'Картинка 4'],
-            ["storage/img/partners/info/5.png", 'Картинка 5'],
-            ["storage/img/partners/info/6.png", 'Картинка 6'],
-            ["storage/img/partners/off/1.png", 'Картинка 7'],
-            ["storage/img/partners/off/2.jpg", 'Картинка 8'],
-            ["storage/img/partners/off/3.jpg", 'Картинка 9'],
-            ["storage/img/partners/off/4.jpg", 'Картинка 10'],
-            ["storage/img/partners/off/5.png", 'Картинка 11'],
-            ["storage/img/partners/off/6.jpg", 'Картинка 12'],
-            ["storage/img/partners/off/7.png", 'Картинка 13'],
-            ["storage/img/partners/strat/1.png", 'Картинка 14'],
-            ["storage/img/partners/strat/2.png", 'Картинка 15'],
-            ["storage/img/partners/strat/3.png", 'Картинка 16'],
-            ["storage/img/partners/strat/4.png", 'Картинка 17'],
+            ["storage/img/partners/info/1.png", 'Картинка 1', 1],
+            ["storage/img/partners/info/2.png", 'Картинка 2', 1],
+            ["storage/img/partners/info/3.png", 'Картинка 3', 1],
+            ["storage/img/partners/info/4.png", 'Картинка 4', 1],
+            ["storage/img/partners/info/5.png", 'Картинка 5', 1],
+            ["storage/img/partners/info/6.png", 'Картинка 6', 1],
+            ["storage/img/partners/off/1.png", 'Картинка 7', 2],
+            ["storage/img/partners/off/2.jpg", 'Картинка 8', 2],
+            ["storage/img/partners/off/3.jpg", 'Картинка 9', 2],
+            ["storage/img/partners/off/4.jpg", 'Картинка 10', 2],
+            ["storage/img/partners/off/5.png", 'Картинка 11', 2],
+            ["storage/img/partners/off/6.jpg", 'Картинка 12', 2],
+            ["storage/img/partners/off/7.png", 'Картинка 13', 2],
+            ["storage/img/partners/strat/1.png", 'Картинка 14', 3],
+            ["storage/img/partners/strat/2.png", 'Картинка 15', 3],
+            ["storage/img/partners/strat/3.png", 'Картинка 16', 3],
+            ["storage/img/partners/strat/4.png", 'Картинка 17', 3],
         ])->each(fn($img) => Image::create([
             'default' => true,
             'path' => $img[0],
-            'name' => $img[1]
+            'name' => $img[1],
+            'category_id' => $img[2]
         ]));
 
 

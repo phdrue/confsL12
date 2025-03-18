@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateConferenceBlockRequest;
 use App\Http\Requests\ReorderBlocksRequest;
+use App\Http\Requests\UpdateConferenceBlockRequest;
 use App\Models\Conference;
 use App\Models\ConferenceBlock;
 use Illuminate\Http\Request;
@@ -39,9 +40,14 @@ class ConferenceBlockController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ConferenceBlock $conferenceBlock)
+    public function update(UpdateConferenceBlockRequest $request, ConferenceBlock $block)
     {
-        //
+        // TODO GATE
+        $block->update([
+            ...$request->safe()->only(['content', 'name'])
+        ]);
+
+        return to_route('adm.conferences.show', $block->conference_id);
     }
 
     /**

@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from "@/components/ui/button"
 import { WandSparkles } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea";
 
 export default function DisclamerTextBlockFormComponent({
     content,
@@ -30,9 +31,8 @@ export default function DisclamerTextBlockFormComponent({
             </Button>
             <div className="grid gap-2">
                 <Label htmlFor="text">Текст</Label>
-                <Input
+                <Textarea
                     id="name"
-                    type="text"
                     required
                     tabIndex={1}
                     value={content.text}

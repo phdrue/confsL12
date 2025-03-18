@@ -3,27 +3,28 @@ import { Reorder, useDragControls } from "framer-motion"
 import { GripVertical, Pencil, Trash2 } from "lucide-react"
 import { useForm } from "@inertiajs/react"
 import { Button } from "@/components/ui/button"
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+import { FormEventHandler } from "react"
 
-export function PreviewItem({ block, toast }: { block: ConferenceBlock, toast: any }) {
+export function PreviewItem({
+    block,
+    toast,
+    setOpenEdit,
+    setBlockToEdit
+}: {
+    block: ConferenceBlock,
+    toast: any,
+    setOpenEdit: (openEdit: boolean) => void,
+    setBlockToEdit: (block: ConferenceBlock | null) => void
+}) {
     const controls = useDragControls()
 
     const { delete: destroy, processing, errors } = useForm({})
 
-    function submit(e: React.FormEvent<HTMLFormElement>) {
+    const handleDeleteSubmit: FormEventHandler = (e) => {
         e.preventDefault()
         destroy(route('adm.blocks.destroy', block.id), {
             onBefore: () => confirm("Вы уверены, что хотите удалить?"),
             onSuccess: () => {
-                // handleClose()
                 toast({
                     variant: "success",
                     title: "Блок конференции удален!",
@@ -44,37 +45,15 @@ export function PreviewItem({ block, toast }: { block: ConferenceBlock, toast: a
                 {block.name}
             </span>
             <div className="flex gap-2">
-                <Button type="button" variant={"outline"} size={"iconSmall"}>
+                <Button onClick={() => { setOpenEdit(true); setBlockToEdit(block) }} type="button" variant={"outline"} size={"iconSmall"}>
                     <Pencil size={12} className="text-black/50" />
                 </Button>
-                <form onSubmit={submit}>
+                <form onSubmit={handleDeleteSubmit}>
                     <Button type="submit" variant={"outline"} className="group" size={"iconSmall"}>
                         <Trash2 size={12} className="text-black/50 group-hover:text-rose-600" />
                     </Button>
                 </form>
             </div>
         </Reorder.Item>
-    )
-}
-
-export function PreviewItemDialog({ block, open, setOpen }: { block?: ConferenceBlock, open: boolean, setOpen: (open: boolean) => void }) {
-    return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                    <DialogTitle>Создание конфедеренции</DialogTitle>
-                </DialogHeader>
-                <div className="w-full mx-auto py-32">
-
-                </div>
-                <DialogFooter className="sm:justify-start">
-                    <DialogClose asChild>
-                        <Button type="button" variant="secondary">
-                            Закрыть
-                        </Button>
-                    </DialogClose>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
     )
 }
