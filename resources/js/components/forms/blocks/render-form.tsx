@@ -6,19 +6,25 @@ import KeyValueTextBlockFormComponent from "@/components/forms/blocks/key-value"
 import HeadingTextBlockFormComponent from "@/components/forms/blocks/heading";
 import DisclamerTextBlockFormComponent from "@/components/forms/blocks/disclamer";
 import SeparatorBlockFormComponent from "@/components/forms/blocks/separator";
-// import ImagesBlockFormComponent from "@/components/forms/blocks/images";
+import { Image, ImageCategory } from "@/types/blocks";
+import ImagesBlockFormComponent from "@/components/forms/blocks/images";
 // import ButtonsBlockFormComponent from "@/Components/Forms/Blocks/Buttons";
 
 export default function RenderBlockForm({
     blockTypeId,
     content,
     setData,
-    errors
+    errors,
+    imagesBlockData
 }: {
     blockTypeId: number,
     content: any,
     setData: any,
-    errors: any
+    errors: any,
+    imagesBlockData: {
+        images: Array<Image>,
+        imageCategories: Array<ImageCategory>
+    }
 }): JSX.Element | null {
     switch (blockTypeId) {
         case 1:
@@ -37,8 +43,8 @@ export default function RenderBlockForm({
             return <SeparatorBlockFormComponent content={content} setData={setData} errors={errors} />
         // case 8:
         //     return <ButtonsBlockFormComponent content={content} setData={setData} errors={errors} />
-        // case 9:
-        //     return <ImagesBlockFormComponent content={content} setData={setData} errors={errors} />
+        case 9:
+            return <ImagesBlockFormComponent imagesBlockData={imagesBlockData} content={content} setData={setData} errors={errors} />
         default:
             return null;
     }

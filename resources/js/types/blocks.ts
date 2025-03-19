@@ -110,8 +110,15 @@ export interface ConferenceBlockType {
 
 export interface Image {
     id: number,
+    category?: ImageCategory,
+    category_id: number,
     default: boolean,
     name: string,
     url: string,
     path: string
+}
+
+export interface ImageCategory {
+    id: number,
+    name: string,
 }

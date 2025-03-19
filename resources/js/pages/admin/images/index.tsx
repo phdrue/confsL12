@@ -2,7 +2,9 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import ImagesAdminDataTable from "@/components/tables/images-admin-data-table";
-import { Image } from "@/types/blocks";
+import { Image, ImageCategory } from "@/types/blocks";
+import { ImagePreview } from "@/components/misc/image-preview";
+import { useState } from "react";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -10,12 +12,33 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/dashboard',
     },
 ];
+import { Button } from "@/components/ui/button";
+import CreateImageForm from "@/components/forms/images/create";
 
 export default function Index({
     images,
+    imageCategories
 }: {
     images: Array<Image>,
+    imageCategories: Array<ImageCategory>
 }) {
+    const TableWithPreview = () => {
+        const [image, setImage] = useState<Image | null>(null);
+        const [openPreview, setOpenPreview] = useState(false);
+
+        return (
+            <>
+                <ImagePreview image={image} openPreview={openPreview} setOpenPreview={setOpenPreview} />
+                <ImagesAdminDataTable
+                    images={images}
+                    imageCategories={imageCategories}
+                    setOpenPreview={setOpenPreview}
+                    setImage={setImage}
+                />
+            </>
+        )
+    }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Администрирование" />
@@ -23,7 +46,8 @@ export default function Index({
                 <div className="grid grid-cols-1 scroll-mt-20 items-start gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:gap-10">
                     <div className="md:col-span-2 lg:col-span-3">
                         {/* <Image /> */}
-                        <ImagesAdminDataTable images={images} />
+                        <CreateImageForm categories={imageCategories} />
+                        <TableWithPreview />
                     </div>
                 </div>
             </div>

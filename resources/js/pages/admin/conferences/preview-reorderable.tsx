@@ -4,7 +4,7 @@ import { PreviewItem } from "@/pages/admin/conferences/preview-item";
 import CreateConferenceBlockForm from "@/components/forms/blocks/create";
 import { Card, CardHeader, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ConferenceBlock, ConferenceBlockType } from "@/types/blocks"
+import { ConferenceBlock, ConferenceBlockType, Image, ImageCategory } from "@/types/blocks"
 import { Reorder } from "framer-motion"
 import { FormEventHandler, useState } from "react";
 
@@ -16,12 +16,17 @@ export default function PreviewReorderComponent({
     handleReorder,
     conferenceId,
     blocks,
-    blockTypes
+    blockTypes,
+    imagesBlockData
 }: {
     handleReorder: (values: Array<ConferenceBlock>) => void,
     conferenceId: number,
     blocks: Array<ConferenceBlock>,
-    blockTypes: Array<ConferenceBlockType>
+    blockTypes: Array<ConferenceBlockType>,
+    imagesBlockData: {
+        images: Array<Image>,
+        imageCategories: Array<ImageCategory>
+    }
 }) {
     const { data, setData, put, processing, transform } = useForm({
         blocks: '',
@@ -82,7 +87,7 @@ export default function PreviewReorderComponent({
                 </Reorder.Group>
             </CardContent>
             <CardFooter className="flex justify-between">
-                <CreateConferenceBlockForm conferenceId={conferenceId} blockTypes={blockTypes} />
+                <CreateConferenceBlockForm imagesBlockData={imagesBlockData} conferenceId={conferenceId} blockTypes={blockTypes} />
                 <EditConferenceBlockForm toast={toast} block={blockToEdit} openEdit={openEdit} setOpenEdit={setOpenEdit} />
                 <form onSubmit={handleReorderSubmit}>
                     <Button type="submit" className="w-full" tabIndex={4} disabled={processing}>

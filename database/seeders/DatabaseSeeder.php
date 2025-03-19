@@ -186,28 +186,29 @@ class DatabaseSeeder extends Seeder
         ])->each(fn($category) => ImageCategory::create(['name' => $category]));
 
         $images = collect([
-            ["storage/img/partners/info/1.png", 'Картинка 1', 1],
-            ["storage/img/partners/info/2.png", 'Картинка 2', 1],
-            ["storage/img/partners/info/3.png", 'Картинка 3', 1],
-            ["storage/img/partners/info/4.png", 'Картинка 4', 1],
-            ["storage/img/partners/info/5.png", 'Картинка 5', 1],
-            ["storage/img/partners/info/6.png", 'Картинка 6', 1],
-            ["storage/img/partners/off/1.png", 'Картинка 7', 2],
-            ["storage/img/partners/off/2.jpg", 'Картинка 8', 2],
-            ["storage/img/partners/off/3.jpg", 'Картинка 9', 2],
-            ["storage/img/partners/off/4.jpg", 'Картинка 10', 2],
-            ["storage/img/partners/off/5.png", 'Картинка 11', 2],
-            ["storage/img/partners/off/6.jpg", 'Картинка 12', 2],
-            ["storage/img/partners/off/7.png", 'Картинка 13', 2],
-            ["storage/img/partners/strat/1.png", 'Картинка 14', 3],
-            ["storage/img/partners/strat/2.png", 'Картинка 15', 3],
-            ["storage/img/partners/strat/3.png", 'Картинка 16', 3],
-            ["storage/img/partners/strat/4.png", 'Картинка 17', 3],
+            ["img/partners/info/1.png", 'yellmed', 1, 'https://yellmed.ru/'],
+            ["img/partners/info/2.png", 'Врачи вместе', 1, 'https://vrachivmeste.ru/'],
+            ["img/partners/info/3.png", 'Аэтэрна', 1, 'https://aeterna-ufa.ru/'],
+            ["img/partners/info/4.png", 'Научные конференции.рф', 1, 'https://na-konferencii.ru/'],
+            ["img/partners/info/5.png", 'ivrach', 1, 'https://www.ivrach.com/'],
+            ["img/partners/info/6.png", 'Нацпроект Наука и Университеты', 1, 'https://xn--80aapampemcchfmo7a3c9ehj.xn--p1ai/projects/nauka-i-universitety/'],
+            ["img/partners/off/1.png", 'Sun Pharma', 2, 'https://sunpharma.com/russia/'],
+            ["img/partners/off/2.jpg", 'Medtronic', 2, 'https://www.medtronic.com/en-us/index.html'],
+            ["img/partners/off/3.jpg", 'Abbott', 2, 'https://www.ru.abbott/'],
+            ["img/partners/off/4.jpg", 'Европа', 2, 'https://europa-ts.ru/'],
+            ["img/partners/off/5.png", 'Мираторг', 2, 'https://miratorg.ru/'],
+            ["img/partners/off/6.jpg", 'Фармстандарт', 2, 'https://pharmstd.ru/'],
+            ["img/partners/off/7.png", 'Фармтек', 2, 'https://pharmtec.ru/'],
+            ["img/partners/strat/1.png", 'Российский союз молодых ученых', 3, 'https://rosmu.ru/'],
+            ["img/partners/strat/2.png", 'Администрация Курской Области', 3, 'https://adm2.rkursk.ru/'],
+            ["img/partners/strat/3.png", 'Администрация Города Курска', 3, 'https://kursk-r38.gosweb.gosuslugi.ru/'],
+            ["img/partners/strat/4.png", 'Союз Курская торгово-промышленная палата', 3, 'https://kursk.tpprf.ru/ru/'],
         ])->each(fn($img) => Image::create([
             'default' => true,
             'path' => $img[0],
             'name' => $img[1],
-            'category_id' => $img[2]
+            'category_id' => $img[2],
+            'url' => $img[3]
         ]));
 
 

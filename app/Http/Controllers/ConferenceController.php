@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ChangeConferenceStateRequest;
 use Inertia\Inertia;
+use App\Models\Image;
 use Inertia\Response;
 use App\Models\Conference;
 use Illuminate\Http\Request;
+use App\Models\ImageCategory;
 use App\Models\ConferenceType;
+use App\Models\ConferenceState;
 use App\Models\ConferenceBlockType;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CreateConferenceRequest;
 use App\Http\Requests\UpdateConferenceRequest;
-use App\Models\ConferenceState;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\ChangeConferenceStateRequest;
 
 class ConferenceController extends Controller
 {
@@ -59,7 +61,11 @@ class ConferenceController extends Controller
                 'type_id',
                 'content'
             ])->orderBy('position')->get(),
-            'blockTypes' => ConferenceBlockType::select('id', 'name')->get()
+            'blockTypes' => ConferenceBlockType::select('id', 'name')->get(),
+            'imagesBlockData' => [
+                'images' => Image::all(),
+                'imageCategories' => ImageCategory::select('id', 'name')->get()
+            ]
         ]);
     }
 

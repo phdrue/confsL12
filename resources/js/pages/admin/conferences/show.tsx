@@ -1,7 +1,7 @@
 import { type BreadcrumbItem } from "@/types"
 import { useState, useEffect } from "react";
 import { Conference } from "@/types/conferences"
-import { ConferenceBlock } from "@/types/blocks";
+import { ConferenceBlock, Image, ImageCategory } from "@/types/blocks";
 import { Head } from '@inertiajs/react';
 import AppLayout from "@/layouts/app-layout";
 import ShowConference from '@/components/conferences/show';
@@ -18,11 +18,16 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Show({
     conference,
     defaultBlocks,
-    blockTypes
+    blockTypes,
+    imagesBlockData
 }: {
     conference: Conference,
     defaultBlocks: Array<ConferenceBlock>,
-    blockTypes: Array<ConferenceBlockType>
+    blockTypes: Array<ConferenceBlockType>,
+    imagesBlockData: {
+        images: Array<Image>,
+        imageCategories: Array<ImageCategory>
+    }
 }) {
     const [blocks, setBlocks] = useState<Array<ConferenceBlock>>(defaultBlocks);
 
@@ -49,7 +54,14 @@ export default function Show({
                         <ShowConference conference={conference} blocks={blocks} />
                     </div>
                     <div className="">
-                        <PreviewReorderComponent handleReorder={handleReorder} conferenceId={conference.id} blocks={blocks} setBlocks={setBlocks} blockTypes={blockTypes} />
+                        <PreviewReorderComponent
+                            handleReorder={handleReorder}
+                            conferenceId={conference.id}
+                            blocks={blocks}
+                            setBlocks={setBlocks}
+                            blockTypes={blockTypes}
+                            imagesBlockData={imagesBlockData}
+                        />
                     </div>
                 </div>
             </div>

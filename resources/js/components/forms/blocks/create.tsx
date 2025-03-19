@@ -26,14 +26,19 @@ import InputError from '@/components/input-error';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { DialogDescription } from "@radix-ui/react-dialog";
-import { ConferenceBlockType } from "@/types/blocks";
+import { ConferenceBlockType, Image, ImageCategory } from "@/types/blocks";
 
 export default function CreateConferenceBlockForm({
     conferenceId,
-    blockTypes
+    blockTypes,
+    imagesBlockData
 }: {
     conferenceId: number,
-    blockTypes: Array<ConferenceBlockType>
+    blockTypes: Array<ConferenceBlockType>,
+    imagesBlockData: {
+        images: Array<Image>,
+        imageCategories: Array<ImageCategory>
+    }
 }) {
     const { data, setData, post, reset, processing, errors } = useForm({
         type_id: '',
@@ -157,7 +162,7 @@ export default function CreateConferenceBlockForm({
                             <InputError message={errors.type_id} className="mt-2" />
                         </div>
                         {/* main */}
-                        <RenderBlockForm errors={errors} content={data.content} setData={setData} blockTypeId={Number(data.type_id)} />
+                        <RenderBlockForm imagesBlockData={imagesBlockData} errors={errors} content={data.content} setData={setData} blockTypeId={Number(data.type_id)} />
                         <Button type="submit" className="w-full" tabIndex={4} disabled={processing}>
                             {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                             Создать

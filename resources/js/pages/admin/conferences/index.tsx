@@ -7,6 +7,7 @@ import ConferencesActivitiesChart from '@/components/charts/conferences/activiti
 import ConferencesTypesChart from '@/components/charts/conferences/types';
 import ConferencesUsersChart from '@/components/charts/conferences/users';
 import CreateConferenceForm from '@/components/forms/conferences/create';
+import { Image, ImageCategory } from "@/types/blocks";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -18,7 +19,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Index({
     states,
     types,
-    conferences
+    conferences,
 }: {
     states: Array<ConferenceState>,
     types: Array<ConferenceType>,
