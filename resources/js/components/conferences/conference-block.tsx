@@ -6,7 +6,8 @@ import {
     KeyValueTextBlock,
     DisclamerTextBlock,
     ListTextBlock,
-    SeparatorBlock
+    SeparatorBlock,
+    ImagesBlock
 } from "@/types/blocks";
 import { JSX } from "react";
 import { Link, Dot } from "lucide-react";
@@ -33,9 +34,21 @@ export const ConferenceBlock = ({
             return <DisclamerTextBlockComponent block={block} />
         case 7:
             return <SeparatorBlockComponent />
+        case 9:
+            return <ImageBlockComponent block={block} />
         default:
             return null;
     }
+}
+
+function ImageBlockComponent({ block }: { block: ImagesBlock }) {
+    return (
+        <div className="flex flex-row flex-wrap gap-4">
+            {block.content.images && block.content.images.map((image, index) => (
+                <img key={index} className="h-16 lg:h-24" alt={image.name} src={`/${image.path}`} />
+            ))}
+        </div>
+    )
 }
 
 function SeparatorBlockComponent() {

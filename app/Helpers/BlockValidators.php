@@ -106,4 +106,21 @@ class BlockValidators
     {
         $rules['content'] = 'nullable';
     }
+
+
+    /**
+     * getImagesBlockValidation
+     * id - 9
+     *
+     * @param array $rules
+     * @return void
+     */
+    public static function getImagesBlockValidation(array &$rules): void
+    {
+        $rules['content'] = 'required|array:images';
+        $rules['content.images'] = 'required|array';
+        $rules['content.images.*'] = 'required|array:path,name';
+        $rules['content.images.*.path'] = 'required|string|max:255';
+        $rules['content.images.*.name'] = 'required|string|max:255';
+    }
 }

@@ -88,7 +88,7 @@ export default function PreviewReorderComponent({
             </CardContent>
             <CardFooter className="flex justify-between">
                 <CreateConferenceBlockForm imagesBlockData={imagesBlockData} conferenceId={conferenceId} blockTypes={blockTypes} />
-                <EditConferenceBlockForm toast={toast} block={blockToEdit} openEdit={openEdit} setOpenEdit={setOpenEdit} />
+                <EditConferenceBlockForm toast={toast} imagesBlockData={imagesBlockData} block={blockToEdit} openEdit={openEdit} setOpenEdit={setOpenEdit} />
                 <form onSubmit={handleReorderSubmit}>
                     <Button type="submit" className="w-full" tabIndex={4} disabled={processing}>
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}

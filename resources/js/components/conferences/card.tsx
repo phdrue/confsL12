@@ -3,7 +3,6 @@ import { Link } from '@inertiajs/react';
 import { MoveRight } from 'lucide-react';
 
 export function ConferenceCard({ conference }: { conference: Conference }) {
-
     const ConferenceTypeSpan = () => {
         switch (conference.type_id) {
             case 1: return <span className={`text-sm text-brand-lime`}>#Международная</span>
@@ -16,7 +15,7 @@ export function ConferenceCard({ conference }: { conference: Conference }) {
     return (
         <article className="max-w-full flex flex-col w-full">
             <div className="self-center aspect-[584/384] w-full xl:w-[584px] bg-white rounded-md overflow-hidden">
-                <img src={`storage/${conference.img_path}`} className="size-full object-cover" alt={conference.name} />
+                <img src={`/storage/${conference.img_path}`} className="size-full object-cover" alt={conference.name} />
             </div>
             <div className="pt-5 lg:pt-6 w-full">
                 <div className="space-y-3">

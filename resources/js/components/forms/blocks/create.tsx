@@ -108,11 +108,11 @@ export default function CreateConferenceBlockForm({
                 setData('name', `Разделитель 1`)
                 break
             case "8":
-                setData('content', { images: [] })
+                setData('content', {})
                 setData('name', `Кнопки`)
                 break
             case "9":
-                setData('content', {})
+                setData('content', { images: [] })
                 setData('name', `Изображения 1`)
                 break
             default:

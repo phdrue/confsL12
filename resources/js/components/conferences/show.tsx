@@ -13,7 +13,7 @@ export default function Show({
         <div className="w-full flex flex-col gap-8">
             <h1 className="text-center text-3xl font-semibold">{conference.name}</h1>
             <div className="self-center aspect-[584/384] w-full max-w-[584px] bg-white rounded-md overflow-hidden">
-                <img className="size-full object-cover" alt={conference.name} src={`/storage/${conference.img_path}`} />
+                <img className="size-full object-cover" alt={conference.name} src={`storage/${conference.img_path}`} />
             </div>
             <div>
                 {blocks.map((block) => (

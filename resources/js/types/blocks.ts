@@ -99,7 +99,11 @@ export type ImagesBlock = {
     position: number
     type_id: 9
     content: {
-        images: Array<Image>
+        // images: Array<Image>
+        images: Array<{
+            path: string,
+            name: string
+        }>
     }
 }
 

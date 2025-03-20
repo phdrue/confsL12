@@ -35,6 +35,7 @@ class UpdateConferenceBlockRequest extends FormRequest
             5 => BlockValidators::getHeadingTextBlockValidation($rules),
             6 => BlockValidators::getDisclaimerTextBlockValidation($rules),
             7 => BlockValidators::getSeparatorBlockValidation($rules),
+            9 => BlockValidators::getImagesBlockValidation($rules),
             default => $rules['content'] = 'required',
         };
 
