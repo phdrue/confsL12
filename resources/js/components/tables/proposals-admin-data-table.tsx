@@ -17,7 +17,7 @@ import {
 import { Link } from "@inertiajs/react"
 import { parseDateString } from "@/parse-date-string"
 
-const columns: ColumnDef<Conference>[] = [
+const columns: ColumnDef<Proposal>[] = [
     {
         accessorKey: "id",
         header: "ID",

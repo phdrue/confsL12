@@ -28,7 +28,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-
         $conferenceTypes = collect([
             1 => 'Региональный',
             2 => 'Всероссийский',
@@ -219,5 +218,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $user->roles()->attach(RoleEnum::ADMIN->value);
+
+        $user1 = User::factory()->create([
+            // 'name' => 'Test User',
+            'email' => 'b@b.com',
+            'password' => '111111'
+        ]);
+        $user->roles()->attach(RoleEnum::USER->value);
     }
 }

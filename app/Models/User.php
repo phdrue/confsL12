@@ -79,4 +79,9 @@ class User extends Authenticatable
     {
         return $this->roles()->where('role_id', $role->value)->exists();
     }
+
+    public function responsibilities(): BelongsToMany
+    {
+        return $this->belongsToMany(Conference::class, 'responsibilities', 'user_id', 'conference_id');
+    }
 }

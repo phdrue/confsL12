@@ -29,6 +29,11 @@ export interface SharedData {
     [key: string]: unknown;
 }
 
+export interface Role {
+    id: number,
+    name: string
+}
+
 export interface User {
     id: number;
     email: string;
@@ -48,6 +53,9 @@ export interface User {
     degree_id: number;
     title_id: number;
     phone: string;
+
+    //roles
+    roles?: Array<Role>
 
     [key: string]: unknown; // This allows for additional properties...
 }

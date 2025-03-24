@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, CloudCog, Folder, ImageIcon, LayoutGrid } from 'lucide-react';
+import { BookOpen, CloudCog, Folder, ImageIcon, LayoutGrid, UsersIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
@@ -23,6 +23,11 @@ const mainNavItems: NavItem[] = [
         title: 'Банк изображений',
         url: route('adm.images.index'),
         icon: ImageIcon,
+    },
+    {
+        title: 'Пользователи',
+        url: route('adm.users.index'),
+        icon: UsersIcon,
     },
 ];
 

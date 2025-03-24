@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\ParticipationTypeEnum;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -57,5 +59,17 @@ class Conference extends Model
     public function thesisParticipants(): BelongsToMany
     {
         return $this->users()->wherePivot('type_id', ParticipationTypeEnum::THESIS->value);
+    }
+
+    public function responsible(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'responsibilities', 'conference_id', 'user_id');
+    }
+
+    public function getAvailableToBeResponsible(): Collection
+    {
+        return User::whereDoesntHave('responsibilities', function (Builder $query) {
+            $query->where('conference_id', $this->id);
+        })->get();
     }
 }

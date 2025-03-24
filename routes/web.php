@@ -1,15 +1,20 @@
 <?php
 
 use App\Enums\Role;
+use App\Models\User;
 use Inertia\Inertia;
+use App\Models\Conference;
+use App\Models\Responsibility;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ImageController;
+use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\ClientController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\ConferenceBlockController;
-use App\Http\Controllers\ImageController;
 
 Route::get('/', [ClientController::class, 'landing'])
     ->name('home');
@@ -26,6 +31,23 @@ Route::get('contacts', [ClientController::class, 'contacts'])
 Route::get('subscribe', [ClientController::class, 'subscribe'])
     ->name('subscribe');
 
+// Route::get('test', function () {
+//     $users = User::whereDoesntHave('responsibilities', function (Builder $query) {
+//         $query->where('conference_id', 1);
+//     })->get();
+
+//     $user = User::find(1);
+//     $conference = Conference::find(1);
+//     dd(
+//         $users,
+//         $user->responsibilities()->get(),
+//         $conference->responsible()->get(),
+//         $conference->availableToBeResponsible()->get()
+//     );
+//     dd($user->responsibilities()->get());
+//     dd(Responsibility::all());
+// });
+
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 
@@ -37,6 +59,12 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('conferences/{conference}/participations', [ConferenceController::class, 'participations'])
             ->name('conferences.participations');
+
+        Route::get('conferences/{conference}/responsible', [ConferenceController::class, 'responsible'])
+            ->name('conferences.responsible');
+
+        Route::put('toggle-responsible/{conference}/{user}', [ConferenceController::class, 'toggleResponsible'])
+            ->name('conferences.toggle-responsible');
 
         Route::put('toggle-front-page/{conference}', [ConferenceController::class, 'toggleFrontPage'])
             ->name('conferences.toggle-front-page');
@@ -57,6 +85,9 @@ Route::middleware(['auth'])->group(function () {
             ->name('blocks.reorder');
         Route::resource('blocks', ConferenceBlockController::class)
             ->only('store', 'update', 'destroy');
+
+        // пользователи
+        Route::resource('users', UserController::class);
     });
 
     // client

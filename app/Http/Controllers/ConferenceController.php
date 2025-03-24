@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CreateConferenceRequest;
 use App\Http\Requests\UpdateConferenceRequest;
 use App\Http\Requests\ChangeConferenceStateRequest;
+use App\Models\User;
 
 class ConferenceController extends Controller
 {
@@ -26,6 +27,21 @@ class ConferenceController extends Controller
             'report' => $conference->reportParticipants()->get(),
             'thesis' => $conference->thesisParticipants()->get(),
         ]);
+    }
+
+    public function responsible(Conference $conference)
+    {
+        return Inertia::render('admin/conferences/responsible', [
+            'conference' => $conference,
+            'responsible' => $conference->responsible,
+            'availableToBeResponsible' => $conference->getAvailableToBeResponsible()
+        ]);
+    }
+
+    public function toggleResponsible(Conference $conference, User $user)
+    {
+        $conference->responsible()->toggle($user->id);
+        return to_route('adm.conferences.responsible', $conference);
     }
 
     /**
@@ -46,13 +62,6 @@ class ConferenceController extends Controller
     public function show(Conference $conference)
     {
         return Inertia::render('admin/conferences/show', [
-            'breadcrumbs' => [
-                'link' => [
-                    'url' => route('adm.conferences.index'),
-                    'name' => 'Конференции'
-                ],
-                'item' => 'Просмотр'
-            ],
             'conference' => $conference,
             'defaultBlocks' => $conference->blocks()->select([
                 'id',
@@ -94,13 +103,6 @@ class ConferenceController extends Controller
             'conference' => $conference,
             'types' => ConferenceType::select('id', 'name')->get(),
             'states' => ConferenceState::select('id', 'name')->get(),
-            'breadcrumbs' => [
-                'link' => [
-                    'url' => route('adm.conferences.index'),
-                    'name' => 'Конференции'
-                ],
-                'item' => 'Изменение'
-            ]
         ]);
     }
 

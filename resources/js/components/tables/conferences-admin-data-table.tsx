@@ -94,6 +94,11 @@ const columns: ColumnDef<Conference>[] = [
                                 Участники
                             </Link>
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={route('adm.conferences.responsible', conference.id)}>
+                                Ответственные
+                            </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                             <Link href={route('adm.conferences.show', conference.id)}>
