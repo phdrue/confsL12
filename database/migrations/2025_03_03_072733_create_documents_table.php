@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('conference_user_id')->constrained('conference_user');
             $table->foreignId('type_id')->constrained('document_types');
             $table->unsignedBigInteger('report_type_id')->nullable();
             $table->string('topic', 2000);

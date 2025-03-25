@@ -30,4 +30,9 @@ class Document extends Model
     {
         return $this->belongsTo(ReportType::class);
     }
+
+    public function participation()
+    {
+        return $this->belongsTo(ConferenceUser::class, 'conference_user_id', 'id');
+    }
 }

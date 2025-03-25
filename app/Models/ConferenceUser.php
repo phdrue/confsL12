@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class ConferenceUser extends Pivot
@@ -29,8 +30,8 @@ class ConferenceUser extends Pivot
         return $this->belongsTo(ParticipationType::class);
     }
 
-    public function document(): BelongsTo
+    public function documents(): HasMany
     {
-        return $this->belongsTo(Document::class);
+        return $this->hasMany(Document::class);
     }
 }
