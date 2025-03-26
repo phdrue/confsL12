@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class UpdateConferenceRequest extends FormRequest
 {
@@ -12,6 +14,13 @@ class UpdateConferenceRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function failedAuthorization()
+    {
+        throw ValidationException::withMessages([
+            'authorization' => 'You are not authorized to update this post.'
+        ]);
     }
 
     /**

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('conference_id')->constrained('conferences');
-            $table->foreignId('type_id')->default(1)->constrained('participation_types');
             $table->boolean('confirmed')->default(false);
             $table->timestamps();
         });

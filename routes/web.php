@@ -15,6 +15,8 @@ use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\ConferenceBlockController;
+use App\Http\Middleware\EnsureCanAccessConference;
+use App\Http\Middleware\EnsureUserIsResponsible;
 
 Route::get('/', [ClientController::class, 'landing'])
     ->name('home');
@@ -53,9 +55,42 @@ Route::middleware(['auth'])->group(function () {
 
     // admin
     Route::middleware([EnsureUserIsAdmin::class])->as('adm.')->prefix('adm')->group(function () {
+        // пользователи
+        Route::resource('users', UserController::class)
+            ->except('create', 'destroy', 'update', 'edit');
+
+        Route::put('toggle-responsible/{user}', [UserController::class, 'toggleResponsible'])
+            ->name('users.toggle-responsible');
+
         // конференции
         Route::resource('conferences', ConferenceController::class)
-            ->only('index', 'show', 'store', 'edit', 'update');
+            ->only('store');
+    });
+
+    // responsible general
+    Route::middleware([EnsureUserIsResponsible::class])->as('adm.')->prefix('adm')->group(function () {
+        // конференции
+        Route::resource('conferences', ConferenceController::class)
+            ->only('index');
+
+        // предложения
+        Route::resource('proposals', ProposalController::class)
+            ->only('index', 'show', 'store');
+
+        // банк изображений
+        Route::resource('images', ImageController::class)
+            ->only('index', 'store');
+
+        // блоки
+        Route::resource('blocks', ConferenceBlockController::class)
+            ->only('store', 'update', 'destroy');
+    });
+
+    // responsible access conference
+    Route::middleware([EnsureCanAccessConference::class])->as('adm.')->prefix('adm')->group(function () {
+        // конференции
+        Route::resource('conferences', ConferenceController::class)
+            ->only('show', 'edit', 'update');
 
         Route::get('conferences/{conference}/participations', [ConferenceController::class, 'participations'])
             ->name('conferences.participations');
@@ -72,22 +107,9 @@ Route::middleware(['auth'])->group(function () {
         Route::put('change-state/{conference}', [ConferenceController::class, 'changeState'])
             ->name('conferences.change-state');
 
-        // предложения
-        Route::resource('proposals', ProposalController::class)
-            ->only('index', 'show', 'store');
-
-        // банк изображений
-        Route::resource('images', ImageController::class)
-            ->only('index', 'store');
-
         // блоки
         Route::put('blocks/reorder/{conference}', [ConferenceBlockController::class, 'reorder'])
             ->name('blocks.reorder');
-        Route::resource('blocks', ConferenceBlockController::class)
-            ->only('store', 'update', 'destroy');
-
-        // пользователи
-        Route::resource('users', UserController::class);
     });
 
     // client
@@ -95,9 +117,9 @@ Route::middleware(['auth'])->group(function () {
         // участвовать
         Route::post('participate/{conference}', [ClientController::class, 'participate'])
             ->name('conferences.participate');
-        // заявить доклад / тезисы
-        Route::post('submit-document/{conference}', [ClientController::class, 'submitDocument'])
-            ->name('conferences.submit-document');
+        //-- заявить доклад / тезисы
+        // Route::post('submit-document/{conference}', [ClientController::class, 'submitDocument'])
+        //     ->name('conferences.submit-document');
     });
 });
 

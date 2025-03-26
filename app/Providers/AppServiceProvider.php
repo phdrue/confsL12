@@ -30,28 +30,12 @@ class AppServiceProvider extends ServiceProvider
         $this->participationGates();
     }
 
-    private function participationGates()
+    private function participationGates(): void
     {
         Gate::define('can-participate', function ($user, $conference) {
             $doesNotParticipate = ! $user->conferences()->where('conference_id', $conference->id)->exists();
             $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
             return $doesNotParticipate && $conferenceIsActive;
-        });
-
-        // сразу участие с документом
-        Gate::define('can-submit-document', function ($user, $conference, $documentTypeId) {
-            $doesNotParticipate = ! $user->conferences()->where('conference_id', $conference->id)->exists();
-            $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
-
-            $thisDocumentIsAllowed = false;
-            if ($documentTypeId == 1 && $conference->allow_report) {
-                $thisDocumentIsAllowed = true;
-            } elseif ($documentTypeId == 2 && $conference->allow_thesis) {
-                $thisDocumentIsAllowed = true;
-            }
-
-            // dd($doesNotParticipate , $conferenceIsActive , $thisDocumentIsAllowed, $conference, $documentTypeId);
-            return $doesNotParticipate && $conferenceIsActive && $thisDocumentIsAllowed;
         });
     }
 

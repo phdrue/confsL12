@@ -11,6 +11,7 @@ import { Country } from '@/types/other';
 import ThesisParticipationForm from "@/components/forms/participations/thesis";
 import Footer from '@/components/landing/footer';
 import RegularParticipationForm from "@/components/forms/participations/regular";
+import ParticipationForm from "@/components/forms/participations/form";
 
 export default function Show({
     conference,
@@ -52,13 +53,7 @@ export default function Show({
                             </div>
                         }
                         <div className="lg:gap-6 justify-center items-center gap-3 flex md:flex-row flex-wrap w-full">
-                            <RegularParticipationForm conference={conference} />
-                            {Boolean(conference.allow_report) &&
-                                <ReportParticipationForm conference={conference} reportTypes={reportTypes} countries={countries} />
-                            }
-                            {Boolean(conference.allow_thesis) &&
-                                <ThesisParticipationForm conference={conference} countries={countries} />
-                            }
+                            <ParticipationForm countries={countries} reportTypes={reportTypes} conference={conference} />
                         </div>
                     </div>
 

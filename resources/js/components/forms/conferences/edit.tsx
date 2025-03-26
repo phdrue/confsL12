@@ -29,6 +29,7 @@ export default function EditConferenceForm({
     const dateParts = conference.date.split('.')
 
     const { data, setData, post, reset, processing, errors } = useForm({
+        authorization: undefined,
         name: conference.name,
         description: conference.description,
         primary_color: conference.primary_color,
@@ -40,7 +41,6 @@ export default function EditConferenceForm({
         _method: 'put'
     })
 
-
     function submit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         post(route('adm.conferences.update', conference.id), {
@@ -50,6 +50,14 @@ export default function EditConferenceForm({
                     title: "Конференция успешно обновлена!",
                 })
                 reset('img')
+            },
+            onError: (err) => {
+                if (err.authorization) {
+                    toast({
+                        variant: 'destructive',
+                        title: 'Нельзя изменить данные',
+                    })
+                }
             }
         })
     }
@@ -169,7 +177,7 @@ export default function EditConferenceForm({
 
                                 <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
                                     {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                    Создать
+                                    Обновить
                                 </Button>
                             </div>
                         </form>

@@ -13,7 +13,6 @@ class ConferenceBlockController extends Controller
 {
     public function reorder(ReorderBlocksRequest $request, Conference $conference)
     {
-        // TODO GATE
         $reorderedBlocks = collect($request->validated()['blocks']);
         $blockIds = $reorderedBlocks->pluck('id')->toArray();
         $blocks = ConferenceBlock::find($blockIds);
@@ -29,9 +28,6 @@ class ConferenceBlockController extends Controller
      */
     public function store(CreateConferenceBlockRequest $request)
     {
-        //TODO GATE draft state
-        // dd($request->all());
-        // dd($request->validated());
         $conference = Conference::find($request->validated()['conference_id']);
         ConferenceBlock::create([...$request->validated(), 'position' => $conference->blocks()->count() + 1]);
         return to_route('adm.conferences.show', $request->validated()['conference_id']);
@@ -42,7 +38,6 @@ class ConferenceBlockController extends Controller
      */
     public function update(UpdateConferenceBlockRequest $request, ConferenceBlock $block)
     {
-        // TODO GATE
         $block->update([
             ...$request->safe()->only(['content', 'name'])
         ]);
@@ -55,8 +50,6 @@ class ConferenceBlockController extends Controller
      */
     public function destroy(ConferenceBlock $block)
     {
-        // TODO gate
-        // dd($block, ConferenceBlock::find($block));
         $block->delete();
         return to_route('adm.conferences.show', $block->conference_id);
     }

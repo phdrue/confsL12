@@ -44,17 +44,19 @@ export default function Profile({
     const { auth } = usePage<SharedData>().props;
 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
-        first_name: auth.user.first_name ?? "",
-        last_name: auth.user.last_name ?? "",
-        second_name: auth.user.second_name ?? "",
-        organization: auth.user.organization ?? "",
-        position: auth.user.position ?? "",
-        city: auth.user.city ?? "",
-        country_id: auth.user.country_id ?? "",
-        degree_id: auth.user.degree_id ?? "",
-        title_id: auth.user.title_id ?? "",
-        phone: auth.user.phone ?? "",
+        first_name: auth.user.first_name,
+        last_name: auth.user.last_name,
+        second_name: auth.user.second_name,
+        organization: auth.user.organization,
+        position: auth.user.position,
+        city: auth.user.city,
+        country_id: auth.user.country_id > 0 ? auth.user.country_id.toString() : '',
+        degree_id: auth.user.degree_id > 0 ? auth.user.degree_id.toString() : '',
+        title_id: auth.user.title_id > 0 ? auth.user.title_id.toString() : '',
+        phone: auth.user.phone,
     });
+
+    console.log(typeof (auth.user.country_id))
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -181,51 +183,42 @@ export default function Profile({
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="country_id">Страна</Label>
-                            <Select name="country_id" value={String(data.country_id)} onValueChange={(country_id) => setData('country_id', Number(country_id))}>
+                            <Select required name="country_id" value={data.country_id} onValueChange={(country_id) => setData('country_id', country_id)}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Выберите страну" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Страны</SelectLabel>
-                                        {countries.map((country) => (
-                                            <SelectItem key={country.id} value={String(country.id)}>{country.name}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
+                                    {countries.map((country) => (
+                                        <SelectItem key={country.id} value={String(country.id)}>{country.name}</SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             <InputError message={errors.country_id} className="mt-2" />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="degree_id">Ученая степень</Label>
-                            <Select name="degree_id" value={String(data.degree_id)} onValueChange={(degree_id) => setData('degree_id', Number(degree_id))}>
+                            <Select required name="degree_id" value={data.degree_id} onValueChange={(degree_id) => setData('degree_id', degree_id)}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Выберите степень" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Ученые степени</SelectLabel>
-                                        {degrees.map((degree) => (
-                                            <SelectItem key={degree.id} value={String(degree.id)}>{degree.name}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
+                                    {degrees.map((degree) => (
+                                        <SelectItem key={degree.id} value={String(degree.id)}>{degree.name}</SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             <InputError message={errors.degree_id} className="mt-2" />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="title_id">Ученое звание</Label>
-                            <Select name="title_id" value={String(data.title_id)} onValueChange={(title_id) => setData('title_id', Number(title_id))}>
+                            <Select required name="title_id" value={data.title_id} onValueChange={(title_id) => setData('title_id', title_id)}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Выберите звание" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Ученые звания</SelectLabel>
-                                        {titles.map((title) => (
-                                            <SelectItem key={title.id} value={String(title.id)}>{title.name}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
+                                    {titles.map((title) => (
+                                        <SelectItem key={title.id} value={String(title.id)}>{title.name}</SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             <InputError message={errors.title_id} className="mt-2" />

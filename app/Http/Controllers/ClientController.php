@@ -20,6 +20,7 @@ class ClientController extends Controller
         return Inertia::render('client/landing', [
             'conferences' => Conference::query()
                 ->where('front_page', true)
+                ->where('state_id', 2)
                 ->orderBy('date', 'asc')
                 ->limit(4)
                 ->get()
@@ -39,7 +40,10 @@ class ClientController extends Controller
     public function conferences()
     {
         return Inertia::render('client/conferences/index', [
-            'conferences' => Conference::all()
+            'conferences' => Conference::query()
+                ->where('state_id', 2)
+                ->orderBy('date', 'asc')
+                ->get()
         ]);
     }
 
@@ -55,7 +59,8 @@ class ClientController extends Controller
 
     public function participate(ConferenceParticipateRequest $request, Conference $conference)
     {
-        auth()->user()->conferences()->attach($conference);
+        dd(1);
+        // auth()->user()->conferences()->attach($conference);
 
         return to_route('conferences.show', $conference);
     }

@@ -40,7 +40,7 @@ export default function AuthorsFormPartial({
 
     function remove(authorToDelete: Author): void {
         const newAuthors: Array<Author> = authors.filter((author: Author, index: number) => index !== authors.indexOf(authorToDelete))
-        setData('authors', newAuthors);
+        setData(newAuthors);
     }
 
     function hideAndResetForm(): void {
@@ -52,13 +52,13 @@ export default function AuthorsFormPartial({
     }
 
     function addAuthor(): void {
-        setData('authors', [...authors, { name: name, organization: organization, city: city, country_id: countryId }]);
+        setData([...authors, { name: name, organization: organization, city: city, country_id: countryId }]);
         hideAndResetForm();
     }
 
     function addUserAsAuthor(): void {
         if (auth.user) {
-            setData('authors', [...authors, { name: auth.user.first_name, organization: auth.user.organization, city: auth.user.city, country_id: auth.user.country_id }]);
+            setData([...authors, { name: auth.user.first_name, organization: auth.user.organization, city: auth.user.city, country_id: auth.user.country_id }]);
         }
     }
 
@@ -89,7 +89,9 @@ export default function AuthorsFormPartial({
                         </div>
                     }
                     <div>
-                        <Button
+                        {auth.user.first_name === 'null' ? <p className="italic text-xs text-red-500">
+                            Заполните данные профиля, чтобы быстро добавлять себя как автора
+                        </p> : <Button
                             onClick={addUserAsAuthor}
                             type="button"
                             variant={"outline"}
@@ -97,6 +99,8 @@ export default function AuthorsFormPartial({
                             className="mr-2">
                             <WandSparkles />
                         </Button>
+                        }
+
                         {!showForm ? <Button
                             onClick={() => setShowForm(true)}
                             type="button"

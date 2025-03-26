@@ -51,14 +51,14 @@ class DatabaseSeeder extends Seeder
             ]);
         });
 
-        $participationTypes = collect([
-            1 => 'Участие',
-            2 => 'Доклад',
-            3 => 'Тезизы'
-        ])->each(fn($name, $id) => ParticipationType::create([
-            'id' => $id,
-            'name' => $name
-        ]));
+        // $participationTypes = collect([
+        //     1 => 'Участие',
+        //     2 => 'Доклад',
+        //     3 => 'Тезизы'
+        // ])->each(fn($name, $id) => ParticipationType::create([
+        //     'id' => $id,
+        //     'name' => $name
+        // ]));
 
         $documentTypes = collect([
             1 => 'Доклад',

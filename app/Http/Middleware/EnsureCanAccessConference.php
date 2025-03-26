@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserIsResponsible
+class EnsureCanAccessConference
 {
     /**
      * Handle an incoming request.
@@ -16,9 +16,13 @@ class EnsureUserIsResponsible
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! (Gate::allows('is-admin') || Gate::allows('is-responsible'))) {
+        $isAdmin = Gate::allows('is-admin');
+        $isResponsible = Gate::allows('is-responsible') && auth()->user()->responsibilities()->where('conference_id', $request->route('conference')->id)->exists();
+
+        if (! ($isAdmin || $isResponsible)) {
             abort(403, 'Недостаточно полномочий');
         }
+
         return $next($request);
     }
 }

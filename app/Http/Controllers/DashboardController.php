@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use App\Models\Conference;
+use Illuminate\Http\Request;
+use App\Models\ConferenceType;
+use App\Models\ConferenceState;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class DashboardController extends Controller
 {
@@ -22,7 +26,14 @@ class DashboardController extends Controller
         }
 
         if (Gate::allows('is-responsible')) {
-            return Inertia::render('dashboards/responsible');
+            return Inertia::render('dashboards/responsible', [
+                'conferences' => auth()->user()->responsibilities,
+                'types' => ConferenceType::select('id', 'name')->get(),
+                'states' => ConferenceState::select('id', 'name')->get(),
+            ]);
         }
+
+        Auth::logout();
+        return abort(403, 'Доступ отключен');
     }
 }

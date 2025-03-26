@@ -16,7 +16,9 @@ class EnsureUserIsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        Gate::authorize('is-admin');
+        if (! Gate::allows('is-admin')) {
+            abort(403, 'Недостаточно полномочий');
+        }
         return $next($request);
     }
 }

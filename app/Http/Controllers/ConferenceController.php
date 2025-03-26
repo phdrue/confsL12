@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Role;
+use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Image;
 use Inertia\Response;
@@ -11,11 +13,11 @@ use App\Models\ImageCategory;
 use App\Models\ConferenceType;
 use App\Models\ConferenceState;
 use App\Models\ConferenceBlockType;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CreateConferenceRequest;
 use App\Http\Requests\UpdateConferenceRequest;
 use App\Http\Requests\ChangeConferenceStateRequest;
-use App\Models\User;
 
 class ConferenceController extends Controller
 {
@@ -40,6 +42,12 @@ class ConferenceController extends Controller
 
     public function toggleResponsible(Conference $conference, User $user)
     {
+        Gate::authorize('is-admin');
+
+        if (! $user->hasRole(Role::RESPONSIBLE)) {
+            abort(403, 'У пользователя недостаточно полномочий');
+        }
+
         $conference->responsible()->toggle($user->id);
         return to_route('adm.conferences.responsible', $conference);
     }
