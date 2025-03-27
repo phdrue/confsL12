@@ -26,6 +26,10 @@ class ImageController extends Controller
      */
     public function store(CreateImageRequest $request)
     {
-        dd(2);
+        $path = 'img/images';
+        $imgPath = $request->file('img')->store($path);
+        Image::create([...$request->safe()->except('img'), 'path' =>  $imgPath]);
+
+        return to_route('adm.images.index');
     }
 }

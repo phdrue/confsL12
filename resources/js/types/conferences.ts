@@ -12,10 +12,6 @@ export interface Conference {
     allow_report: boolean,
     pivot?: {
         confirmed: boolean,
-        type_id: number,
-        state_id: number,
-        conference_id: number,
-        user_id: number
     }
 }
 

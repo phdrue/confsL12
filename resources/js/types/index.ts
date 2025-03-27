@@ -43,16 +43,16 @@ export interface User {
     updated_at: string;
 
     // profile
-    first_name: string;
-    last_name: string;
-    second_name: string;
-    organization: string;
-    position: string;
-    city: string;
-    country_id: number;
-    degree_id: number;
-    title_id: number;
-    phone: string;
+    first_name: string | null;
+    last_name: string | null;
+    second_name: string | null;
+    organization: string | null;
+    position: string | null;
+    city: string | null;
+    country_id: number | null;
+    degree_id: number | null;
+    title_id: number | null;
+    phone: string | null;
 
     //roles
     roles?: Array<Role>

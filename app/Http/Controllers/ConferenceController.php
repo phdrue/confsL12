@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CreateConferenceRequest;
 use App\Http\Requests\UpdateConferenceRequest;
 use App\Http\Requests\ChangeConferenceStateRequest;
+use App\Models\ConferenceUser;
 
 class ConferenceController extends Controller
 {
@@ -25,9 +26,7 @@ class ConferenceController extends Controller
     {
         return Inertia::render('admin/conferences/participations', [
             'conference' => $conference,
-            'regular' => $conference->regularParticipants()->get(),
-            'report' => $conference->reportParticipants()->get(),
-            'thesis' => $conference->thesisParticipants()->get(),
+            'users' => $conference->users()->get()
         ]);
     }
 
@@ -50,6 +49,18 @@ class ConferenceController extends Controller
 
         $conference->responsible()->toggle($user->id);
         return to_route('adm.conferences.responsible', $conference);
+    }
+
+    public function toggleConfirmed(Conference $conference, User $user)
+    {
+        $pivot = ConferenceUser::query()
+            ->where('user_id', $user->id)
+            ->where('conference_id', $conference->id)
+            ->firstOrFail();
+
+        $pivot->update(['confirmed' => !$pivot->confirmed]);
+
+        return to_route('adm.conferences.participations', $conference);
     }
 
     /**

@@ -67,7 +67,7 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Conference::class)
             ->using(ConferenceUser::class)
-            ->withPivot('type_id', 'confirmed', 'document_id');
+            ->withPivot('confirmed');
     }
 
     public function roles(): BelongsToMany

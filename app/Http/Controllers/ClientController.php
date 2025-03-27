@@ -6,6 +6,7 @@ use App\Http\Requests\ConferenceParticipateRequest;
 use App\Http\Requests\CreateDocumentRequest;
 use App\Http\Requests\SubmitDocumentRequest;
 use App\Models\Conference;
+use App\Models\ConferenceUser;
 use App\Models\Country;
 use App\Models\Document;
 use App\Models\ReportType;
@@ -59,8 +60,37 @@ class ClientController extends Controller
 
     public function participate(ConferenceParticipateRequest $request, Conference $conference)
     {
-        dd(1);
-        // auth()->user()->conferences()->attach($conference);
+        // dd($request->validated());
+        DB::transaction(function () use ($request, $conference) {
+            $id = ConferenceUser::create([
+                'conference_id' => $conference->id,
+                'user_id' => auth()->id(),
+            ])->id;
+
+            if ($request->validated('reports')) {
+                collect($request->validated('reports'))->each(function ($report) use ($id) {
+                    Document::create([
+                        'conference_user_id' => $id,
+                        'type_id' => 1,
+                        'report_type_id' => $report['report_type_id'],
+                        'topic' => $report['topic'],
+                        'authors' => $report['authors'],
+                    ]);
+                });
+            }
+            if ($request->validated('thesises')) {
+                collect($request->validated('thesises'))->each(function ($thesis) use ($id) {
+                    Document::create([
+                        'conference_user_id' => $id,
+                        'type_id' => 2,
+                        'topic' => $thesis['topic'],
+                        'text' => $thesis['text'],
+                        'literature' => $thesis['literature'],
+                        'authors' => $thesis['authors'],
+                    ]);
+                });
+            }
+        });
 
         return to_route('conferences.show', $conference);
     }

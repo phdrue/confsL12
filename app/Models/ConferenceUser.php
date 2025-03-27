@@ -32,6 +32,6 @@ class ConferenceUser extends Pivot
 
     public function documents(): HasMany
     {
-        return $this->hasMany(Document::class);
+        return $this->hasMany(Document::class, 'conference_user_id', 'id');
     }
 }

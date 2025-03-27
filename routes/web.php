@@ -15,6 +15,7 @@ use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\ConferenceBlockController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Middleware\EnsureCanAccessConference;
 use App\Http\Middleware\EnsureUserIsResponsible;
 
@@ -107,6 +108,17 @@ Route::middleware(['auth'])->group(function () {
         Route::put('change-state/{conference}', [ConferenceController::class, 'changeState'])
             ->name('conferences.change-state');
 
+        Route::put('toggle-confirmed/{conference}/{user}', [ConferenceController::class, 'toggleConfirmed'])
+            ->name('conferences.toggle-confirmed');
+
+        //сборник тезисов
+        Route::get('get-book/{conference}', [DocumentController::class, 'getBook'])
+            ->name('conferences.get-book');
+
+        //сборник докладов
+        Route::get('get-reports-book/{conference}', [DocumentController::class, 'getReportsBook'])
+            ->name('conferences.get-reports-book');
+
         // блоки
         Route::put('blocks/reorder/{conference}', [ConferenceBlockController::class, 'reorder'])
             ->name('blocks.reorder');
@@ -117,6 +129,9 @@ Route::middleware(['auth'])->group(function () {
         // участвовать
         Route::post('participate/{conference}', [ClientController::class, 'participate'])
             ->name('conferences.participate');
+
+        Route::get('my-thesis/{conference}', [DocumentController::class, 'myThesis'])
+            ->name('conferences.my-thesis');
         //-- заявить доклад / тезисы
         // Route::post('submit-document/{conference}', [ClientController::class, 'submitDocument'])
         //     ->name('conferences.submit-document');

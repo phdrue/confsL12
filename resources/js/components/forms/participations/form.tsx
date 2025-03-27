@@ -56,11 +56,12 @@ export default function ParticipationForm({
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post(route('client.conferences.participate', conference.id), {
+            onBefore: () => confirm("Вы уверены, что хотите зарегистрироваться и приложили все документы?"),
             onError: (err) => {
                 if (err.authorization) {
                     toast({
                         variant: 'destructive',
-                        title: 'Нельзя изменить данные',
+                        title: 'Вы уже участвуете',
                     })
                 }
             },
@@ -68,7 +69,7 @@ export default function ParticipationForm({
                 handleClose()
                 toast({
                     variant: "success",
-                    title: "Доклад успешно подан!",
+                    title: "Вы успешно зарегистрировались на конференцию!",
                 })
                 reset()
             }
@@ -92,13 +93,19 @@ export default function ParticipationForm({
                 <DialogHeader>
                     <DialogTitle>Регистрация</DialogTitle>
                     <DialogDescription>
-                        Заполните основные поля, содержание позде
+                        Если это разрешено в конференции, приложите свои документы
                     </DialogDescription>
                 </DialogHeader>
                 <form className="flex flex-col gap-6" onSubmit={submit}>
                     <div className="grid gap-6">
-                        <ReportParticipationForm setData={setData} errors={errors} reports={data.reports} conference={conference} reportTypes={reportTypes} countries={countries} />
-                        <ThesisParticipationForm setData={setData} errors={errors} thesises={data.thesises} conference={conference} countries={countries} />
+                        {Boolean(conference.allow_report) &&
+                            <ReportParticipationForm setData={setData} errors={errors} reports={data.reports} conference={conference} reportTypes={reportTypes} countries={countries} />
+                        }
+                        <InputError message={errors.reports} className="mt-2" />
+                        {Boolean(conference.allow_thesis) &&
+                            <ThesisParticipationForm setData={setData} errors={errors} thesises={data.thesises} conference={conference} countries={countries} />
+                        }
+                        <InputError message={errors.thesises} className="mt-2" />
                         <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
                             {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                             Зарегистрироваться

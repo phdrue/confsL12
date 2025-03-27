@@ -94,7 +94,7 @@ class DatabaseSeeder extends Seeder
             5 => 'Заголовок',
             6 => 'Дисклеймер',
             7 => 'Разделитель',
-            8 => 'Кнопки',
+            // 8 => 'Кнопки',
             9 => 'Картинки'
         ])->each(function ($name, $id) {
             ConferenceBlockType::create([

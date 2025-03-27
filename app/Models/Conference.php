@@ -43,7 +43,7 @@ class Conference extends Model
     {
         return $this->belongsToMany(User::class)
             ->using(ConferenceUser::class)
-            ->withPivot('type_id', 'confirmed', 'document_id');
+            ->withPivot('confirmed');
     }
 
     public function regularParticipants(): BelongsToMany
@@ -68,8 +68,10 @@ class Conference extends Model
 
     public function getAvailableToBeResponsible(): Collection
     {
-        return User::whereDoesntHave('responsibilities', function (Builder $query) {
-            $query->where('conference_id', $this->id);
-        })->get();
+        return User::query()
+            ->whereNot('email', 'like', '%@kursksmu.net')
+            ->whereDoesntHave('responsibilities', function (Builder $query) {
+                $query->where('conference_id', $this->id);
+            })->get();
     }
 }

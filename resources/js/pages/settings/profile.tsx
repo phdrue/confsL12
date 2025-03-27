@@ -43,23 +43,36 @@ export default function Profile({
 }) {
     const { auth } = usePage<SharedData>().props;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
-        first_name: auth.user.first_name,
-        last_name: auth.user.last_name,
-        second_name: auth.user.second_name,
-        organization: auth.user.organization,
-        position: auth.user.position,
-        city: auth.user.city,
-        country_id: auth.user.country_id > 0 ? auth.user.country_id.toString() : '',
-        degree_id: auth.user.degree_id > 0 ? auth.user.degree_id.toString() : '',
-        title_id: auth.user.title_id > 0 ? auth.user.title_id.toString() : '',
-        phone: auth.user.phone,
+    const { data, setData, patch, errors, processing, recentlySuccessful, setError } = useForm({
+        first_name: auth.user.first_name ?? '',
+        last_name: auth.user.last_name ?? '',
+        second_name: auth.user.second_name ?? '',
+        organization: auth.user.organization ?? '',
+        position: auth.user.position ?? '',
+        city: auth.user.city ?? '',
+        country_id: auth.user.country_id ? String(auth.user.country_id) : '',
+        degree_id: auth.user.degree_id ? String(auth.user.degree_id) : '',
+        title_id: auth.user.title_id ? String(auth.user.title_id) : '',
+        phone: auth.user.phone ?? '',
     });
-
-    console.log(typeof (auth.user.country_id))
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+
+        if (data.country_id === '') {
+            setError('country_id', 'Пожалуйста, выберите страну');
+            return;
+        }
+
+        if (data.degree_id === '') {
+            setError('degree_id', 'Пожалуйста, выберите ученую степень');
+            return;
+        }
+
+        if (data.title_id === '') {
+            setError('title_id', 'Пожалуйста, выберите ученое звание');
+            return;
+        }
 
         patch(route('profile.update'), {
             preserveScroll: true,

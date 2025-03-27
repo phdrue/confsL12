@@ -21,7 +21,7 @@ class DashboardController extends Controller
 
         if (Gate::allows('is-user')) {
             return Inertia::render('dashboards/client', [
-                'conferences' => auth()->user()->conferences
+                'conferences' => auth()->user()->conferences()->withPivot('confirmed')->get(),
             ]);
         }
 

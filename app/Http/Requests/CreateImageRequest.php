@@ -24,7 +24,7 @@ class CreateImageRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'url' => 'required|string|max:255',
-            'img' => 'required|file|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'img' => 'required|file|image|mimes:jpeg,png,jpg,gif,svg|max:4048',
             'category_id' => 'required|exists:image_categories,id',
         ];
     }

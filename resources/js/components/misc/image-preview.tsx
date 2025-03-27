@@ -27,7 +27,7 @@ export function ImagePreview({
                     <DialogDescription />
                 </DialogHeader>
                 {image &&
-                    <img className="h-56" src={`/${image.path}`} alt={image.name} />
+                    <img className="h-56" src={image?.default ? `/${image?.path}` : `/storage/${image?.path}`} alt={image.name} />
                 }
                 <DialogFooter className="sm:justify-start">
                     <DialogClose asChild>

@@ -17,10 +17,9 @@ export function ConferenceStateBadge({ state_id }: { state_id: number }) {
     }
 }
 
-export function ConferenceParticipationBadge({ type_id }: { type_id: number }) {
-    switch (type_id) {
-        case 1: return (<Badge variant="blue">Участие</Badge>)
-        case 2: return (<Badge variant="emerald">Доклад</Badge>)
-        case 3: return (<Badge variant="amber">Тезисы</Badge>)
+export function ConferenceParticipationBadge({ confirmed }: { confirmed: Boolean }) {
+    switch (confirmed) {
+        case false: return (<Badge variant="blue">Нет</Badge>)
+        case true: return (<Badge variant="emerald">Да</Badge>)
     }
 }

@@ -89,7 +89,7 @@ export default function AuthorsFormPartial({
                         </div>
                     }
                     <div>
-                        {auth.user.first_name === 'null' ? <p className="italic text-xs text-red-500">
+                        {auth.user.first_name === null ? <p className="italic text-xs text-red-500 mb-2">
                             Заполните данные профиля, чтобы быстро добавлять себя как автора
                         </p> : <Button
                             onClick={addUserAsAuthor}

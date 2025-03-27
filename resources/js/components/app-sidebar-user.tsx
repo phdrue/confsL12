@@ -11,11 +11,6 @@ import AppLogoIcon from "./app-logo-icon";
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Мои конференции',
-        url: route('conferences.index'),
-        icon: LayoutGrid,
-    },
-    {
         title: 'Мой профиль',
         url: route('profile.edit'),
         icon: User
