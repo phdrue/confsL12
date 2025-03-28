@@ -77,14 +77,14 @@ export default function ResponsibleForm({
                         <div className="grid gap-2">
                             <Label htmlFor="user_id">Пользователь</Label>
                             <Select name="user_id" value={userId} onValueChange={(user_id) => setUserId(user_id)}>
-                                <SelectTrigger className="w-full">
+                                <SelectTrigger className="max-w-full">
                                     <SelectValue placeholder="Выберите пользователя" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
                                         <SelectLabel>Виды</SelectLabel>
                                         {users.map((user) => (
-                                            <SelectItem key={user.id} value={String(user.id)}>{user.email}</SelectItem>
+                                            <SelectItem key={user.id} value={String(user.id)}>{user.email} {user.last_name} {user.first_name} {user.second_name}</SelectItem>
                                         ))}
                                     </SelectGroup>
                                 </SelectContent>

@@ -69,7 +69,7 @@ class Conference extends Model
     public function getAvailableToBeResponsible(): Collection
     {
         return User::query()
-            ->whereNot('email', 'like', '%@kursksmu.net')
+            ->where('email', 'like', '%@kursksmu.net')
             ->whereDoesntHave('responsibilities', function (Builder $query) {
                 $query->where('conference_id', $this->id);
             })->get();

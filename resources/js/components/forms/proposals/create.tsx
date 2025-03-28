@@ -39,10 +39,10 @@ export default function ProposalCreateForm({ }) {
     const [selectedAudiences, setSelectedAudiences] = useState<string[]>([])
 
     const { toast } = useToast()
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, transform } = useForm({
         name: '',
         engName: '',
-        level: undefined,
+        level: '',
         form: '',
         type: '',
         lang: '',
@@ -65,10 +65,14 @@ export default function ProposalCreateForm({ }) {
         coverageProfession: '',
     });
 
+    transform((data) => ({
+        ...data,
+        audiences: selectedAudiences,
+        amenities: selectedAmenities,
+    }))
+
     const handleAmenitiesCheckboxChange = (amenity: string) => {
-        console.log(amenity)
         setSelectedAmenities((prev) => {
-            console.log(prev)
             if (prev.includes(amenity)) {
                 return prev.filter((item) => item !== amenity)
             } else {
@@ -87,7 +91,6 @@ export default function ProposalCreateForm({ }) {
         })
     }
 
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post(route('adm.proposals.store'), {
@@ -96,13 +99,13 @@ export default function ProposalCreateForm({ }) {
                 handleClose()
                 toast({
                     variant: "success",
-                    title: "Конференция успешно создана!",
+                    title: "Предложение успешно создана!",
                 })
                 reset()
             }
         })
     };
-    const [selectedValue, setSelectedValue] = useState<string | undefined>()
+
     return (
         <Dialog open={open} onOpenChange={setOpen} modal>
             <DialogTrigger asChild>
@@ -406,20 +409,39 @@ export default function ProposalCreateForm({ }) {
                             <InputError message={errors.coverageProfession} />
                         </div>
 
-
                         <div className="grid gap-2">
-                            <Label htmlFor="name">Название</Label>
-                            <Input
-                                id="name"
-                                type="text"
-                                required
-                                tabIndex={1}
-                                value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
-                            />
-                            <InputError message={errors.name} />
+                            <Label htmlFor="audiences">Целевая аудитория</Label>
+                            {options.audiences.map((option, index) => (
+                                <div key={index} className="flex items-center space-x-2 border p-3 rounded-md">
+                                    <Checkbox
+                                        id={`audience${index}`}
+                                        checked={selectedAudiences.includes(option)}
+                                        onCheckedChange={() => handleAudiencesCheckboxChange(option)}
+                                    />
+                                    <Label htmlFor={`audience${index}`} className="flex-1 cursor-pointer">
+                                        {option}
+                                    </Label>
+                                </div>
+                            ))}
+                            <InputError message={errors.audiences} />
                         </div>
 
+                        <div className="grid gap-2">
+                            <Label htmlFor="audiences">Дополниетельные услуги</Label>
+                            {options.amenities.map((option, index) => (
+                                <div key={index} className="flex items-center space-x-2 border p-3 rounded-md">
+                                    <Checkbox
+                                        id={`amenities${index}`}
+                                        checked={selectedAmenities.includes(option)}
+                                        onCheckedChange={() => handleAmenitiesCheckboxChange(option)}
+                                    />
+                                    <Label htmlFor={`amenities${index}`} className="flex-1 cursor-pointer">
+                                        {option}
+                                    </Label>
+                                </div>
+                            ))}
+                            <InputError message={errors.amenities} />
+                        </div>
 
                         <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
                             {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}

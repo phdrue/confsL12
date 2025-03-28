@@ -12,14 +12,38 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet" />
 
+    <script>
+        window.gtranslateSettings = {
+            "default_language": "ru",
+            "detect_browser_language": true,
+            "native_language_names": true,
+            "languages": ["ru", "be", "en", "uz", "tg"],
+            "wrapper_selector": ".gtranslate_wrapper",
+            "switcher_horizontal_position": "right"
+        }
+    </script>
+    <script src="https://cdn.gtranslate.net/widgets/latest/dwf.js" defer></script>
+    <script>
+        (function() {
+            function deleteCookie(name, domain, path) {
+                document.cookie = name + "=; Path=" + path + "; Domain=" + domain +
+                    "; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+            }
+
+            // Delete the parent domain cookie
+            deleteCookie('XSRF-TOKEN', '.kurskmed.com', '/');
+        })();
+    </script>
+
     @routes
     @viteReactRefresh
     @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
     @inertiaHead
 </head>
 
-<body class="font-sans antialiased prefe">
+<body class="prefe font-sans antialiased">
     @inertia
+    <div class="gtranslate_wrapper"></div>
 </body>
 
 </html>

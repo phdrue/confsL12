@@ -4,12 +4,17 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, User } from 'lucide-react';
+import { BookOpen, Folder, Home, LayoutGrid, User } from 'lucide-react';
 import AppLogo from './app-logo';
 import { SidebarGroup, SidebarGroupLabel } from '@/components/ui/sidebar';
 import AppLogoIcon from "./app-logo-icon";
 
 const mainNavItems: NavItem[] = [
+    {
+        title: 'На главную',
+        url: route('home'),
+        icon: Home
+    },
     {
         title: 'Мой профиль',
         url: route('profile.edit'),

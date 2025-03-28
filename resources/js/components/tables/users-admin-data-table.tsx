@@ -61,6 +61,16 @@ export default function UsersAdminDataTable({
             }
         },
         {
+            header: "ФИО",
+            cell: ({ row }) => {
+                return (
+                    <>
+                        {row.original.last_name} {row.original.first_name} {row.original.second_name}
+                    </>
+                )
+            }
+        },
+        {
             id: "roles",
             header: "Роли",
             cell: ({ row }) => {

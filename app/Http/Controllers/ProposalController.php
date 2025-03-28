@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateProposalRequest;
 use App\Models\Proposal;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,19 +20,15 @@ class ProposalController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateProposalRequest $request)
     {
-        dd(1);
+        Proposal::create([
+            'payload' => [...$request->safe()]
+        ]);
+
+        return to_route('adm.proposals.index');
     }
 
     /**
