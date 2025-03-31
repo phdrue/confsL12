@@ -15,7 +15,7 @@ export default function ConferenceLayout({ children }: { children: React.ReactNo
                     <div className="rounded-3xl overflow-hidden border bg-card shadow-xs">
                         {/* <AuroraBackground> */}
                         <div className="px-4 pb-6 pt-8">
-                            <p className="font-semibold text-center">350+ проведенных конференций</p>
+                            {/* <p className="font-semibold text-center">350+ проведенных конференций</p> */}
                             <p className="text-center leading-tight mt-2">Присоединяйтесь к научному сообществу вместе с КГМУ</p>
                             <div className="flex gap-4 justify-center mt-6 h-9">
                                 <img src="/img/landing/icons/telegram.svg" alt="telegram" className="h-full aspect-square" />

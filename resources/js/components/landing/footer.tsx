@@ -22,8 +22,8 @@ export default function Footer() {
                 <div className="border-t border-border pt-8 pb-4 flex justify-between">
                     <p className="text-xs">© 2025 КГМУ</p>
                     <div className="flex gap-8">
-                        <Link className="text-xs underline" href="#">Пользовательское соглашение</Link>
-                        <Link className="text-xs underline" href="#">Политика конфиденциальности</Link>
+                        {/* <Link className="text-xs underline" href="#">Пользовательское соглашение</Link> */}
+                        <a className="text-xs underline" href={route('download.policy')}>Политика конфиденциальности</a>
                     </div>
                 </div>
             </div>

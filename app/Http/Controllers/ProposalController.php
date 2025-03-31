@@ -25,6 +25,7 @@ class ProposalController extends Controller
     public function store(CreateProposalRequest $request)
     {
         Proposal::create([
+            'user_id' => auth()->id(),
             'payload' => [...$request->safe()]
         ]);
 

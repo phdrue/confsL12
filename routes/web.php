@@ -18,6 +18,7 @@ use App\Http\Controllers\ConferenceBlockController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Middleware\EnsureCanAccessConference;
 use App\Http\Middleware\EnsureUserIsResponsible;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', [ClientController::class, 'landing'])
     ->name('home');
@@ -33,6 +34,9 @@ Route::get('contacts', [ClientController::class, 'contacts'])
 
 Route::get('subscribe', [ClientController::class, 'subscribe'])
     ->name('subscribe');
+
+Route::get('policy', fn() => Storage::download('policy.pdf'))
+    ->name('download.policy');
 
 // Route::get('test', function () {
 //     $users = User::whereDoesntHave('responsibilities', function (Builder $query) {
@@ -51,7 +55,7 @@ Route::get('subscribe', [ClientController::class, 'subscribe'])
 //     dd(Responsibility::all());
 // });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 
     // admin

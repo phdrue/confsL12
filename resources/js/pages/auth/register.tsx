@@ -83,6 +83,10 @@ export default function Register() {
                         <InputError message={errors.password_confirmation} />
                     </div>
 
+                    <div className="grid gap-2">
+                        <p className="text-sm">Регистрируясь на сайте, вы соглашаетесь с <a href={route('download.policy')} className="text-brand-red hover:underline">политикой обработки персональных данных</a></p>
+                    </div>
+
                     <Button variant={"brandDarkBlue"} type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                         Создать аккаунт

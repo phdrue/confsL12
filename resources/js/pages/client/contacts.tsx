@@ -29,7 +29,7 @@ export default function Contacts({ }) {
                         <div className="">
                             <figure className="flex flex-col gap-10">
                                 <figcaption className="flex gap-6">
-                                    <img src="img/landing/testimonials/1.webp" alt="Вячеслав Александрович Липатов" className="size-24 aspect-square rounded-full object-cover" />
+                                    <img src="img/landing/testimonials/3.png" alt="Вячеслав Александрович Липатов" className="size-24 aspect-square rounded-full object-cover object-top" />
                                 </figcaption>
                                 <div className="">
                                     <p className="text-base font-semibold">Вячеслав Александрович Липатов</p>

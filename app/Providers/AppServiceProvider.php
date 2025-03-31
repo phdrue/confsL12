@@ -2,11 +2,14 @@
 
 namespace App\Providers;
 
-use App\Enums\ConferenceStateEnum;
 use App\Enums\Role;
+use App\Enums\ConferenceStateEnum;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,6 +31,25 @@ class AppServiceProvider extends ServiceProvider
 
         $this->rolesGates();
         $this->participationGates();
+
+        ResetPassword::toMailUsing(function (object $notifiable, string $url) {
+            return (new MailMessage)
+                ->subject('Сброс пароля')
+                ->greeting('Здравствуйте!')
+                ->line('Вы получили это письмо, потому что мы получили запрос на сброс пароля для вашего аккаунта.')
+                ->salutation('С уважением, Конференции КГМУ')
+                ->action('Сброс', $url);
+        });
+
+        VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
+            return (new MailMessage)
+                ->subject('Подтверждение электронной почты')
+                ->greeting('Здравствуйте!')
+                ->subject('Подтверждение электронной почты')
+                ->line('Нажмите кнопку ниже, чтобы подтвердить свой адрес электронной почты. Если вы делаете это с другого устройства, предварительно вам будет необходимо снова войти в свой аккаунт.')
+                ->salutation('С уважением, Конференции КГМУ')
+                ->action('Подтвердить', $url);
+        });
     }
 
     private function participationGates(): void

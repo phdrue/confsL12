@@ -79,11 +79,11 @@ export default function Features() {
                 </div>
                 <div className="px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-3 gap-6 mt-12">
                     <motion.div
-                        initial={{ translateX: "-50%" }}
-                        whileInView={{ translateX: "0%" }}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
                         transition={{
-                            delay: 0.1,
-                            duration: 0.4,
+                            delay: 0.2,
+                            duration: 0.8,
                             ease: "easeInOut",
                         }}
                         viewport={{ once: true }}
@@ -91,11 +91,11 @@ export default function Features() {
                         <Card Icon={cards[1].iconName} title={cards[1].title} content={cards[1].content} className="bg-brand-white inset-ring inset-ring-gray-200 shadow-xl shadow-slate-900/10" />
                     </motion.div>
                     <motion.div
-                        initial={{ translateY: "-30%" }}
-                        whileInView={{ translateY: "0%" }}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
                         transition={{
-                            delay: 0.15,
-                            duration: 0.4,
+                            delay: 0.2,
+                            duration: 0.8,
                             ease: "easeInOut",
                         }}
                         viewport={{ once: true }}
@@ -103,11 +103,11 @@ export default function Features() {
                         <Card Icon={cards[0].iconName} title={cards[0].title} content={cards[0].content} className="bg-brand-white inset-ring inset-ring-gray-200 shadow-xl shadow-slate-900/10" />
                     </motion.div>
                     <motion.div
-                        initial={{ translateY: "30%" }}
-                        whileInView={{ translateY: "0%" }}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
                         transition={{
                             delay: 0.2,
-                            duration: 0.4,
+                            duration: 0.8,
                             ease: "easeInOut",
                         }}
                         viewport={{ once: true }}
@@ -135,11 +135,11 @@ export default function Features() {
                         </ul>
                     </motion.div>
                     <motion.div
-                        initial={{ translateX: "50%" }}
-                        whileInView={{ translateX: "0%" }}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
                         transition={{
-                            delay: 0.25,
-                            duration: 0.4,
+                            delay: 0.2,
+                            duration: 0.8,
                             ease: "easeInOut",
                         }}
                         viewport={{ once: true }}
