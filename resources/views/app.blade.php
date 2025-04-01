@@ -23,18 +23,6 @@
         }
     </script>
     <script src="https://cdn.gtranslate.net/widgets/latest/dwf.js" defer></script>
-    <script>
-        (function() {
-            function deleteCookie(name, domain, path) {
-                document.cookie = name + "=; Path=" + path + "; Domain=" + domain +
-                    "; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-            }
-
-            // Delete the parent domain cookie
-            deleteCookie('XSRF-TOKEN', '.kurskmed.com', '/');
-        })();
-    </script>
-
     @routes
     @viteReactRefresh
     @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])

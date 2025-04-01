@@ -15,7 +15,7 @@ class ProposalController extends Controller
     public function index()
     {
         return Inertia::render('admin/proposals/index', [
-            'proposals' => Proposal::all()
+            'proposals' => Proposal::with('user')->get()
         ]);
     }
 

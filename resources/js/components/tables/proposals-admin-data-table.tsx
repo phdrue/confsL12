@@ -29,6 +29,16 @@ const columns: ColumnDef<Proposal>[] = [
             )
         }
     },
+    {
+        header: "Предложивший",
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center gap-2 font-semibold">
+                    {row.original.user.last_name} {row.original.user.first_name} {row.original.user.second_name}
+                </div>
+            )
+        }
+    },
 ]
 
 export default function ProposalsAdminDataTable({

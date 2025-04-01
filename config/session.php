@@ -211,4 +211,6 @@ return [
 
     'partitioned' => env('SESSION_PARTITIONED_COOKIE', false),
 
+    'token_cookie' => 'CONFS-XSRF-TOKEN',
+
 ];

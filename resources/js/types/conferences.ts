@@ -1,3 +1,5 @@
+import { User } from "."
+
 export interface Conference {
     id: number,
     name: string,
@@ -17,6 +19,8 @@ export interface Conference {
 
 export interface Proposal {
     id: number,
+    user_id: number,
+    user: User,
     name: string,
     engName: string,
     level: string,

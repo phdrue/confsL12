@@ -32,13 +32,16 @@ class AppServiceProvider extends ServiceProvider
         $this->rolesGates();
         $this->participationGates();
 
-        ResetPassword::toMailUsing(function (object $notifiable, string $url) {
+        ResetPassword::toMailUsing(function (object $notifiable, string $token) {
             return (new MailMessage)
                 ->subject('Сброс пароля')
                 ->greeting('Здравствуйте!')
                 ->line('Вы получили это письмо, потому что мы получили запрос на сброс пароля для вашего аккаунта.')
                 ->salutation('С уважением, Конференции КГМУ')
-                ->action('Сброс', $url);
+                ->action('Сброс', url(route('password.reset', [
+                    'token' => $token,
+                    'email' => $notifiable->getEmailForPasswordReset(),
+                ], false)));
         });
 
         VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
