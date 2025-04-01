@@ -20,6 +20,8 @@ use App\Http\Middleware\EnsureCanAccessConference;
 use App\Http\Middleware\EnsureUserIsResponsible;
 use Illuminate\Support\Facades\Storage;
 
+Route::get('/proj', fn () => inertia()->render('proj'));
+
 Route::get('/', [ClientController::class, 'landing'])
     ->name('home');
 
