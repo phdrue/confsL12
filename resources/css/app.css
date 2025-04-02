@@ -24,6 +24,15 @@
 /* @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *)); */
 
 @theme {
+
+    /*gos*/
+    @theme {
+        --text-h1: 0.625rem;
+        --text-h1--line-height: 1.5rem;
+        --text-h1--font-weight: 700;
+    }
+
+    /*end gos*/
     /* my */
     /* --color-border: #E4E4E7; */
     /* darker D90041 */
@@ -65,10 +74,19 @@
     --color-brand-textGray: #B3B3B3;
     --color-brand-textSecondary: theme(colors.gray.600);
 
-    --font-sans:
-        'Onest', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Onest',
+    ui-sans-serif,
+    system-ui,
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    'Noto Color Emoji';
 
-    --font-lato: 'Lato', system-ui, sans-serif, ui-sans-serif;
+    --font-lato: 'Lato',
+    system-ui,
+    sans-serif,
+    ui-sans-serif;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
