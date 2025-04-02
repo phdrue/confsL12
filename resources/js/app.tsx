@@ -11,7 +11,7 @@ declare global {
     const route: typeof routeFn;
 }
 
-axios.defaults.xsrfCookieName = 'XSRF-TOKEN-CONF';
+axios.defaults.xsrfCookieName = 'XSRF-TOKEN-CONFS';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
