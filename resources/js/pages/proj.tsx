@@ -98,7 +98,7 @@ function Footer({ }) {
         <div className="w-full font-lato bg-[#EFF5F9] py-16">
             <div className="mx-auto max-w-[1216px] w-full gap-8 px-4 md:px-16 lg:px-0 flex flex-col lg:flex-row text-[#66727F]">
                 <div className="flex flex-col gap-4 text-lg w-full">
-                    <span>Главная</span>
+                    <span className="text-h1">Главная</span>
                     <span>Новости</span>
                     <span>АСКОП</span>
                 </div>
