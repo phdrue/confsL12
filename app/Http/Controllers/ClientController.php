@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ConferenceStateEnum;
 use App\Http\Requests\ConferenceParticipateRequest;
 use App\Http\Requests\CreateDocumentRequest;
 use App\Http\Requests\SubmitDocumentRequest;
@@ -10,7 +11,6 @@ use App\Models\ConferenceUser;
 use App\Models\Country;
 use App\Models\Document;
 use App\Models\ReportType;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -21,7 +21,7 @@ class ClientController extends Controller
         return Inertia::render('client/landing', [
             'conferences' => Conference::query()
                 ->where('front_page', true)
-                ->where('state_id', 2)
+                ->where('state_id', ConferenceStateEnum::ACTIVE)
                 ->orderBy('date', 'asc')
                 ->limit(4)
                 ->get()
@@ -42,7 +42,7 @@ class ClientController extends Controller
     {
         return Inertia::render('client/conferences/index', [
             'conferences' => Conference::query()
-                ->where('state_id', 2)
+                ->whereIn('state_id', [ConferenceStateEnum::ACTIVE, ConferenceStateEnum::ARCHIVE])
                 ->orderBy('date', 'asc')
                 ->get()
         ]);
@@ -50,6 +50,10 @@ class ClientController extends Controller
 
     public function conference(Conference $conference)
     {
+        if ($conference->state_id === ConferenceStateEnum::DRAFT->value) {
+            abort(404, 'Мероприятие не найдено');
+        }
+
         return Inertia::render('client/conferences/show', [
             'conference' => $conference,
             'blocks' => $conference->blocks()->orderBy('position')->get(),
@@ -66,6 +70,8 @@ class ClientController extends Controller
                 'conference_id' => $conference->id,
                 'user_id' => auth()->id(),
             ])->id;
+
+            // dd($request->validated('reports'));
 
             if ($request->validated('reports')) {
                 collect($request->validated('reports'))->each(function ($report) use ($id) {

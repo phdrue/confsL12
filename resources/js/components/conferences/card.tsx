@@ -5,9 +5,9 @@ import { MoveRight } from 'lucide-react';
 export function ConferenceCard({ conference }: { conference: Conference }) {
     const ConferenceTypeSpan = () => {
         switch (conference.type_id) {
-            case 1: return <span className={`text-sm text-brand-lime`}>#Международная</span>
+            case 1: return <span className={`text-sm text-brand-lime`}>#Региональная</span>
             case 2: return <span className={`text-sm text-brand-cyan`}>#Всероссийская</span>
-            case 3: return <span className={`text-sm text-brand-green`}>#Региональная</span>
+            case 3: return <span className={`text-sm text-brand-green`}>#Международная</span>
             case 4: return <span className={`text-sm text-brand-blue`}>#Другая</span>
         }
     }

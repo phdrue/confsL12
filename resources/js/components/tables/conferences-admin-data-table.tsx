@@ -87,7 +87,7 @@ const columns: ColumnDef<Conference>[] = [
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="start">
                         <DropdownMenuLabel>Действия</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
                             <Link href={route('adm.conferences.participations', conference.id)}>

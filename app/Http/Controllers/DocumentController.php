@@ -8,6 +8,7 @@ use App\Models\Country;
 use App\Models\Document;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class DocumentController extends Controller
@@ -15,7 +16,7 @@ class DocumentController extends Controller
     public function myThesis(Conference $conference)
     {
         $participated = ConferenceUser::query()
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->where('conference_id', $conference->id)
             ->first();
 
@@ -43,15 +44,20 @@ class DocumentController extends Controller
             ->get();
 
         if (!$documents->isEmpty()) {
-            $file = $this->generate($documents);
             try {
+                $file = $this->generate($documents);
                 return response()->download($file)
                     ->deleteFileAfterSend(true);
             } catch (\Exception $e) {
-                dd('error while downloading');
+                return response()->json([
+                    'error' => 'Ошибка при генерации файла: ' . $e->getMessage()
+                ], 500);
             }
         }
-        abort(403, 'Невозможно осуществить действие');
+        
+        return response()->json([
+            'error' => 'Нет документов для генерации сборника тезисов'
+        ], 404);
     }
 
     public function getReportsBook(Conference $conference)
@@ -63,15 +69,20 @@ class DocumentController extends Controller
             ->get();
 
         if (!$documents->isEmpty()) {
-            $file = $this->generateReports($documents);
             try {
+                $file = $this->generateReports($documents);
                 return response()->download($file)
                     ->deleteFileAfterSend(true);
             } catch (\Exception $e) {
-                dd('error while downloading');
+                return response()->json([
+                    'error' => 'Ошибка при генерации файла: ' . $e->getMessage()
+                ], 500);
             }
         }
-        abort(403, 'Невозможно осуществить действие');
+        
+        return response()->json([
+            'error' => 'Нет документов для генерации сборника докладов'
+        ], 404);
     }
 
     private function generate(Collection $documents)

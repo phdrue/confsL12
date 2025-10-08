@@ -17,7 +17,7 @@
             "default_language": "ru",
             "detect_browser_language": true,
             "native_language_names": true,
-            "languages": ["ru", "be", "en", "uz", "tg"],
+            "languages": ["ru", "be", "en", "uz", "tg", "ky"],
             "wrapper_selector": ".gtranslate_wrapper",
             "switcher_horizontal_position": "right"
         }
