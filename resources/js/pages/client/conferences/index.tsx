@@ -46,10 +46,10 @@ export default function Index({
                     {/* filters */}
                     <div className="flex flex-row flex-wrap gap-4 w-full">
                         <Button onClick={() => filterByType(null)} variant={`${type === null ? "brandDarkBlue" : "ghost"}`}>Все</Button>
-                        <Button onClick={() => filterByType(1)} variant={`${type === 1 ? "brandDarkBlue" : "ghost"}`}>Международная</Button>
-                        <Button onClick={() => filterByType(2)} variant={`${type === 2 ? "brandDarkBlue" : "ghost"}`}>Всероссийская</Button>
-                        <Button onClick={() => filterByType(3)} variant={`${type === 3 ? "brandDarkBlue" : "ghost"}`}>Региональная</Button>
-                        <Button onClick={() => filterByType(4)} variant={`${type === 4 ? "brandDarkBlue" : "ghost"}`}>Другое</Button>
+                        <Button onClick={() => filterByType(1)} variant={`${type === 1 ? "brandDarkBlue" : "ghost"}`}>Международные</Button>
+                        <Button onClick={() => filterByType(2)} variant={`${type === 2 ? "brandDarkBlue" : "ghost"}`}>Всероссийские</Button>
+                        <Button onClick={() => filterByType(3)} variant={`${type === 3 ? "brandDarkBlue" : "ghost"}`}>Региональные</Button>
+                        <Button onClick={() => filterByType(4)} variant={`${type === 4 ? "brandDarkBlue" : "ghost"}`}>Другие</Button>
                     </div>
                     {_conferences && _conferences.map((conference) => (
                         <ConferenceCard key={conference.id} conference={conference} />

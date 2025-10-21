@@ -187,7 +187,11 @@ function LinksTextBlockComponent({ block }: { block: LinksTextBlock }) {
         <ul className="w-full px-11 pb-8">
             {block.content.map((link, index) => (
                 <li key={index}>
-                    <a href={link.url} className="flex items-center gap-2 underline underline-offset-4 transition-all hover:text-blue-600">
+                    <a
+                        href={link.url}
+                        target="_blank"
+                        className="flex items-center gap-2 underline underline-offset-4 transition-all hover:text-blue-600"
+                    >
                         <Link size={14} />
                         {link.text}
                     </a>

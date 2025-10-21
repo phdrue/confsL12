@@ -23,6 +23,8 @@ class CreateProposalRequest extends FormRequest
     {
         return [
             "name" => "required|string|max:1000",
+            "shortName" => "required|string|max:1000",
+            "engShortName" => "required|string|max:1000",
             "engName" => "required|string|max:1000",
             "level" => "required|string|max:1000",
             "form" => "required|string|max:1000",

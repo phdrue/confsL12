@@ -118,7 +118,7 @@ export default function AuthorsFormPartial({
                                 </Button>
                                 <div className="grid gap-6">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="name">Имя</Label>
+                                        <Label htmlFor="name">ФИО автора</Label>
                                         <Input
                                             id="name"
                                             type="text"

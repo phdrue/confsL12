@@ -157,7 +157,7 @@ export default function Contacts({ }) {
                                         </dd>
                                     </div>
 
-                                    <div className="px-4 py-6 sm:px-0 mt-1 text-sm/6 sm:mt-0">
+                                    {/* <div className="px-4 py-6 sm:px-0 mt-1 text-sm/6 sm:mt-0">
                                         <a target="_blank" href="" className="text-brand-darkBlue underline underline-offset-2">
                                             Скачать бланк квитанции для перевода денежных средств на расчетный счет ООО “МедТестИнфо”
                                         </a>
@@ -171,7 +171,7 @@ export default function Contacts({ }) {
                                         <a target="_blank" href="" className="text-brand-darkBlue underline underline-offset-2">
                                             Internet system for a money transfer in English
                                         </a>
-                                    </div>
+                                    </div> */}
                                 </dl>
                             </div>
                         </div>

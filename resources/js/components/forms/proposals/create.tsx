@@ -41,7 +41,9 @@ export default function ProposalCreateForm({ }) {
     const { toast } = useToast()
     const { data, setData, post, processing, errors, reset, transform } = useForm({
         name: '',
+        shortName: '',
         engName: '',
+        engShortName: '',
         level: '',
         form: '',
         type: '',
@@ -121,7 +123,7 @@ export default function ProposalCreateForm({ }) {
                 <form className="flex flex-col gap-6" onSubmit={submit}>
                     <div className="grid gap-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="name">Название RUS</Label>
+                            <Label htmlFor="name">Полное название RUS</Label>
                             <Textarea
                                 id="name"
                                 name="name"
@@ -131,6 +133,18 @@ export default function ProposalCreateForm({ }) {
                                 onChange={(e) => setData('name', e.target.value)}
                             />
                             <InputError message={errors.name} className="mt-2" />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="shortName">Краткое название RUS</Label>
+                            <Textarea
+                                id="shortName"
+                                name="shortName"
+                                value={data.shortName}
+                                className="w-full"
+                                autoComplete="shortName"
+                                onChange={(e) => setData('shortName', e.target.value)}
+                            />
+                            <InputError message={errors.shortName} className="mt-2" />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="engName">Название ENG</Label>
@@ -143,6 +157,18 @@ export default function ProposalCreateForm({ }) {
                                 onChange={(e) => setData('engName', e.target.value)}
                             />
                             <InputError message={errors.engName} className="mt-2" />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="engShortName">Краткое название ENG</Label>
+                            <Textarea
+                                id="engShortName"
+                                name="engShortName"
+                                value={data.engShortName}
+                                className="w-full"
+                                autoComplete="engShortName"
+                                onChange={(e) => setData('engShortName', e.target.value)}
+                            />
+                            <InputError message={errors.engShortName} className="mt-2" />
                         </div>
                         <div className="space-2">
                             <Label htmlFor="level">Уровень мероприятия</Label>
@@ -373,7 +399,7 @@ export default function ProposalCreateForm({ }) {
                             <InputError message={errors.budgetSource} className="mt-2" />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="coverageInPerson">Охват участников (очно)</Label>
+                            <Label htmlFor="coverageInPerson">Предполагаемое количество участников (очно)</Label>
                             <Input
                                 id="coverageInPerson"
                                 type="text"
@@ -385,7 +411,7 @@ export default function ProposalCreateForm({ }) {
                             <InputError message={errors.coverageInPerson} />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="coverageOnline">Охват участников (дистанционно)</Label>
+                            <Label htmlFor="coverageOnline">Предполагаемое количество участников (дистанционно)</Label>
                             <Input
                                 id="coverageOnline"
                                 type="text"
@@ -397,7 +423,7 @@ export default function ProposalCreateForm({ }) {
                             <InputError message={errors.coverageOnline} />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="coverageProfession">Охват профессионального сообщества</Label>
+                            <Label htmlFor="coverageProfession">Предполагаемое количество участников (профессиональное сообщество)</Label>
                             <Input
                                 id="coverageProfession"
                                 type="text"

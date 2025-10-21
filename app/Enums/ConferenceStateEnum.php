@@ -5,6 +5,7 @@ namespace App\Enums;
 enum ConferenceStateEnum: int
 {
     case DRAFT = 1;
-    case ACTIVE = 2;
-    case ARCHIVE = 3;
+    case PLANNED = 2;
+    case ACTIVE = 3;
+    case ARCHIVE = 4;
 }

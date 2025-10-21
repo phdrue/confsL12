@@ -12,8 +12,9 @@ export function ConferenceTypeBadge({ type_id }: { type_id: number }) {
 export function ConferenceStateBadge({ state_id }: { state_id: number }) {
     switch (state_id) {
         case 1: return (<Badge variant="rose">Черновик</Badge>)
-        case 2: return (<Badge variant="emerald">Актуальная</Badge>)
-        case 3: return (<Badge variant="amber">Архив</Badge>)
+        case 2: return (<Badge variant="blue">В плане</Badge>)
+        case 3: return (<Badge variant="emerald">Актуальная</Badge>)
+        case 4: return (<Badge variant="amber">Архив</Badge>)
     }
 }
 

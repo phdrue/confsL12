@@ -42,8 +42,9 @@ class DatabaseSeeder extends Seeder
 
         $conferenceStates = collect([
             1 => 'Черновик',
-            2 => 'Актуальная',
-            3 => 'Архив',
+            2 => 'В плане',
+            3 => 'Актуальная',
+            4 => 'Архив',
         ])->each(function ($name, $id) {
             ConferenceState::create([
                 'id' => $id,
@@ -103,16 +104,16 @@ class DatabaseSeeder extends Seeder
             ]);
         });
 
-        // $countries = collect([
-        //     1 => 'Россия',
-        //     2 => 'Не россия',
-        //     3 => 'США',
-        // ])->each(function ($name, $id) {
-        //     Country::create([
-        //         'id' => $id,
-        //         'name' => $name
-        //     ]);
-        // });
+        $countries = collect([
+            1 => 'Россия',
+            2 => 'Не россия',
+            3 => 'США',
+        ])->each(function ($name, $id) {
+            Country::create([
+                'id' => $id,
+                'name' => $name
+            ]);
+        });
 
         $degrees = collect([
             1 => 'Не имею / I do not have',
@@ -215,10 +216,25 @@ class DatabaseSeeder extends Seeder
             // 'name' => 'Test User',
             'email' => 'a@a.com',
             // 'email' => 'goncharovas@kursksmu.net',
+            'first_name' => 'Алексей',
+            'last_name' => 'Гончаров',
+            'second_name' => 'Сергеевич',
             'password' => '111111'
         ]);
 
         $user->roles()->attach(RoleEnum::ADMIN->value);
+
+        $user = User::factory()->create([
+            // 'name' => 'Test User',
+            'email' => 'b@b.com',
+            // 'email' => 'goncharovas@kursksmu.net',
+            'first_name' => 'Иван',
+            'last_name' => 'Иванов',
+            'second_name' => 'Иванович',
+            'password' => '111111'
+        ]);
+
+        $user->roles()->attach(RoleEnum::RESPONSIBLE->value);
 
         // $user1 = User::factory()->create([
         //     // 'name' => 'Test User',
