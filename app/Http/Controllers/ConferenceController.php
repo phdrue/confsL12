@@ -69,7 +69,7 @@ class ConferenceController extends Controller
     public function index(): Response
     {
         return Inertia::render('admin/conferences/index', [
-            'conferences' => Conference::all(),
+            'conferences' => Conference::with('proposal.user')->get(),
             'types' => ConferenceType::select('id', 'name')->get(),
             'states' => ConferenceState::select('id', 'name')->get(),
         ]);
@@ -119,7 +119,7 @@ class ConferenceController extends Controller
     public function edit(Conference $conference)
     {
         return Inertia::render('admin/conferences/edit', [
-            'conference' => $conference,
+            'conference' => $conference->load('proposal.user'),
             'types' => ConferenceType::select('id', 'name')->get(),
             'states' => ConferenceState::select('id', 'name')->get(),
         ]);

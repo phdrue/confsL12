@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('proposals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('conference_id')->nullable()->constrained('conferences');
+            $table->boolean('denied')->default(false);
             $table->json('payload');
             $table->timestamps();
         });

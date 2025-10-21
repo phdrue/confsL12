@@ -3,6 +3,7 @@ import * as ConferenceTypes from '@/types/conferences'
 
 export interface Auth {
     user: User;
+    roles: string[];
 }
 
 export interface BreadcrumbItem {

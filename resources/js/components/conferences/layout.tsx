@@ -1,8 +1,8 @@
-export default function ConferenceLayout({ children }: { children: React.ReactNode }) {
+export default function ConferenceLayout({ heading, children }: { heading: string, children: React.ReactNode }) {
     return (
         <div className="mx-auto mb-24 w-full max-w-screen-xl pt-16">
             <div className="mx-auto mb-16 max-w-2xl px-4 sm:px-6">
-                <h2 className="text-center text-3xl font-semibold sm:text-4xl">Актуальные мероприятия</h2>
+                <h2 className="text-center text-3xl font-semibold sm:text-4xl">Мероприятия: {heading.toLocaleLowerCase()}</h2>
                 <p className="text-brand-textSecondary mt-6 text-center">
                     Какие блага получает участник научных мероприятий, принимая в них участие?
                 </p>

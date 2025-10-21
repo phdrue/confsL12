@@ -1,6 +1,6 @@
 import { Conference, ConferenceState, ConferenceType } from "@/types/conferences"
 import { DataTableFilter } from "@/types/other"
-import { Star, ArrowUpDown } from "lucide-react"
+import { Star, ArrowUpDown, FileText } from "lucide-react"
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@/components/ui/data-table"
 import { ConferenceTypeBadge, ConferenceStateBadge } from "@/components/conferences/utils"
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Link } from "@inertiajs/react"
 import { parseDateString } from "@/parse-date-string"
+import ProposalPreviewDialog from "@/components/proposals/proposal-preview-dialog"
 
 const columns: ColumnDef<Conference>[] = [
     {
@@ -74,6 +75,30 @@ const columns: ColumnDef<Conference>[] = [
     {
         accessorKey: "name",
         header: "Название",
+    },
+    {
+        header: "Предложение",
+        cell: ({ row }) => {
+            const conference = row.original;
+            if (conference.proposal) {
+                return (
+                    <ProposalPreviewDialog 
+                        proposal={conference.proposal}
+                        trigger={
+                            <Button variant="outline" size="sm">
+                                <FileText className="w-4 h-4 mr-2" />
+                                Просмотр
+                            </Button>
+                        }
+                        title="Исходное предложение"
+                    />
+                );
+            } else {
+                return (
+                    <span className="text-sm text-gray-400">—</span>
+                );
+            }
+        }
     },
     {
         id: "actions",

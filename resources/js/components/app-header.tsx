@@ -3,7 +3,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Icon } from '@/components/icon';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -12,15 +12,51 @@ import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Menu, Search, ChevronDown } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
+// Conferences Dropdown Component
+function ConferencesDropdown() {
+    const page = usePage();
+    
+    const conferenceStates = [
+        { id: 3, name: 'Актуальные', url: route('conferences.index', { state: 3 }) },
+        { id: 4, name: 'Архив', url: route('conferences.index', { state: 4 }) },
+        { id: 2, name: 'В плане', url: route('conferences.index', { state: 2 }) },
+    ];
+
+    const isConferencesPage = page.url.startsWith('/conferences');
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button
+                    variant="ghost"
+                    className={cn(
+                        navigationMenuTriggerStyle(),
+                        isConferencesPage && activeItemStyles,
+                        'h-9 cursor-pointer px-3 flex items-center gap-1'
+                    )}
+                >
+                    Мероприятия
+                    <ChevronDown className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+                {conferenceStates.map((state) => (
+                    <DropdownMenuItem key={state.id} asChild>
+                        <Link href={state.url}>
+                            {state.name}
+                        </Link>
+                    </DropdownMenuItem>
+                ))}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+}
+
 const mainNavItems: NavItem[] = [
-    {
-        title: 'Мероприятия',
-        url: route('conferences.index', [], false),
-    },
     {
         title: 'Рассылка',
         url: route('subscribe', [], false),
@@ -77,6 +113,23 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 <div className="mt-6 flex h-full flex-1 flex-col space-y-4">
                                     <div className="flex h-full flex-col justify-between text-sm">
                                         <div className="flex flex-col space-y-4">
+                                            {/* Conferences Dropdown for Mobile */}
+                                            <div className="flex flex-col space-y-2">
+                                                <div className="font-medium text-gray-900 dark:text-gray-100">Мероприятия</div>
+                                                <div className="ml-4 flex flex-col space-y-2">
+                                                    <Link href={route('conferences.index', { state: 3 })} className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                                                        Актуальные
+                                                    </Link>
+                                                    <Link href={route('conferences.index', { state: 4 })} className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                                                        Архив
+                                                    </Link>
+                                                    <Link href={route('conferences.index', { state: 2 })} className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                                                        В плане
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Other Navigation Items */}
                                             {mainNavItems.map((item) => (
                                                 <Link key={item.title} href={item.url} className="flex items-center space-x-2 font-medium">
                                                     {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
@@ -110,6 +163,12 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                     <div className="ml-6 hidden h-full items-center space-x-6 lg:flex lg:grow">
                         <NavigationMenu className="flex h-full items-center justify-between max-w-full">
                             <NavigationMenuList className="flex h-full items-stretch grow space-x-2">
+                                {/* Conferences Dropdown */}
+                                <NavigationMenuItem className="relative flex h-full items-center">
+                                    <ConferencesDropdown />
+                                </NavigationMenuItem>
+                                
+                                {/* Other Navigation Items */}
                                 {mainNavItems.map((item, index) => (
                                     <NavigationMenuItem key={index} className="relative flex h-full items-center">
                                         <Link

@@ -15,4 +15,9 @@ class Proposal extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function conference(): BelongsTo
+    {
+        return $this->belongsTo(Conference::class);
+    }
 }

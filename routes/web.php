@@ -72,6 +72,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // конференции
         Route::resource('conferences', ConferenceController::class)
             ->only('store');
+
+        // предложения - только админ может редактировать
+        Route::resource('proposals', ProposalController::class)
+            ->only('edit', 'update');
+        
+        // Admin proposal management
+        Route::put('proposals/{proposal}/deny', [ProposalController::class, 'deny'])
+            ->name('proposals.deny');
+        Route::put('proposals/{proposal}/approve', [ProposalController::class, 'approve'])
+            ->name('proposals.approve');
     });
 
     // responsible general

@@ -2,9 +2,10 @@ import { Conference, ConferenceType } from "@/types/conferences"
 import { useState, ChangeEvent } from "react"
 import { useForm } from "@inertiajs/react"
 import { useToast } from "@/hooks/use-toast"
-import { WandSparkles, LoaderCircle } from "lucide-react"
+import { WandSparkles, LoaderCircle, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
+import ProposalPreviewDialog from "@/components/proposals/proposal-preview-dialog";
 import {
     Select,
     SelectContent,
@@ -70,7 +71,21 @@ export default function EditConferenceForm({
     return (
         <Card className="md:col-span-2">
             <CardHeader>
-                <CardTitle>Редактирование конференции</CardTitle>
+                <div className="flex justify-between items-center">
+                    <CardTitle>Редактирование конференции</CardTitle>
+                    {conference.proposal && (
+                        <ProposalPreviewDialog 
+                            proposal={conference.proposal}
+                            trigger={
+                                <Button variant="outline" size="sm">
+                                    <FileText className="w-4 h-4 mr-2" />
+                                    Просмотр предложения
+                                </Button>
+                            }
+                            title="Исходное предложение"
+                        />
+                    )}
+                </div>
             </CardHeader>
             <CardContent>
                 <div className="">

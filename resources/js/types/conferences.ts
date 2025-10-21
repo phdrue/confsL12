@@ -12,6 +12,7 @@ export interface Conference {
     primary_color: string;
     allow_thesis: boolean;
     allow_report: boolean;
+    proposal?: Proposal;
     pivot?: {
         confirmed: boolean;
     };
@@ -20,6 +21,8 @@ export interface Conference {
 export interface Proposal {
     id: number;
     user_id: number;
+    conference_id?: number;
+    denied: boolean;
     user: User;
     payload: {
         name: string;

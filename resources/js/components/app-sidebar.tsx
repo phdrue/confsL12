@@ -2,34 +2,12 @@ import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
+import { type NavItem, Auth } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, CloudCog, Folder, ImageIcon, LayoutGrid, UsersIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Конференции',
-        url: '/dashboard',
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Предложения',
-        url: route('adm.proposals.index'),
-        icon: CloudCog,
-    },
-    {
-        title: 'Банк изображений',
-        url: route('adm.images.index'),
-        icon: ImageIcon,
-    },
-    {
-        title: 'Пользователи',
-        url: route('adm.users.index'),
-        icon: UsersIcon,
-    },
-];
 
 const footerNavItems: NavItem[] = [
     // {
@@ -45,6 +23,32 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage().props as { auth: Auth };
+    const isAdmin = auth?.roles?.includes('Администратор') || false;
+
+    const mainNavItems: NavItem[] = [
+        {
+            title: 'Конференции',
+            url: '/dashboard',
+            icon: LayoutGrid,
+        },
+        {
+            title: 'Предложения',
+            url: route('adm.proposals.index'),
+            icon: CloudCog,
+        },
+        {
+            title: 'Банк изображений',
+            url: route('adm.images.index'),
+            icon: ImageIcon,
+        },
+        ...(isAdmin ? [{
+            title: 'Пользователи',
+            url: route('adm.users.index'),
+            icon: UsersIcon,
+        }] : []),
+    ];
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

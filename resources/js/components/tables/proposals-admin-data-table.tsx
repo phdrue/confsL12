@@ -1,6 +1,7 @@
 import { Conference, ConferenceState, ConferenceType, Proposal } from "@/types/conferences"
 import { DataTableFilter } from "@/types/other"
-import { Star, ArrowUpDown, Eye } from "lucide-react"
+import { Auth } from "@/types"
+import { Star, ArrowUpDown, Eye, Edit, X, CheckCircle, ExternalLink } from "lucide-react"
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@/components/ui/data-table"
 import { ConferenceTypeBadge, ConferenceStateBadge } from "@/components/conferences/utils"
@@ -20,10 +21,109 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogFooter,
 } from "@/components/ui/dialog"
-import { Link } from "@inertiajs/react"
+import { Link, usePage, router } from "@inertiajs/react"
 import { parseDateString } from "@/parse-date-string"
 import { useState } from "react"
+import ProposalEditForm from "@/components/forms/proposals/edit"
+
+// Confirmation Dialog for Deny Action
+function DenyConfirmationDialog({ proposal }: { proposal: Proposal }) {
+    const [open, setOpen] = useState(false);
+
+    const handleDeny = () => {
+        router.put(route('adm.proposals.deny', proposal.id), {}, {
+            onSuccess: () => setOpen(false)
+        });
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <DropdownMenuItem 
+                    className="text-red-600"
+                    onSelect={(e) => e.preventDefault()}
+                >
+                    <X className="w-4 h-4 mr-2" />
+                    Отклонить
+                </DropdownMenuItem>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Подтверждение отклонения</DialogTitle>
+                </DialogHeader>
+                <div className="py-4">
+                    <p className="text-sm text-gray-600">
+                        Вы уверены, что хотите отклонить предложение <strong>"{proposal.payload.shortName}"</strong>?
+                    </p>
+                    <p className="text-sm text-red-600 mt-2">
+                        Это действие нельзя отменить.
+                    </p>
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setOpen(false)}>
+                        Отмена
+                    </Button>
+                    <Button variant="destructive" onClick={handleDeny}>
+                        Отклонить предложение
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+// Confirmation Dialog for Approve Action
+function ApproveConfirmationDialog({ proposal }: { proposal: Proposal }) {
+    const [open, setOpen] = useState(false);
+
+    const handleApprove = () => {
+        router.put(route('adm.proposals.approve', proposal.id), {}, {
+            onSuccess: () => setOpen(false)
+        });
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <DropdownMenuItem 
+                    className="text-green-600"
+                    onSelect={(e) => e.preventDefault()}
+                >
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Одобрить и создать конференцию
+                </DropdownMenuItem>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Подтверждение одобрения</DialogTitle>
+                </DialogHeader>
+                <div className="py-4">
+                    <p className="text-sm text-gray-600">
+                        Вы уверены, что хотите одобрить предложение <strong>"{proposal.payload.shortName}"</strong> и создать из него конференцию?
+                    </p>
+                    <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                        <p className="text-sm font-medium text-blue-900">Будет создана конференция:</p>
+                        <ul className="text-sm text-blue-700 mt-1 space-y-1">
+                            <li>• Название: {proposal.payload.name}</li>
+                            <li>• Дата: {new Date(proposal.payload.date).toLocaleDateString()}</li>
+                            <li>• Уровень: {proposal.payload.level}</li>
+                        </ul>
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setOpen(false)}>
+                        Отмена
+                    </Button>
+                    <Button variant="default" onClick={handleApprove} className="bg-green-600 hover:bg-green-700">
+                        Одобрить и создать конференцию
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
 
 // Proposal Preview Dialog Component
 function ProposalPreviewDialog({ proposal }: { proposal: Proposal }) {
@@ -196,69 +296,134 @@ function ProposalPreviewDialog({ proposal }: { proposal: Proposal }) {
     )
 }
 
-const columns: ColumnDef<Proposal>[] = [
-    {
-        accessorKey: "id",
-        header: "ID",
-        cell: ({ row }) => {
-            return (
-                <div className="flex items-center gap-2 font-semibold">
-                    {row.getValue("id")}
-                </div>
-            )
-        }
-    },
-    {
-        header: "Краткое название",
-        cell: ({ row }) => {
-            return <div className="flex items-center gap-2 font-semibold">{row.original.payload.shortName}</div>
-        }
-    },
-    {
-        header: "Дата проведения",
-        cell: ({ row }) => {
-            return <div className="flex items-center gap-2 font-semibold">{new Date(row.original.payload.date).toLocaleDateString()}</div>
-        }
-    },
-    {
-        header: "Организатор",
-        cell: ({ row }) => {
-            return (
-                <div className="flex items-center gap-2 font-semibold">
-                    {row.original.user.last_name} {row.original.user.first_name} {row.original.user.second_name}
-                </div>
-            )
-        }
-    },
-    {
-        id: "actions",
-        cell: ({ row }) => {
-            const proposal = row.original
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Открыть меню</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                        <DropdownMenuLabel>Действия</DropdownMenuLabel>
-                        <DropdownMenuItem asChild>
-                            <ProposalPreviewDialog proposal={proposal} />
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
-        },
-    },
-]
-
 export default function ProposalsAdminDataTable({
     proposals,
 }: {
     proposals: Array<Proposal>,
 }) {
+    const { auth } = usePage().props as { auth: Auth };
+    const isAdmin = auth?.roles?.includes('Администратор') || false;
+
+    const columns: ColumnDef<Proposal>[] = [
+        {
+            accessorKey: "id",
+            header: "ID",
+            cell: ({ row }) => {
+                return (
+                    <div className="flex items-center gap-2 font-semibold">
+                        {row.getValue("id")}
+                    </div>
+                )
+            }
+        },
+        {
+            header: "Краткое название",
+            cell: ({ row }) => {
+                return <div className="flex items-center gap-2 font-semibold">{row.original.payload.shortName}</div>
+            }
+        },
+        {
+            header: "Дата проведения",
+            cell: ({ row }) => {
+                return <div className="flex items-center gap-2 font-semibold">{new Date(row.original.payload.date).toLocaleDateString()}</div>
+            }
+        },
+        {
+            header: "Организатор",
+            cell: ({ row }) => {
+                return (
+                    <div className="flex items-center gap-2 font-semibold">
+                        {row.original.user.last_name} {row.original.user.first_name} {row.original.user.second_name}
+                    </div>
+                )
+            }
+        },
+        {
+            header: "Статус",
+            cell: ({ row }) => {
+                const proposal = row.original;
+                if (proposal.conference_id) {
+                    return (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                            Одобрено
+                        </span>
+                    );
+                } else if (proposal.denied) {
+                    return (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            <X className="w-3 h-3 mr-1" />
+                            Отклонено
+                        </span>
+                    );
+                } else {
+                    return (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                            Ожидает
+                        </span>
+                    );
+                }
+            }
+        },
+        {
+            header: "Конференция",
+            cell: ({ row }) => {
+                const proposal = row.original;
+                if (proposal.conference_id) {
+                    return (
+                        <Link 
+                            href={route('adm.conferences.edit', proposal.conference_id)}
+                            className="inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors"
+                        >
+                            <ExternalLink className="w-4 h-4 mr-1" />
+                            Редактировать конференцию
+                        </Link>
+                    );
+                } else {
+                    return (
+                        <span className="text-sm text-gray-400">—</span>
+                    );
+                }
+            }
+        },
+        {
+            id: "actions",
+            cell: ({ row }) => {
+                const proposal = row.original
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Открыть меню</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                            <DropdownMenuLabel>Действия</DropdownMenuLabel>
+                            <DropdownMenuItem asChild>
+                                <ProposalPreviewDialog proposal={proposal} />
+                            </DropdownMenuItem>
+                            {isAdmin && (
+                                <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem asChild>
+                                        <ProposalEditForm proposal={proposal} />
+                                    </DropdownMenuItem>
+                                    {!proposal.conference_id && !proposal.denied && (
+                                        <>
+                                            <DropdownMenuSeparator />
+                                            <ApproveConfirmationDialog proposal={proposal} />
+                                            <DenyConfirmationDialog proposal={proposal} />
+                                        </>
+                                    )}
+                                </>
+                            )}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )
+            },
+        },
+    ]
 
     return <DataTable columns={columns} data={proposals} />
 }

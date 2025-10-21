@@ -1,6 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle, WandSparkles } from 'lucide-react';
-import { FormEventHandler, useState, ChangeEvent } from 'react';
+import { FormEventHandler, useState, ChangeEvent, useEffect } from 'react';
 import { ConferenceType, Proposal } from '@/types/conferences';
 import { useToast } from "@/hooks/use-toast"
 
@@ -31,40 +31,81 @@ import {
 } from "@/components/ui/select"
 import options from '@/components/forms/proposals/options';
 
-export default function ProposalCreateForm({ }) {
+interface ProposalEditFormProps {
+    proposal: Proposal;
+    trigger?: React.ReactNode;
+}
+
+export default function ProposalEditForm({ proposal, trigger }: ProposalEditFormProps) {
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
 
-    const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
-    const [selectedAudiences, setSelectedAudiences] = useState<string[]>([])
+    // Check if proposal has been converted to a conference
+    if (proposal.conference_id) {
+        return (
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                    {trigger || (
+                        <Button variant="ghost" className="w-full justify-start">
+                            Редактировать
+                        </Button>
+                    )}
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Редактирование недоступно</DialogTitle>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <p className="text-sm text-gray-600">
+                            Это предложение уже было одобрено и конференция создана. 
+                            Редактирование предложения недоступно.
+                        </p>
+                        <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                            <p className="text-sm font-medium text-blue-900">
+                                Для изменения информации о конференции перейдите к редактированию конференции.
+                            </p>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={handleClose}>
+                            Закрыть
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        );
+    }
+
+    const [selectedAmenities, setSelectedAmenities] = useState<string[]>(proposal.payload.amenities || [])
+    const [selectedAudiences, setSelectedAudiences] = useState<string[]>(proposal.payload.audiences || [])
 
     const { toast } = useToast()
-    const { data, setData, post, processing, errors, reset, transform } = useForm({
-        name: '',
-        shortName: '',
-        engName: '',
-        engShortName: '',
-        level: '',
-        form: '',
-        type: '',
-        lang: '',
-        date: '',
-        endDate: '',
-        place: '',
-        department: '',
-        organization: '',
-        organizationOther: '',
-        participationsTotal: '',
-        participationsForeign: '',
+    const { data, setData, put, processing, errors, reset, transform } = useForm({
+        name: proposal.payload.name || '',
+        shortName: proposal.payload.shortName || '',
+        engName: proposal.payload.engName || '',
+        engShortName: proposal.payload.engShortName || '',
+        level: proposal.payload.level || '',
+        form: proposal.payload.form || '',
+        type: proposal.payload.type || '',
+        lang: proposal.payload.lang || '',
+        date: proposal.payload.date || '',
+        endDate: proposal.payload.endDate || '',
+        place: proposal.payload.place || '',
+        department: proposal.payload.department || '',
+        organization: proposal.payload.organization || '',
+        organizationOther: proposal.payload.organizationOther || '',
+        participationsTotal: proposal.payload.participationsTotal || '',
+        participationsForeign: proposal.payload.participationsForeign || '',
         audiences: selectedAudiences,
-        bookType: '',
-        topics: '',
+        bookType: proposal.payload.bookType || '',
+        topics: proposal.payload.topics || '',
         amenities: selectedAmenities,
-        budget: '',
-        budgetSource: '',
-        coverageInPerson: '',
-        coverageOnline: '',
-        coverageProfession: '',
+        budget: proposal.payload.budget || '',
+        budgetSource: proposal.payload.budgetSource || '',
+        coverageInPerson: proposal.payload.coverageInPerson || '',
+        coverageOnline: proposal.payload.coverageOnline || '',
+        coverageProfession: proposal.payload.coverageProfession || '',
     });
 
     transform((data) => ({
@@ -95,15 +136,13 @@ export default function ProposalCreateForm({ }) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('adm.proposals.store'), {
-            forceFormData: true,
+        put(route('adm.proposals.update', proposal.id), {
             onSuccess: () => {
                 handleClose()
                 toast({
                     variant: "success",
-                    title: "Предложение успешно создана!",
+                    title: "Предложение успешно обновлено!",
                 })
-                reset()
             }
         })
     };
@@ -111,13 +150,13 @@ export default function ProposalCreateForm({ }) {
     return (
         <Dialog open={open} onOpenChange={setOpen} modal>
             <DialogTrigger asChild>
-                <Button variant="outline">Создать</Button>
+                {trigger || <Button variant="outline">Редактировать</Button>}
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Предложить конференцию</DialogTitle>
+                    <DialogTitle>Редактировать предложение</DialogTitle>
                     <DialogDescription>
-                        Заполните поля
+                        Измените необходимые поля
                     </DialogDescription>
                 </DialogHeader>
                 <form className="flex flex-col gap-6" onSubmit={submit}>
@@ -177,12 +216,9 @@ export default function ProposalCreateForm({ }) {
                                     <SelectValue placeholder="Выберите вид конференции" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {/* <SelectGroup> */}
-                                    {/* <SelectLabel>Виды</SelectLabel> */}
                                     {options.levels.map((level) => (
                                         <SelectItem key={level} value={level}>{level}</SelectItem>
                                     ))}
-                                    {/* </SelectGroup> */}
                                 </SelectContent>
                             </Select>
                             <InputError message={errors.level} className="mt-2" />
@@ -453,7 +489,7 @@ export default function ProposalCreateForm({ }) {
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="amenities">Дополнительные услуги</Label>
+                            <Label htmlFor="audiences">Дополнительные услуги</Label>
                             {options.amenities.map((option, index) => (
                                 <div key={index} className="flex items-center space-x-2 border p-3 rounded-md">
                                     <Checkbox
@@ -471,7 +507,7 @@ export default function ProposalCreateForm({ }) {
 
                         <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
                             {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                            Создать
+                            Обновить
                         </Button>
                     </div>
                 </form>

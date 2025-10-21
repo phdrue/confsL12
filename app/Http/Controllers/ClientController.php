@@ -11,6 +11,8 @@ use App\Models\ConferenceUser;
 use App\Models\Country;
 use App\Models\Document;
 use App\Models\ReportType;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -38,13 +40,35 @@ class ClientController extends Controller
         return Inertia::render('client/subscribe');
     }
 
-    public function conferences()
+    public function conferences(Request $request)
     {
+        $state = $request->query('state');
+        
+        $query = Conference::query();
+        
+        if ($state && $state !== '1') {
+            $query->where('state_id', $state);
+        } else {
+            $query->whereIn('state_id', [ConferenceStateEnum::ACTIVE, ConferenceStateEnum::ARCHIVE]);
+        }
+        
+        $conferences = $query->orderBy('date', 'asc')->paginate(10);
+        
         return Inertia::render('client/conferences/index', [
-            'conferences' => Conference::query()
-                ->whereIn('state_id', [ConferenceStateEnum::ACTIVE, ConferenceStateEnum::ARCHIVE])
-                ->orderBy('date', 'asc')
-                ->get()
+            'conferences' => $conferences,
+            'currentState' => $state,
+            'currentStateName' => $state ? 
+                collect([
+                    ['id' => ConferenceStateEnum::ACTIVE->value, 'name' => 'Актуальные'],
+                    ['id' => ConferenceStateEnum::ARCHIVE->value, 'name' => 'Архив'],
+                    ['id' => ConferenceStateEnum::PLANNED->value, 'name' => 'В плане'],
+                ])->firstWhere('id', $state)['name'] ?? 'Актуальные' : 
+                'Актуальные',
+            'states' => [
+                ['id' => ConferenceStateEnum::ACTIVE->value, 'name' => 'Актуальные'],
+                ['id' => ConferenceStateEnum::ARCHIVE->value, 'name' => 'Архив'],
+                ['id' => ConferenceStateEnum::PLANNED->value, 'name' => 'В плане'],
+            ]
         ]);
     }
 
@@ -68,7 +92,7 @@ class ClientController extends Controller
         DB::transaction(function () use ($request, $conference) {
             $id = ConferenceUser::create([
                 'conference_id' => $conference->id,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
             ])->id;
 
             // dd($request->validated('reports'));
@@ -115,7 +139,7 @@ class ClientController extends Controller
                 ]),
             ]);
 
-            auth()->user()->conferences()->attach($conference, [
+            Auth::user()->conferences()->attach($conference, [
                 'document_id' => $document->id,
                 'type_id' => $request->validated('type_id') + 1
             ]);
