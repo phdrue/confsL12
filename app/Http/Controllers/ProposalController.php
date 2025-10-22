@@ -136,6 +136,17 @@ class ProposalController extends Controller
                 'conference_id' => $conference->id,
                 'denied' => false,
             ]);
+
+            // Assign proposal author as responsible for the conference
+            $proposalAuthor = $proposal->user;
+            
+            // Ensure the author has the RESPONSIBLE role
+            if (!$proposalAuthor->hasRole(\App\Enums\Role::RESPONSIBLE)) {
+                $proposalAuthor->roles()->attach(\App\Enums\Role::RESPONSIBLE->value);
+            }
+            
+            // Assign the author as responsible for the conference
+            $conference->responsible()->attach($proposalAuthor->id);
         });
 
         return redirect()->back()->with('success', 'Конференция создана из предложения');

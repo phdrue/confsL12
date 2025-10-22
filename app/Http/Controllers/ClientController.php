@@ -43,6 +43,7 @@ class ClientController extends Controller
     public function conferences(Request $request)
     {
         $state = $request->query('state');
+        $name = $request->query('name');
         
         $query = Conference::query();
         
@@ -52,11 +53,17 @@ class ClientController extends Controller
             $query->whereIn('state_id', [ConferenceStateEnum::ACTIVE, ConferenceStateEnum::ARCHIVE]);
         }
         
-        $conferences = $query->orderBy('date', 'asc')->paginate(10);
+        // Add name filter if provided
+        if ($name) {
+            $query->where('name', 'like', '%' . $name . '%');
+        }
+        
+        $conferences = $query->orderBy('date', 'asc')->paginate(1);
         
         return Inertia::render('client/conferences/index', [
             'conferences' => $conferences,
             'currentState' => $state,
+            'currentName' => $name,
             'currentStateName' => $state ? 
                 collect([
                     ['id' => ConferenceStateEnum::ACTIVE->value, 'name' => 'Актуальные'],

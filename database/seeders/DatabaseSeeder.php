@@ -214,8 +214,8 @@ class DatabaseSeeder extends Seeder
 
         $user = User::factory()->create([
             // 'name' => 'Test User',
-            'email' => 'a@a.com',
-            // 'email' => 'goncharovas@kursksmu.net',
+            // 'email' => 'a@a.com',
+            'email' => 'goncharovas@kursksmu.net',
             'first_name' => 'Алексей',
             'last_name' => 'Гончаров',
             'second_name' => 'Сергеевич',
@@ -224,17 +224,17 @@ class DatabaseSeeder extends Seeder
 
         $user->roles()->attach(RoleEnum::ADMIN->value);
 
-        $user = User::factory()->create([
-            // 'name' => 'Test User',
-            'email' => 'b@b.com',
-            // 'email' => 'goncharovas@kursksmu.net',
-            'first_name' => 'Иван',
-            'last_name' => 'Иванов',
-            'second_name' => 'Иванович',
-            'password' => '111111'
-        ]);
+        // $user = User::factory()->create([
+        //     // 'name' => 'Test User',
+        //     'email' => 'b@b.com',
+        //     // 'email' => 'goncharovas@kursksmu.net',
+        //     'first_name' => 'Иван',
+        //     'last_name' => 'Иванов',
+        //     'second_name' => 'Иванович',
+        //     'password' => '111111'
+        // ]);
 
-        $user->roles()->attach(RoleEnum::RESPONSIBLE->value);
+        // $user->roles()->attach(RoleEnum::RESPONSIBLE->value);
 
         // $user1 = User::factory()->create([
         //     // 'name' => 'Test User',
