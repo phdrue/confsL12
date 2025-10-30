@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 
 interface RegisterForm {
     email: string;
@@ -18,6 +19,9 @@ interface RegisterForm {
 export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
+    const [policyAgreed, setPolicyAgreed] = useState(false);
+    const [showPolicyDialog, setShowPolicyDialog] = useState(false);
+    const [policyError, setPolicyError] = useState<string | null>(null);
     
     const { data, setData, post, processing, errors, reset } = useForm<RegisterForm>({
         email: '',
@@ -27,6 +31,11 @@ export default function Register() {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+        if (!policyAgreed) {
+            setPolicyError('Вы должны согласиться с политикой конфиденциальности');
+            return;
+        }
+        setPolicyError(null);
         post(route('register'), {
             onFinish: () => reset('password', 'password_confirmation'),
         });
@@ -120,11 +129,42 @@ export default function Register() {
                         <InputError message={errors.password_confirmation} />
                     </div>
 
-                    <div className="grid gap-2">
-                        <p className="text-sm">Регистрируясь на сайте, вы соглашаетесь с <a href={route('download.policy')} className="text-brand-red hover:underline">политикой обработки персональных данных</a></p>
+                {/* Policy Agreement */}
+                <div className="grid gap-2">
+                    <div className="flex items-start mt-2">
+                        <input
+                            id="policy-agreement"
+                            name="policy_agreement"
+                            type="checkbox"
+                            className="h-4 w-4 text-blue-600 border-gray-300 rounded cursor-pointer"
+                            checked={policyAgreed}
+                            tabIndex={7}
+                            onChange={() => setShowPolicyDialog(true)}
+                            readOnly
+                            required
+                        />
+                        <label
+                            htmlFor="policy-agreement"
+                            className="ml-3 text-sm font-medium text-gray-700 cursor-pointer"
+                            onClick={() => setShowPolicyDialog(true)}
+                        >
+                            Я согласен с{' '}
+                            <span className="text-blue-600 hover:text-blue-500 underline">
+                                политикой конфиденциальности
+                            </span>
+                        </label>
                     </div>
+                    {policyError && <InputError message={policyError} />}
+                </div>
 
-                    <Button variant={"brandDarkBlue"} type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>
+
+                    <Button
+                        variant={"brandDarkBlue"}
+                        type="submit"
+                        className="mt-2 w-full"
+                        tabIndex={5}
+                        disabled={processing || !policyAgreed}
+                    >
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                         Создать аккаунт
                     </Button>
@@ -137,6 +177,86 @@ export default function Register() {
                     </TextLink>
                 </div>
             </form>
+            {/* Policy Dialog */}
+            <Dialog open={showPolicyDialog} onOpenChange={setShowPolicyDialog}>
+                <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle>
+                            Согласие на обработку персональных данных субъектов персональных данных, которые являются посетителями официального сайта ФГБОУ ВО КГМУ Минздрава России
+                        </DialogTitle>
+                    </DialogHeader>
+                    <div className="text-sm text-gray-700 space-y-4 max-h-[50vh] overflow-y-auto mt-2 mb-2 pr-2">
+                        <p>
+                            Я (далее - Пользователь или Субъект персональных данных) даю согласие ФГБОУ ВО КГМУ Минздрава России, адрес: 305041, Курская область, г. Курск, ул. К. Маркса, д.3, ИНН: 4629027572, ОГРН: 1034637005347 (далее – Оператор) на обработку моих персональных данных в соответствии с прочитанной мною Политикой обработки персональных данных в КГМУ (расположенной по адресу https://kurskmed.com/adm_files/politic_personal_data.pdf/, далее – Политика) при использовании сайта Оператора (расположенного по адресу https://confs.kurskmed.com/, далее - Сайт).
+                        </p>
+                        <p>
+                            Согласие дается мной сознательно, свободно, своей волей и в своем интересе. Оператор собирает и обрабатывает персональные данные, необходимые для предоставления услуг, обеспечения безопасности и удобства Пользователя, контроля за соблюдением Пользователем правил использования Сайта, оказания Пользователю технической поддержки, сбора и обобщения статистических данных, проведения исследований, связи и иного применимого взаимодействия с Пользователем (далее — Взаимодействие).
+                        </p>
+                        <p>
+                            Оператор вправе обрабатывать следующие персональные данные, полученные Оператором как путем заполнения Пользователем специальных форм, так и в некоторых случаях, собираемые сайтом автоматически, для следующих целей:
+                        </p>
+                        <p>
+                            а) адрес электронной почты (email) — требуется Оператору для связи с Пользователем при предоставлении услуг и иных целей в соответствии с п. 4 Политики;
+                        </p>
+                        <p>
+                            б) номер контактного телефона — требуется Оператору для связи с Пользователем при предоставлении услуг и иных целей в соответствии с п. 4 Политики;
+                        </p>
+                        <p>
+                            в) ФИО — требуется Оператору для идентификации Пользователя в соответствии с п. 4 Политики;
+                        </p>
+                        <p>
+                            г) должность — требуется Оператору для идентификации Пользователя в соответствии с п. 4 Политики;
+                        </p>
+                        <p>
+                            д) ученая степень — требуется Оператору для идентификации Пользователя в соответствии с п. 4 Политики;
+                        </p>
+                        <p>
+                            е) ученое звание - требуется Оператору для идентификации Пользователя в соответствии с п. 4 Политики.
+                        </p>
+                        <p>
+                            Также целями обработки персональных данных Пользователя Оператором являются:
+                        </p>
+                        <p>
+                            предоставление доступа к сервисам, информации, материалам, содержащимся на Сайте Оператора, оказание услуг, связь и взаимодействие, предоставление справочной информации, исследование и формирование обобщенного «портрета (профиля) пользователя» для совершенствования сервисов, сбора и обобщения статистических данных.
+                        </p>
+                        <p>
+                            Согласие предоставляется на осуществление Оператором следующих действий с моими персональными данными: сбор, запись, систематизация, накопление, хранение, уточнение (обновление, изменение), извлечение, использование, передача (предоставление, доступ), обезличивание, блокирование, удаление, уничтожение, - с использованием средств автоматизации и без использования таких средств.
+                        </p>
+                        <p>
+                            Настоящим я выражаю согласие на предоставление Оператором персональных данных третьим лицам, в случае: явного моего согласия; если передача необходима в рамках использования Сайта и в случае необходимости предоставления услуг Пользователю; если передача предусмотрена российским или иным применимым законодательством.
+                        </p>
+                        <p>
+                            Срок действия согласия на обработку персональных данных является неограниченным. Согласие на обработку персональных данных в любой момент может быть отозвано Пользователем путем направления письменного обращения/требования Оператору по адресу: 305041, Курская область, г. Курск, ул. К. Маркса, д.3, с пометкой: «Отзыв согласия на обработку персональных данных» или «Требование о прекращении обработки персональных данных».
+                        </p>
+                        <p>
+                            При этом я согласен, что отзыв согласия на обработку персональных данных, как и требование о прекращении обработки персональных данных, может повлечь за собой удаление моих учетных записей на Сайте Оператора в сети Интернет, невозможность идентификации меня в качестве пользователя Сайта, что означает невозможность его использования и получения услуг от Оператора.
+                        </p>
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            type="button"
+                            onClick={() => {
+                                setPolicyAgreed(true);
+                                setShowPolicyDialog(false);
+                                setPolicyError(null);
+                            }}
+                            variant="brandDarkBlue"
+                        >
+                            Согласен
+                        </Button>
+                        <Button
+                            type="button"
+                            onClick={() => {
+                                setPolicyAgreed(false);
+                                setShowPolicyDialog(false);
+                            }}
+                            variant="outline"
+                        >
+                            Не согласен
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </AuthLayout>
     );
 }

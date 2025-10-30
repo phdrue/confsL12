@@ -30,6 +30,7 @@
 </head>
 
 <body class="prefe font-sans antialiased">
+    @include('cookie-consent::index')
     @inertia
     <div class="gtranslate_wrapper"></div>
 </body>

@@ -37,8 +37,8 @@ Route::get('contacts', [ClientController::class, 'contacts'])
 Route::get('subscribe', [ClientController::class, 'subscribe'])
     ->name('subscribe');
 
-Route::get('policy', fn() => Storage::download('policy.pdf'))
-    ->name('download.policy');
+// Route::get('policy', fn() => Storage::download('policy.pdf'))
+//     ->name('download.policy');
 
 // Route::get('test', function () {
 //     $users = User::whereDoesntHave('responsibilities', function (Builder $query) {

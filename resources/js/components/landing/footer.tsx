@@ -23,7 +23,7 @@ export default function Footer() {
                     <p className="text-xs">© 2025 КГМУ</p>
                     <div className="flex gap-8">
                         {/* <Link className="text-xs underline" href="#">Пользовательское соглашение</Link> */}
-                        <a className="text-xs underline" href={route('download.policy')}>Политика конфиденциальности</a>
+                        <a className="text-xs underline" href="https://kurskmed.com/adm_files/politic_personal_data.pdf/" target="_blank">Политика конфиденциальности</a>
                     </div>
                 </div>
             </div>
