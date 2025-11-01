@@ -40,6 +40,22 @@ Route::get('subscribe', [ClientController::class, 'subscribe'])
 // Route::get('policy', fn() => Storage::download('policy.pdf'))
 //     ->name('download.policy');
 
+Route::get('sogl1', function() {
+    $file = Storage::get('sogl1.pdf');
+    $mimeType = Storage::mimeType('sogl1.pdf');
+    return response($file, 200)
+        ->header('Content-Type', $mimeType ?: 'application/pdf')
+        ->header('Content-Disposition', 'inline; filename="sogl1.pdf"');
+})->name('download.sogl1');
+
+Route::get('sogl2', function() {
+    $file = Storage::get('sogl2.pdf');
+    $mimeType = Storage::mimeType('sogl2.pdf');
+    return response($file, 200)
+        ->header('Content-Type', $mimeType ?: 'application/pdf')
+        ->header('Content-Disposition', 'inline; filename="sogl2.pdf"');
+})->name('download.sogl2');
+
 // Route::get('test', function () {
 //     $users = User::whereDoesntHave('responsibilities', function (Builder $query) {
 //         $query->where('conference_id', 1);
