@@ -1,18 +1,14 @@
-import { Head, useForm } from '@inertiajs/react';
-import { CircleX, LoaderCircle, Plus, Trash2, WandSparkles } from 'lucide-react';
-import { FormEventHandler, useState, ChangeEvent } from 'react';
-import { Author, Conference, ConferenceType, ReportType } from '@/types/conferences';
+import { CircleX, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { Conference } from '@/types/conferences';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useToast } from "@/hooks/use-toast"
-
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from "@/components/ui/textarea"
 import AuthorsFormPartial from './authors';
+import ScienceGuidesFormPartial from './science-guides';
 import { Country, Thesis } from '@/types/other';
+import { Label } from '@/components/ui/label';
 
 export default function ThesisParticipationForm({
     thesises,
@@ -31,6 +27,7 @@ export default function ThesisParticipationForm({
     const [text, setText] = useState('');
     const [literature, setLiterature] = useState('');
     const [authors, setAuthors] = useState([]);
+    const [scienceGuides, setScienceGuides] = useState<Array<string>>([]);
 
     const [showForm, setShowForm] = useState(false);
 
@@ -40,10 +37,11 @@ export default function ThesisParticipationForm({
         setText('')
         setLiterature('')
         setAuthors([])
+        setScienceGuides([])
     }
 
     function addToContent(): void {
-        setData('thesises', [...thesises, { topic, text, literature, authors }]);
+        setData('thesises', [...thesises, { topic, text, literature, authors, science_guides: scienceGuides }]);
         hideAndResetForm();
     }
 
@@ -97,6 +95,9 @@ export default function ThesisParticipationForm({
                                     <div>
                                         <AuthorsFormPartial countries={countries} setData={setAuthors} authors={authors} errors={errors} />
                                         <InputError message={errors.authors} className="mt-2" />
+                                    </div>
+                                    <div>
+                                        <ScienceGuidesFormPartial scienceGuides={scienceGuides} setData={setScienceGuides} error={errors.science_guides} />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="topic">Тема тезисов</Label>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\ConferenceStateEnum;
 use App\Http\Requests\ConferenceParticipateRequest;
 use App\Http\Requests\CreateDocumentRequest;
-use App\Http\Requests\SubmitDocumentRequest;
 use App\Models\Conference;
 use App\Models\ConferenceUser;
 use App\Models\Country;
@@ -112,6 +111,7 @@ class ClientController extends Controller
                         'report_type_id' => $report['report_type_id'],
                         'topic' => $report['topic'],
                         'authors' => $report['authors'],
+                        'science_guides' => $report['science_guides'] ?? [],
                     ]);
                 });
             }
@@ -124,6 +124,7 @@ class ClientController extends Controller
                         'text' => $thesis['text'],
                         'literature' => $thesis['literature'],
                         'authors' => $thesis['authors'],
+                        'science_guides' => $thesis['science_guides'] ?? [],
                     ]);
                 });
             }
@@ -142,7 +143,8 @@ class ClientController extends Controller
                     'topic',
                     'text',
                     'literature',
-                    'authors'
+                    'authors',
+                    'science_guides',
                 ]),
             ]);
 

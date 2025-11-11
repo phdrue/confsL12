@@ -1,9 +1,8 @@
-import { CircleX, LoaderCircle, Plus, Trash2, WandSparkles } from 'lucide-react';
-import { FormEventHandler, useState, ChangeEvent } from 'react';
+import { CircleX, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import InputError from "@/components/input-error";
 import { Textarea } from "@/components/ui/textarea"
 import {
     Select,
@@ -15,9 +14,10 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import AuthorsFormPartial from './authors';
+import ScienceGuidesFormPartial from './science-guides';
 import { Country, Report } from '@/types/other';
 import { Conference, ReportType } from "@/types/conferences";
-import InputError from "@/components/input-error";
+import { Label } from '@/components/ui/label';
 
 export default function ReportParticipationForm({
     reports,
@@ -37,6 +37,7 @@ export default function ReportParticipationForm({
     const [topic, setTopic] = useState('');
     const [reportTypeId, setReportTypeId] = useState('');
     const [authors, setAuthors] = useState([]);
+    const [scienceGuides, setScienceGuides] = useState<Array<string>>([]);
 
     const [showForm, setShowForm] = useState(false);
 
@@ -45,10 +46,11 @@ export default function ReportParticipationForm({
         setTopic('')
         setReportTypeId('')
         setAuthors([])
+        setScienceGuides([])
     }
 
     function addToContent(): void {
-        setData('reports', [...reports, { topic, report_type_id: reportTypeId, authors }]);
+        setData('reports', [...reports, { topic, report_type_id: reportTypeId, authors, science_guides: scienceGuides }]);
         hideAndResetForm();
     }
 
@@ -102,6 +104,9 @@ export default function ReportParticipationForm({
                                     <div>
                                         <AuthorsFormPartial countries={countries} setData={setAuthors} authors={authors} errors={errors} />
                                         <InputError message={errors.authors} className="mt-2" />
+                                    </div>
+                                    <div>
+                                        <ScienceGuidesFormPartial scienceGuides={scienceGuides} setData={setScienceGuides} error={errors.science_guides} />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="report_type_id">Вид доклада</Label>

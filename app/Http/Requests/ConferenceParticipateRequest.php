@@ -4,9 +4,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Gate;
 
+/**
+ * @method \App\Models\Conference|null route($name = null, $parameters = [])
+ */
 class ConferenceParticipateRequest extends FormRequest
 {
     /**
@@ -14,7 +16,13 @@ class ConferenceParticipateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Gate::allows('can-participate', $this->route('conference'));
+        $conference = $this->route('conference');
+
+        if (! $conference) {
+            return false;
+        }
+
+        return Gate::allows('can-participate', $conference);
     }
 
     protected function failedAuthorization()
@@ -31,12 +39,17 @@ class ConferenceParticipateRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var \App\Models\Conference|null $conference */
         $conference = $this->route('conference');
+
+        if (! $conference) {
+            return [];
+        }
 
         $rules = [];
         if ($conference->allow_thesis) {
             $rules['thesises'] = 'nullable|array';
-            $rules['thesises.*'] = 'required|array:topic,text,literature,authors';
+            $rules['thesises.*'] = 'required|array:topic,text,literature,authors,science_guides';
             $rules['thesises.*.topic'] = 'required|string|max:2000';
             $rules['thesises.*.text'] = 'required_if:type_id,2|string|max:23000';
             $rules['thesises.*.literature'] = 'required_if:type_id,2|string|max:23000';
@@ -46,11 +59,13 @@ class ConferenceParticipateRequest extends FormRequest
             $rules['thesises.*.authors.*.organization'] = 'required|string|max:500';
             $rules['thesises.*.authors.*.city'] = 'required|string|max:500';
             $rules['thesises.*.authors.*.country_id'] = 'required|numeric|exists:countries,id';
+            $rules['thesises.*.science_guides'] = 'nullable|array';
+            $rules['thesises.*.science_guides.*'] = 'required|string|max:500';
         }
 
         if ($conference->allow_report) {
             $rules['reports'] = 'nullable|array';
-            $rules['reports.*'] = 'required|array:topic,report_type_id,authors';
+            $rules['reports.*'] = 'required|array:topic,report_type_id,authors,science_guides';
             $rules['reports.*.topic'] = 'required|string|max:2000';
             $rules['reports.*.report_type_id'] = 'required|numeric|exists:report_types,id';
             $rules['reports.*.authors'] = 'required|array';
@@ -59,32 +74,10 @@ class ConferenceParticipateRequest extends FormRequest
             $rules['reports.*.authors.*.organization'] = 'required|string|max:500';
             $rules['reports.*.authors.*.city'] = 'required|string|max:500';
             $rules['reports.*.authors.*.country_id'] = 'required|numeric|exists:countries,id';
+            $rules['reports.*.science_guides'] = 'nullable|array';
+            $rules['reports.*.science_guides.*'] = 'required|string|max:500';
         }
 
         return $rules;
     }
-
-    // [
-    //     'reports' => 'required|array',
-    //     'thesises' => 'required|array',
-    //     'reports.*' => 'required|array:topic,report_type_id,authors',
-    //     'reports.*.topic' => 'required|string|max:2000',
-    //     'reports.*.report_type_id' => 'required|numeric|exists:report_types,id',
-    //     'reports.*.authors' => 'required|array',
-    //     'reports.*.authors.*' => 'required|array:name,organization,city,country_id',
-    //     'reports.*.authors.*.name' => 'required|string|max:500',
-    //     'reports.*.authors.*.organization' => 'required|string|max:500',
-    //     'reports.*.authors.*.city' => 'required|string|max:500',
-    //     'reports.*.authors.*.country_id' => 'required|numeric|exists:countries,id',
-    //     'thesises.*' => 'required|array:topic,text,literature,authors',
-    //     'thesises.*.topic' => 'required|string|max:2000',
-    //     'thesises.*.text' => 'required_if:type_id,2|string|max:23000',
-    //     'thesises.*.literature' => 'required_if:type_id,2|string|max:23000',
-    //     'thesises.*.authors' => 'required|array',
-    //     'thesises.*.authors.*' => 'required|array:name,organization,city,country_id',
-    //     'thesises.*.authors.*.name' => 'required|string|max:500',
-    //     'thesises.*.authors.*.organization' => 'required|string|max:500',
-    //     'thesises.*.authors.*.city' => 'required|string|max:500',
-    //     'thesises.*.authors.*.country_id' => 'required|numeric|exists:countries,id',
-    // ];
 }

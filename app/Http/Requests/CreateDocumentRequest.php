@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * @method \App\Models\Conference|null route($name = null, $parameters = [])
+ * @method mixed input(string $key = null, $default = null)
+ */
 class CreateDocumentRequest extends FormRequest
 {
     /**
@@ -13,13 +17,20 @@ class CreateDocumentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Gate::allows('can-submit-document', [$this->route('conference'), $this->type_id]);
+        $conference = $this->route('conference');
+        $typeId = (int) $this->input('type_id');
+
+        if (! $conference) {
+            return false;
+        }
+
+        return Gate::allows('can-submit-document', [$conference, $typeId]);
     }
 
     protected function failedAuthorization()
     {
         throw ValidationException::withMessages([
-            'authorization' => 'You are not authorized to update this post.'
+            'authorization' => 'Вы не авторизованы для отправки документа.'
         ]);
     }
 
@@ -43,21 +54,8 @@ class CreateDocumentRequest extends FormRequest
             'authors.*.organization' => 'required|string|max:500',
             'authors.*.city' => 'required|string|max:500',
             'authors.*.country_id' => 'required|numeric|exists:countries,id',
+            'science_guides' => 'nullable|array',
+            'science_guides.*' => 'required|string|max:500',
         ];
-        // полное имя заявителя
-        // тема
-
-        //--доклад 1
-        // формат выступления с докладом
-
-        //--тезисы 2
-        // полный текст 23к символов
-        // список лит 23к символов
-
-        //--докладчик
-        // фамилия и инициалы
-        // учреждение или организация
-        // город
-        // страна
     }
 }

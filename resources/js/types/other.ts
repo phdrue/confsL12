@@ -36,12 +36,14 @@ export type Title = {
 export interface Report {
     topic: string,
     report_type_id: string,
-    authors: Array<any>
+    authors: Array<any>,
+    science_guides: Array<string>
 }
 
 export interface Thesis {
     topic: string,
     text: string,
     literature: string,
-    authors: Array<any>
+    authors: Array<any>,
+    science_guides: Array<string>
 }

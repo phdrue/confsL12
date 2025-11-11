@@ -43,7 +43,7 @@ export default function Show({
                         <ShowConference conference={conference} blocks={blocks} />
                     </div>
 
-                    {conference.state_id == 2 && (
+                    {conference.state_id == 3 && (
                         <div className="relative flex w-full flex-col items-center py-12 lg:px-16">
                             {!auth.user && (
                                 <div className="absolute inset-0 flex items-center justify-center gap-3 font-semibold backdrop-blur-lg">

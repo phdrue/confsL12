@@ -16,6 +16,7 @@ class Document extends Model
     {
         return [
             'authors' => 'array',
+            'science_guides' => 'array',
         ];
     }
 

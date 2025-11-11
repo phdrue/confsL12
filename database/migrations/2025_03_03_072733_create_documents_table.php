@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('text', 23000)->nullable();
             $table->text('literature', 23000)->nullable();
             $table->json('authors')->nullable();
+            $table->json('science_guides')->nullable();
             $table->timestamps();
         });
     }

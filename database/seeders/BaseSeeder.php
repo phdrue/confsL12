@@ -214,8 +214,8 @@ class BaseSeeder extends Seeder
 
         $user = User::factory()->create([
             // 'name' => 'Test User',
-            // 'email' => 'a@a.com',
-            'email' => 'goncharovas@kursksmu.net',
+            'email' => 'a@a.com',
+            // 'email' => 'goncharovas@kursksmu.net',
             'first_name' => 'Алексей',
             'last_name' => 'Гончаров',
             'second_name' => 'Сергеевич',

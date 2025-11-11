@@ -120,7 +120,7 @@ class ProposalController extends Controller
             // Create conference
             $conference = Conference::create([
                 'type_id' => $typeId,
-                'state_id' => ConferenceStateEnum::DRAFT->value,
+                'state_id' => ConferenceStateEnum::PLANNED->value,
                 'front_page' => false,
                 'name' => $payload['name'] ?? $payload['shortName'] ?? 'Новая конференция',
                 'description' => $payload['topics'] ?? 'Описание конференции',
