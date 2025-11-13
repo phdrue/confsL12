@@ -1,9 +1,7 @@
-import { Conference, ConferenceState, ConferenceType, Proposal } from "@/types/conferences"
 import { DataTableFilter } from "@/types/other"
-import { Star, ArrowUpDown, LoaderCircle } from "lucide-react"
+import { LoaderCircle } from "lucide-react"
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@/components/ui/data-table"
-import { ConferenceTypeBadge, ConferenceStateBadge } from "@/components/conferences/utils"
 import { MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,11 +9,9 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Link, useForm } from "@inertiajs/react"
-import { parseDateString } from "@/parse-date-string"
+import { useForm } from "@inertiajs/react"
 import { User } from "@/types"
 import { cn } from "@/lib/utils"
 import { Badge } from "../ui/badge"
@@ -44,6 +40,23 @@ export default function UsersAdminDataTable({
         })
     }
 
+    const filters: Array<DataTableFilter> = [
+        {
+            name: 'email',
+            type: 'text',
+            data: {
+                placeholder: 'Фильтр по email...',
+            },
+        },
+        {
+            name: 'fullName',
+            type: 'text',
+            data: {
+                placeholder: 'Фильтр по имени...',
+            },
+        },
+    ]
+
     const columns: ColumnDef<User>[] = [
         {
             accessorKey: "id",
@@ -52,6 +65,7 @@ export default function UsersAdminDataTable({
         {
             accessorKey: "email",
             header: "email",
+            filterFn: 'includesString',
             cell: ({ row }) => {
                 return (
                     <div className={cn({ 'text-amber-500': row.original.email.includes('@kursksmu.net') })}>
@@ -61,7 +75,10 @@ export default function UsersAdminDataTable({
             }
         },
         {
+            id: "fullName",
+            accessorFn: (row) => `${row.last_name ?? ""} ${row.first_name ?? ""} ${row.second_name ?? ""}`.split(" ").filter(Boolean).join(" "),
             header: "ФИО",
+            filterFn: 'includesString',
             cell: ({ row }) => {
                 return (
                     <>
@@ -109,5 +126,5 @@ export default function UsersAdminDataTable({
         },
     ]
 
-    return <DataTable columns={columns} data={users} />
+    return <DataTable columns={columns} data={users} filters={filters} />
 }

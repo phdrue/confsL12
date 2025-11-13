@@ -1,7 +1,31 @@
-export function parseDateString(dateString: string): Date {
-    // Split the date string by the dot separator
-    const [day, month, year] = dateString.split(".")
+export function parseDateString(value: string | Date | null | undefined): Date {
+    if (!value) {
+        return new Date(0)
+    }
 
-    // Create a new Date object (months are 0-indexed in JavaScript)
-    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+    if (value instanceof Date) {
+        return value
+    }
+
+    const dateString = String(value).trim()
+
+    if (!dateString) {
+        return new Date(0)
+    }
+
+    const dotParts = dateString.split(".")
+    if (dotParts.length === 3) {
+        const [day, month, year] = dotParts.map((part) => parseInt(part, 10))
+
+        if (!Number.isNaN(day) && !Number.isNaN(month) && !Number.isNaN(year)) {
+            return new Date(year, month - 1, day)
+        }
+    }
+
+    const timestamp = Date.parse(dateString)
+    if (!Number.isNaN(timestamp)) {
+        return new Date(timestamp)
+    }
+
+    return new Date(0)
 }

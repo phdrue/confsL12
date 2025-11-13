@@ -1,7 +1,7 @@
-import { Conference, ConferenceState, ConferenceType, Proposal } from "@/types/conferences"
+import { Proposal } from "@/types/conferences"
 import { DataTableFilter } from "@/types/other"
 import { Auth } from "@/types"
-import { Star, ArrowUpDown, Eye, Edit, X, CheckCircle, ExternalLink } from "lucide-react"
+import { ArrowUpDown, X, CheckCircle, ExternalLink } from "lucide-react"
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@/components/ui/data-table"
 import { ConferenceTypeBadge, ConferenceStateBadge } from "@/components/conferences/utils"
@@ -301,8 +301,31 @@ export default function ProposalsAdminDataTable({
 }: {
     proposals: Array<Proposal>,
 }) {
-    const { auth } = usePage().props as { auth: Auth };
+    const { auth } = usePage<{ auth: Auth }>().props;
     const isAdmin = auth?.roles?.includes('Администратор') || false;
+
+    const filters: Array<DataTableFilter> = [
+        {
+            name: 'shortName',
+            type: 'text',
+            data: {
+                placeholder: 'Фильтр по названию...',
+            },
+        },
+        {
+            name: 'status',
+            type: 'select',
+            data: {
+                label: 'Статус',
+                placeholder: 'Фильтр статуса',
+                options: [
+                    { id: 'approved', name: 'Одобрено' },
+                    { id: 'denied', name: 'Отклонено' },
+                    { id: 'pending', name: 'Ожидает' },
+                ],
+            },
+        },
+    ]
 
     const columns: ColumnDef<Proposal>[] = [
         {
@@ -317,13 +340,32 @@ export default function ProposalsAdminDataTable({
             }
         },
         {
+            id: "shortName",
+            accessorFn: (row) => row.payload.shortName,
             header: "Краткое название",
             cell: ({ row }) => {
                 return <div className="flex items-center gap-2 font-semibold">{row.original.payload.shortName}</div>
             }
         },
         {
-            header: "Дата проведения",
+            id: "date",
+            accessorFn: (row) => row.payload.date,
+            sortingFn: (rowA, rowB, columnId) => {
+                const dateA = parseDateString(rowA.getValue(columnId))
+                const dateB = parseDateString(rowB.getValue(columnId))
+                return dateA.getTime() - dateB.getTime()
+            },
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Дата проведения
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                )
+            },
             cell: ({ row }) => {
                 return <div className="flex items-center gap-2 font-semibold">{new Date(row.original.payload.date).toLocaleDateString()}</div>
             }
@@ -339,17 +381,30 @@ export default function ProposalsAdminDataTable({
             }
         },
         {
+            id: "status",
+            accessorFn: (row) => {
+                if (row.conference_id) {
+                    return 'approved'
+                }
+
+                if (row.denied) {
+                    return 'denied'
+                }
+
+                return 'pending'
+            },
+            filterFn: 'equalsString',
             header: "Статус",
             cell: ({ row }) => {
-                const proposal = row.original;
-                if (proposal.conference_id) {
+                const status = row.getValue("status") as string;
+                if (status === 'approved') {
                     return (
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             <CheckCircle className="w-3 h-3 mr-1" />
                             Одобрено
                         </span>
                     );
-                } else if (proposal.denied) {
+                } else if (status === 'denied') {
                     return (
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                             <X className="w-3 h-3 mr-1" />
@@ -425,5 +480,5 @@ export default function ProposalsAdminDataTable({
         },
     ]
 
-    return <DataTable columns={columns} data={proposals} />
+    return <DataTable columns={columns} data={proposals} filters={filters} />
 }

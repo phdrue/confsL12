@@ -6,7 +6,7 @@ export type DataTableSelectFilter = {
     data: {
         label: string
         placeholder: string
-        options: Array<{ id: number; name: string }>
+        options: Array<{ id: string | number; name: string }>
     }
 }
 
