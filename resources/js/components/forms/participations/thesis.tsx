@@ -128,7 +128,7 @@ export default function ThesisParticipationForm({
                                         <InputError message={errors.text} className="mt-2" />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="literature">Список литературы {literature.length} / 23000</Label>
+                                        <Label htmlFor="literature">Библиографический список {literature.length} / 23000</Label>
                                         <Textarea
                                             id="literature"
                                             maxLength={23000}
@@ -137,6 +137,7 @@ export default function ThesisParticipationForm({
                                             className="w-full"
                                             autoComplete="literature"
                                             required
+                                            placeholder="Количество ссылок должно быть не менее 3, но не более 20. Вставляемый перечень ссылок просьба НЕ ОБОЗНАЧАТЬ заголовком типа 'Список литературы', 'Литература' и тому подобным - вставлять необходимо только ссылки."
                                             onChange={(e) => setLiterature(e.target.value)}
                                         />
                                         <InputError message={errors.literature} className="mt-2" />

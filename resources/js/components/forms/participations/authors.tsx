@@ -118,13 +118,14 @@ export default function AuthorsFormPartial({
                                 </Button>
                                 <div className="grid gap-6">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="name">ФИО автора</Label>
+                                        <Label htmlFor="name">ФИО автора (Полностью)</Label>
                                         <Input
                                             id="name"
                                             type="text"
                                             required
                                             tabIndex={1}
                                             value={name}
+                                            placeholder="Иванов Иван Иванович"
                                             onChange={(e) => setName(e.target.value)}
                                         />
                                         <InputError message={errors.name} />

@@ -22,7 +22,8 @@ class ConferenceParticipateRequest extends FormRequest
             return false;
         }
 
-        return Gate::allows('can-participate', $conference);
+        // Allow if user can participate (new participation) or can manage documents (existing participation)
+        return Gate::allows('can-participate', $conference) || Gate::allows('can-manage-documents', $conference);
     }
 
     protected function failedAuthorization()

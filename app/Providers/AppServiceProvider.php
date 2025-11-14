@@ -58,9 +58,17 @@ class AppServiceProvider extends ServiceProvider
     private function participationGates(): void
     {
         Gate::define('can-participate', function ($user, $conference) {
-            $doesNotParticipate = ! $user->conferences()->where('conference_id', $conference->id)->exists();
+            // Allow participation if conference is active
+            // User can participate once, but can manage documents after participation
             $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
-            return $doesNotParticipate && $conferenceIsActive;
+            return $conferenceIsActive;
+        });
+
+        Gate::define('can-manage-documents', function ($user, $conference) {
+            // User can manage documents if they participate and conference is active
+            $participates = $user->conferences()->where('conference_id', $conference->id)->exists();
+            $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
+            return $participates && $conferenceIsActive;
         });
     }
 

@@ -34,6 +34,7 @@ export type Title = {
 }
 
 export interface Report {
+    id?: number,
     topic: string,
     report_type_id: string,
     authors: Array<any>,
@@ -41,6 +42,7 @@ export interface Report {
 }
 
 export interface Thesis {
+    id?: number,
     topic: string,
     text: string,
     literature: string,

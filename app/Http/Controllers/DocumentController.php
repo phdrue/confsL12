@@ -95,18 +95,23 @@ class DocumentController extends Controller
         $documents->each(function (Document $document) use (&$replacements, $countries) {
             $authors = collect($document->authors);
             $authorsString = '';
+            $authorsFullString = '';
 
-            $authors->each(function (array $author) use (&$authorsString, $countries) {
-                $authorsString .= $author['name'] . ' ' . $author['organization'] . ', ' . $author['city'] . ' ' . $countries[$author['country_id']] . '; ';
+            $authors->each(function (array $author) use (&$authorsString, &$authorsFullString, $countries) {
+                $authorsString .= $author['name'] . ', ';
+                $authorsFullString .= $author['name'] . ' ' . $author['organization'] . ', ' . $author['city'] . ' ' . $countries[$author['country_id']] . '; ';
             });
 
             $replacements[] = [
                 'topic' => $document->topic,
                 'authors' => $authorsString,
+                'authorsFull' => $authorsFullString,
                 'text' => $document->text,
                 'literature' => $document->literature,
             ];
         });
+
+        $replacements = collect($replacements)->sortBy('authors')->toArray();
 
         $templateProcessor->cloneBlock('thesisBlock', 0, true, false, $replacements);
 
@@ -126,17 +131,22 @@ class DocumentController extends Controller
         $documents->each(function (Document $document) use (&$replacements, $countries) {
             $authors = collect($document->authors);
             $authorsString = '';
+            $authorsFullString = '';
 
-            $authors->each(function (array $author) use (&$authorsString, $countries) {
-                $authorsString .= $author['name'] . ' ' . $author['organization'] . ', ' . $author['city'] . ' ' . $countries[$author['country_id']] . '; ';
+            $authors->each(function (array $author) use (&$authorsString, &$authorsFullString, $countries) {
+                $authorsString .= $author['name'] . ', ';
+                $authorsFullString .= $author['name'] . ' ' . $author['organization'] . ', ' . $author['city'] . ' ' . $countries[$author['country_id']] . '; ';
             });
 
             $replacements[] = [
                 'topic' => $document->topic,
                 'authors' => $authorsString,
+                'authorsFull' => $authorsFullString,
                 'type' => $document->reportType->name
             ];
         });
+
+        $replacements = collect($replacements)->sortBy('authors')->toArray();
 
         $templateProcessor->cloneBlock('reportBlock', 0, true, false, $replacements);
 

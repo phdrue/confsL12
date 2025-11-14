@@ -84,49 +84,131 @@ class ClientController extends Controller
             abort(404, 'Мероприятие не найдено');
         }
 
+        // Get existing participation if user is authenticated
+        $participation = null;
+        $existingDocuments = [
+            'reports' => [],
+            'thesises' => []
+        ];
+
+        if (Auth::check()) {
+            $participation = ConferenceUser::where('conference_id', $conference->id)
+                ->where('user_id', Auth::id())
+                ->with(['documents' => function ($query) {
+                    $query->with('reportType');
+                }])
+                ->first();
+
+            if ($participation) {
+                $existingDocuments['reports'] = $participation->documents()
+                    ->where('type_id', 1)
+                    ->get()
+                    ->map(function ($doc) {
+                        return [
+                            'id' => $doc->id,
+                            'topic' => $doc->topic,
+                            'report_type_id' => $doc->report_type_id,
+                            'authors' => $doc->authors,
+                            'science_guides' => $doc->science_guides ?? [],
+                        ];
+                    })
+                    ->toArray();
+
+                $existingDocuments['thesises'] = $participation->documents()
+                    ->where('type_id', 2)
+                    ->get()
+                    ->map(function ($doc) {
+                        return [
+                            'id' => $doc->id,
+                            'topic' => $doc->topic,
+                            'text' => $doc->text,
+                            'literature' => $doc->literature,
+                            'authors' => $doc->authors,
+                            'science_guides' => $doc->science_guides ?? [],
+                        ];
+                    })
+                    ->toArray();
+            }
+        }
+
         return Inertia::render('client/conferences/show', [
             'conference' => $conference,
             'blocks' => $conference->blocks()->orderBy('position')->get(),
             'countries' => Country::select('id', 'name')->get(),
             'reportTypes' => ReportType::select('id', 'name')->get(),
+            'participation' => $participation ? [
+                'id' => $participation->id,
+                'confirmed' => $participation->confirmed,
+            ] : null,
+            'existingDocuments' => $existingDocuments,
         ]);
     }
 
     public function participate(ConferenceParticipateRequest $request, Conference $conference)
     {
-        // dd($request->validated());
         DB::transaction(function () use ($request, $conference) {
-            $id = ConferenceUser::create([
-                'conference_id' => $conference->id,
-                'user_id' => Auth::id(),
-            ])->id;
+            // Check if user already participates
+            $participation = ConferenceUser::where('conference_id', $conference->id)
+                ->where('user_id', Auth::id())
+                ->first();
 
-            // dd($request->validated('reports'));
-
-            if ($request->validated('reports')) {
-                collect($request->validated('reports'))->each(function ($report) use ($id) {
-                    Document::create([
-                        'conference_user_id' => $id,
-                        'type_id' => 1,
-                        'report_type_id' => $report['report_type_id'],
-                        'topic' => $report['topic'],
-                        'authors' => $report['authors'],
-                        'science_guides' => $report['science_guides'] ?? [],
-                    ]);
-                });
+            // If no participation exists, create one
+            if (!$participation) {
+                $participation = ConferenceUser::create([
+                    'conference_id' => $conference->id,
+                    'user_id' => Auth::id(),
+                ]);
             }
-            if ($request->validated('thesises')) {
-                collect($request->validated('thesises'))->each(function ($thesis) use ($id) {
-                    Document::create([
-                        'conference_user_id' => $id,
-                        'type_id' => 2,
-                        'topic' => $thesis['topic'],
-                        'text' => $thesis['text'],
-                        'literature' => $thesis['literature'],
-                        'authors' => $thesis['authors'],
-                        'science_guides' => $thesis['science_guides'] ?? [],
-                    ]);
-                });
+
+            $participationId = $participation->id;
+
+            // Handle reports - replace all existing reports with new ones
+            // Only process if reports are allowed
+            if ($conference->allow_report) {
+                // Delete existing reports
+                Document::where('conference_user_id', $participationId)
+                    ->where('type_id', 1)
+                    ->delete();
+
+                // Create new reports if any are provided
+                $reports = $request->validated('reports');
+                if ($reports && !empty($reports)) {
+                    collect($reports)->each(function ($report) use ($participationId) {
+                        Document::create([
+                            'conference_user_id' => $participationId,
+                            'type_id' => 1,
+                            'report_type_id' => $report['report_type_id'],
+                            'topic' => $report['topic'],
+                            'authors' => $report['authors'],
+                            'science_guides' => $report['science_guides'] ?? [],
+                        ]);
+                    });
+                }
+            }
+
+            // Handle thesises - replace all existing thesises with new ones
+            // Only process if thesises are allowed
+            if ($conference->allow_thesis) {
+                // Delete existing thesises
+                Document::where('conference_user_id', $participationId)
+                    ->where('type_id', 2)
+                    ->delete();
+
+                // Create new thesises if any are provided
+                $thesises = $request->validated('thesises');
+                if ($thesises && !empty($thesises)) {
+                    collect($thesises)->each(function ($thesis) use ($participationId) {
+                        Document::create([
+                            'conference_user_id' => $participationId,
+                            'type_id' => 2,
+                            'topic' => $thesis['topic'],
+                            'text' => $thesis['text'],
+                            'literature' => $thesis['literature'],
+                            'authors' => $thesis['authors'],
+                            'science_guides' => $thesis['science_guides'] ?? [],
+                        ]);
+                    });
+                }
             }
         });
 

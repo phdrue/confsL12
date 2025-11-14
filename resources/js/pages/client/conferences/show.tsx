@@ -15,11 +15,15 @@ export default function Show({
     blocks,
     countries,
     reportTypes,
+    participation,
+    existingDocuments,
 }: {
     conference: Conference;
     blocks: Array<ConferenceBlockType>;
     countries: Array<Country>;
     reportTypes: Array<ReportType>;
+    participation?: { id: number; confirmed: boolean } | null;
+    existingDocuments?: { reports: Array<any>; thesises: Array<any> };
 }) {
     const { auth } = usePage<SharedData>().props;
 
@@ -57,7 +61,13 @@ export default function Show({
                                 </div>
                             )}
                             <div className="flex w-full flex-wrap items-center justify-center gap-3 md:flex-row lg:gap-6">
-                                <ParticipationForm countries={countries} reportTypes={reportTypes} conference={conference} />
+                                <ParticipationForm 
+                                    countries={countries} 
+                                    reportTypes={reportTypes} 
+                                    conference={conference}
+                                    participation={participation}
+                                    existingDocuments={existingDocuments}
+                                />
                             </div>
                         </div>
                     )}
