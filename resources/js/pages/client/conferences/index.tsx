@@ -92,7 +92,6 @@ export default function Index({
         });
     };
 
-
     return (
         <ClientLayout breadcrumbs={breadcrumbs}>
             <Head title="Мероприятия" />

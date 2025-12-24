@@ -34,7 +34,7 @@ export default function Index({
                     <ConferencesUsersChart />
                     <ConferencesActivitiesChart />
                     <div className="md:col-span-2 lg:col-span-3">
-                        <CreateConferenceForm types={types} />
+                        {/* <CreateConferenceForm types={types} /> */}
                         <ConferencesAdminDataTable conferences={conferences} states={states} types={types} />
                     </div>
                 </div>

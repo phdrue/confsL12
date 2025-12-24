@@ -44,12 +44,25 @@ class ClientController extends Controller
         $state = $request->query('state');
         $name = $request->query('name');
         
+        // Only allow states 3 (ACTIVE) and 4 (ARCHIVE) for index route
+        // Block any other state values
+        $allowedStates = [
+            (string) ConferenceStateEnum::ACTIVE->value,
+            (string) ConferenceStateEnum::ARCHIVE->value
+        ];
+        
+        if ($state && !in_array($state, $allowedStates, true)) {
+            // Redirect to index without state parameter if invalid state is provided
+            return redirect()->route('conferences.index');
+        }
+        
         $query = Conference::query();
         
-        if ($state && $state !== '1') {
-            $query->where('state_id', $state);
+        if ($state && in_array($state, $allowedStates, true)) {
+            $query->where('state_id', (int) $state);
         } else {
-            $query->whereIn('state_id', [ConferenceStateEnum::ACTIVE, ConferenceStateEnum::ARCHIVE]);
+            // By default, show only ACTIVE conferences
+            $query->where('state_id', ConferenceStateEnum::ACTIVE);
         }
         
         // Add name filter if provided
@@ -57,7 +70,7 @@ class ClientController extends Controller
             $query->where('name', 'like', '%' . $name . '%');
         }
         
-        $conferences = $query->orderBy('date', 'asc')->paginate(1);
+        $conferences = $query->orderBy('date', 'asc')->paginate(15);
         
         return Inertia::render('client/conferences/index', [
             'conferences' => $conferences,
@@ -67,14 +80,26 @@ class ClientController extends Controller
                 collect([
                     ['id' => ConferenceStateEnum::ACTIVE->value, 'name' => 'Актуальные'],
                     ['id' => ConferenceStateEnum::ARCHIVE->value, 'name' => 'Архив'],
-                    ['id' => ConferenceStateEnum::PLANNED->value, 'name' => 'В плане'],
-                ])->firstWhere('id', $state)['name'] ?? 'Актуальные' : 
+                ])->firstWhere('id', (int) $state)['name'] ?? 'Актуальные' : 
                 'Актуальные',
             'states' => [
                 ['id' => ConferenceStateEnum::ACTIVE->value, 'name' => 'Актуальные'],
                 ['id' => ConferenceStateEnum::ARCHIVE->value, 'name' => 'Архив'],
-                ['id' => ConferenceStateEnum::PLANNED->value, 'name' => 'В плане'],
             ]
+        ]);
+    }
+
+    public function conferencesTable(Request $request)
+    {
+        $query = Conference::query()
+            ->whereIn('state_id', [ConferenceStateEnum::PLANNED, ConferenceStateEnum::ACTIVE])
+            ->with('proposal')
+            ->orderBy('date', 'asc');
+        
+        $conferences = $query->paginate(15);
+        
+        return Inertia::render('client/conferences/table', [
+            'conferences' => $conferences,
         ]);
     }
 

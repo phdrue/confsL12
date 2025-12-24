@@ -28,6 +28,9 @@ Route::get('/', [ClientController::class, 'landing'])
 Route::get('conferences', [ClientController::class, 'conferences'])
     ->name('conferences.index');
 
+Route::get('conferences/plan', [ClientController::class, 'conferencesTable'])
+    ->name('conferences.table');
+
 Route::get('conferences/{conference}', [ClientController::class, 'conference'])
     ->name('conferences.show');
 

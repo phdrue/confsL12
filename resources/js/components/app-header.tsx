@@ -23,7 +23,7 @@ function ConferencesDropdown() {
     const conferenceStates = [
         { id: 3, name: 'Актуальные', url: route('conferences.index', { state: 3 }) },
         { id: 4, name: 'Архив', url: route('conferences.index', { state: 4 }) },
-        { id: 2, name: 'В плане', url: route('conferences.index', { state: 2 }) },
+        { id: 2, name: 'В плане', url: route('conferences.table') },
     ];
 
     const isConferencesPage = page.url.startsWith('/conferences');
@@ -123,7 +123,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                     <Link href={route('conferences.index', { state: 4 })} className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
                                                         Архив
                                                     </Link>
-                                                    <Link href={route('conferences.index', { state: 2 })} className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                                                    <Link href={route('conferences.table')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
                                                         В плане
                                                     </Link>
                                                 </div>
