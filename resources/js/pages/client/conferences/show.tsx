@@ -41,7 +41,7 @@ export default function Show({
     return (
         <ClientLayout breadcrumbs={breadcrumbs}>
             <Head title={conference.name} />
-            <ConferenceLayout heading={conference.name}>
+            <ConferenceLayout heading={conference.name} showHeader={false}>
                 <div className="flex w-full flex-col items-center gap-12">
                     <div className="px-4 sm:px-6 lg:px-16">
                         <ShowConference conference={conference} blocks={blocks} />
