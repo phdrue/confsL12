@@ -91,15 +91,105 @@ class ClientController extends Controller
 
     public function conferencesTable(Request $request)
     {
+        $sortBy = $request->query('sort_by');
+        $sortOrder = $request->query('sort_order', 'asc');
+        $search = $request->query('search');
+        
         $query = Conference::query()
             ->whereIn('state_id', [ConferenceStateEnum::PLANNED, ConferenceStateEnum::ACTIVE])
-            ->with('proposal')
-            ->orderBy('date', 'asc');
+            ->with('proposal');
+        
+        // Join with proposals for sorting and searching
+        $query->leftJoin('proposals', 'conferences.id', '=', 'proposals.conference_id');
+        
+        // Apply search filter
+        if ($search) {
+            $searchTerm = '%' . $search . '%';
+            $dbDriver = config('database.default');
+            
+            if ($dbDriver === 'sqlite') {
+                // SQLite JSON syntax
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->whereRaw("json_extract(proposals.payload, '$.name') LIKE ?", [$searchTerm])
+                      ->orWhereRaw("json_extract(proposals.payload, '$.organization') LIKE ?", [$searchTerm])
+                      ->orWhereRaw("json_extract(proposals.payload, '$.organizationOther') LIKE ?", [$searchTerm])
+                      ->orWhereRaw("json_extract(proposals.payload, '$.topics') LIKE ?", [$searchTerm])
+                      ->orWhereRaw("json_extract(proposals.payload, '$.department') LIKE ?", [$searchTerm]);
+                });
+            } elseif ($dbDriver === 'mysql') {
+                // MySQL/MariaDB JSON syntax
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.name')) LIKE ?", [$searchTerm])
+                      ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.organization')) LIKE ?", [$searchTerm])
+                      ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.organizationOther')) LIKE ?", [$searchTerm])
+                      ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.topics')) LIKE ?", [$searchTerm])
+                      ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.department')) LIKE ?", [$searchTerm]);
+                });
+            } else {
+                // PostgreSQL JSON syntax
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->whereRaw("proposals.payload->>'name' LIKE ?", [$searchTerm])
+                      ->orWhereRaw("proposals.payload->>'organization' LIKE ?", [$searchTerm])
+                      ->orWhereRaw("proposals.payload->>'organizationOther' LIKE ?", [$searchTerm])
+                      ->orWhereRaw("proposals.payload->>'topics' LIKE ?", [$searchTerm])
+                      ->orWhereRaw("proposals.payload->>'department' LIKE ?", [$searchTerm]);
+                });
+            }
+        }
+        
+        // Apply sorting
+        if ($sortBy) {
+            $validSortFields = ['date', 'form', 'bookType'];
+            $validSortOrder = in_array(strtolower($sortOrder), ['asc', 'desc']) ? strtolower($sortOrder) : 'asc';
+            $dbDriver = config('database.default');
+            
+            if (in_array($sortBy, $validSortFields)) {
+                if ($dbDriver === 'sqlite') {
+                    // SQLite JSON syntax
+                    if ($sortBy === 'date') {
+                        $query->orderByRaw("date(json_extract(proposals.payload, '$.date')) " . $validSortOrder);
+                    } else {
+                        $query->orderByRaw("json_extract(proposals.payload, '$.{$sortBy}') " . $validSortOrder);
+                    }
+                } elseif ($dbDriver === 'mysql') {
+                    // MySQL/MariaDB JSON syntax
+                    if ($sortBy === 'date') {
+                        $query->orderByRaw("CAST(JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.date')) AS DATE) " . $validSortOrder);
+                    } else {
+                        $query->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.{$sortBy}')) " . $validSortOrder);
+                    }
+                } else {
+                    // PostgreSQL JSON syntax
+                    if ($sortBy === 'date') {
+                        $query->orderByRaw("CAST(proposals.payload->>'date' AS DATE) " . $validSortOrder);
+                    } else {
+                        $query->orderByRaw("proposals.payload->>'{$sortBy}' " . $validSortOrder);
+                    }
+                }
+            }
+        } else {
+            // Default sorting by date ascending
+            $dbDriver = config('database.default');
+            if ($dbDriver === 'sqlite') {
+                $query->orderByRaw("date(json_extract(proposals.payload, '$.date')) ASC");
+            } elseif ($dbDriver === 'mysql') {
+                $query->orderByRaw("CAST(JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.date')) AS DATE) ASC");
+            } else {
+                $query->orderByRaw("CAST(proposals.payload->>'date' AS DATE) ASC");
+            }
+        }
+        
+        // Select distinct conferences to avoid duplicates from join
+        $query->select('conferences.*');
+        $query->distinct();
         
         $conferences = $query->paginate(15);
         
         return Inertia::render('client/conferences/table', [
             'conferences' => $conferences,
+            'currentSortBy' => $sortBy,
+            'currentSortOrder' => $sortOrder,
+            'currentSearch' => $search,
         ]);
     }
 
