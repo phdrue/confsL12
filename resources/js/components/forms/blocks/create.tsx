@@ -133,18 +133,6 @@ export default function CreateConferenceBlockForm({
                 <div className="w-full mx-auto py-32">
                     <form onSubmit={submit} className="space-y-4">
                         <div className="grid gap-2">
-                            <Label htmlFor="name">Название</Label>
-                            <Input
-                                id="name"
-                                type="text"
-                                required
-                                tabIndex={1}
-                                value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
-                            />
-                            <InputError message={errors.name} />
-                        </div>
-                        <div className="grid gap-2">
                             <Label htmlFor="type_id">Вид</Label>
                             <Select name="type_id" value={data.type_id} onValueChange={handleTypeValueChange}>
                                 <SelectTrigger className="w-full">
@@ -161,6 +149,20 @@ export default function CreateConferenceBlockForm({
                             </Select>
                             <InputError message={errors.type_id} className="mt-2" />
                         </div>
+                        {data.type_id && (
+                            <div className="grid gap-2">
+                                <Label htmlFor="name">Название</Label>
+                                <Input
+                                    id="name"
+                                    type="text"
+                                    required
+                                    tabIndex={1}
+                                    value={data.name}
+                                    onChange={(e) => setData('name', e.target.value)}
+                                />
+                                <InputError message={errors.name} />
+                            </div>
+                        )}
                         {/* main */}
                         <RenderBlockForm imagesBlockData={imagesBlockData} errors={errors} content={data.content} setData={setData} blockTypeId={Number(data.type_id)} />
                         <Button type="submit" className="w-full" tabIndex={4} disabled={processing}>

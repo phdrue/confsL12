@@ -164,6 +164,10 @@ export default function TablePage({
         );
     };
 
+    const handleRowClick = (conference: Conference) => {
+        router.visit(route('conferences.show', conference.id));
+    };
+
     // Table columns for proposal data
     const proposalColumns: ColumnDef<Conference>[] = [
         {
@@ -296,7 +300,11 @@ export default function TablePage({
                     {conferences.data && conferences.data.length > 0 ? (
                         <>
                             <div className="w-full">
-                                <DataTable columns={proposalColumns} data={conferences.data} />
+                                <DataTable 
+                                    columns={proposalColumns} 
+                                    data={conferences.data} 
+                                    onRowClick={handleRowClick}
+                                />
                             </div>
                             {/* Pagination */}
                             {conferences.last_page > 1 && (

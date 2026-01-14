@@ -50,6 +50,15 @@ export default function ThesisParticipationForm({
         setData('thesises', newContent);
     }
 
+    function getMissingFieldsMessage(): string {
+        const missing: string[] = [];
+        if (!topic) missing.push('тему тезисов');
+        if (!text) missing.push('полный текст');
+        if (!literature) missing.push('библиографический список');
+        if (authors.length === 0) missing.push('добавить хотя бы одного автора');
+        return missing.length > 0 ? `Для добавления тезисов необходимо заполнить: ${missing.join(', ')}` : '';
+    }
+
     return (
         <Card>
             <CardHeader className="p-4">
@@ -67,9 +76,9 @@ export default function ThesisParticipationForm({
                                         onClick={() => remove(thesis)}
                                         type="button"
                                         className="shrink-0 hover:text-red-600"
-                                        variant={"outline"}
-                                        size={"iconSmall"}>
-                                        <Trash2 />
+                                        variant={"outline"}>
+                                        <Trash2 className="h-4 w-4" />
+                                        Удалить
                                     </Button>
                                 </div>
                             ))}
@@ -79,17 +88,17 @@ export default function ThesisParticipationForm({
                         {!showForm ? <Button
                             onClick={() => setShowForm(true)}
                             type="button"
-                            variant={"outline"}
-                            size={"iconSmall"}>
-                            <Plus />
+                            variant={"outline"}>
+                            <Plus className="h-4 w-4" />
+                            Добавить тезисы
                         </Button> :
                             <div className="space-y-4">
                                 <Button
                                     onClick={hideAndResetForm}
                                     type="button"
-                                    variant={"outline"}
-                                    size={"iconSmall"}>
-                                    <CircleX />
+                                    variant={"outline"}>
+                                    <CircleX className="h-4 w-4" />
+                                    Отмена
                                 </Button>
                                 <div className="grid gap-6">
                                     <div>
@@ -100,7 +109,7 @@ export default function ThesisParticipationForm({
                                         <ScienceGuidesFormPartial scienceGuides={scienceGuides} setData={setScienceGuides} error={errors.science_guides} />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="topic">Тема тезисов</Label>
+                                        <Label htmlFor="topic">Тема тезисов <span className="text-red-500">*</span></Label>
                                         <Textarea
                                             id="topic"
                                             maxLength={2000}
@@ -114,7 +123,7 @@ export default function ThesisParticipationForm({
                                         <InputError message={errors.topic} className="mt-2" />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="text">Полный текст {text.length} / 23000</Label>
+                                        <Label htmlFor="text">Полный текст {text.length} / 23000 <span className="text-red-500">*</span></Label>
                                         <Textarea
                                             id="text"
                                             maxLength={23000}
@@ -129,7 +138,7 @@ export default function ThesisParticipationForm({
                                         <InputError message={errors.text} className="mt-2" />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="literature">Библиографический список {literature.length} / 23000</Label>
+                                        <Label htmlFor="literature">Библиографический список {literature.length} / 23000 <span className="text-red-500">*</span></Label>
                                         <Textarea
                                             id="literature"
                                             maxLength={23000}
@@ -144,16 +153,22 @@ export default function ThesisParticipationForm({
                                         <InputError message={errors.literature} className="mt-2" />
                                     </div>
                                 </div>
-                                {(topic && text && literature && authors.length > 0) &&
+                                <div className="space-y-2">
                                     <Button
                                         className="text-sm"
                                         onClick={addToContent}
                                         type="button"
                                         variant={"outline"}
+                                        disabled={!topic || !text || !literature || authors.length === 0}
                                     >
                                         Добавить
                                     </Button>
-                                }
+                                    {(!topic || !text || !literature || authors.length === 0) && (
+                                        <p className="text-sm text-muted-foreground">
+                                            {getMissingFieldsMessage()}
+                                        </p>
+                                    )}
+                                </div>
                             </div>}
                         <InputError message={errors.content} className="mt-2" />
                         <InputError message={errors["content.items"]} className="mt-2" />

@@ -62,6 +62,15 @@ export default function AuthorsFormPartial({
         }
     }
 
+    function getMissingFieldsMessage(): string {
+        const missing: string[] = [];
+        if (!name) missing.push('ФИО');
+        if (!organization) missing.push('организацию');
+        if (!city) missing.push('город');
+        if (!countryId) missing.push('страну');
+        return missing.length > 0 ? `Для добавления соавтора необходимо заполнить: ${missing.join(', ')}` : '';
+    }
+
     return (
         <Card>
             <CardHeader className="p-4">
@@ -80,9 +89,9 @@ export default function AuthorsFormPartial({
                                         onClick={() => remove(author)}
                                         type="button"
                                         className="shrink-0 hover:text-red-600"
-                                        variant={"outline"}
-                                        size={"iconSmall"}>
-                                        <Trash2 />
+                                        variant={"outline"}>
+                                        <Trash2 className="h-4 w-4" />
+                                        Удалить
                                     </Button>
                                 </div>
                             ))}
@@ -91,34 +100,38 @@ export default function AuthorsFormPartial({
                     <div>
                         {auth.user.first_name === null ? <p className="italic text-xs text-red-500 mb-2">
                             Заполните данные профиля, чтобы быстро добавлять себя как автора
-                        </p> : <Button
-                            onClick={addUserAsAuthor}
-                            type="button"
-                            variant={"outline"}
-                            size={"iconSmall"}
-                            className="mr-2">
-                            <WandSparkles />
-                        </Button>
-                        }
-
-                        {!showForm ? <Button
-                            onClick={() => setShowForm(true)}
-                            type="button"
-                            variant={"outline"}
-                            size={"iconSmall"}>
-                            <Plus />
-                        </Button> :
+                        </p> : null}
+                        {!showForm ? (
+                            <div className="flex gap-2 flex-wrap">
+                                {auth.user.first_name !== null && (
+                                    <Button
+                                        onClick={addUserAsAuthor}
+                                        type="button"
+                                        variant={"outline"}>
+                                        <WandSparkles className="h-4 w-4" />
+                                        Добавить себя
+                                    </Button>
+                                )}
+                                <Button
+                                    onClick={() => setShowForm(true)}
+                                    type="button"
+                                    variant={"outline"}>
+                                    <Plus className="h-4 w-4" />
+                                    Добавить соавтора
+                                </Button>
+                            </div>
+                        ) :
                             <div className="">
                                 <Button
                                     onClick={hideAndResetForm}
                                     type="button"
-                                    variant={"outline"}
-                                    size={"iconSmall"}>
-                                    <CircleX />
+                                    variant={"outline"}>
+                                    <CircleX className="h-4 w-4" />
+                                    Отмена
                                 </Button>
                                 <div className="grid gap-6">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="name">ФИО автора (Полностью)</Label>
+                                        <Label htmlFor="name">ФИО автора (Полностью) <span className="text-red-500">*</span></Label>
                                         <Input
                                             id="name"
                                             type="text"
@@ -131,7 +144,7 @@ export default function AuthorsFormPartial({
                                         <InputError message={errors.name} />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="organization">Организация</Label>
+                                        <Label htmlFor="organization">Организация <span className="text-red-500">*</span></Label>
                                         <Input
                                             id="organization"
                                             type="text"
@@ -143,7 +156,7 @@ export default function AuthorsFormPartial({
                                         <InputError message={errors.name} />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="city">Город</Label>
+                                        <Label htmlFor="city">Город <span className="text-red-500">*</span></Label>
                                         <Input
                                             id="city"
                                             type="text"
@@ -155,7 +168,7 @@ export default function AuthorsFormPartial({
                                         <InputError message={errors.name} />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="country_id">Страна</Label>
+                                        <Label htmlFor="country_id">Страна <span className="text-red-500">*</span></Label>
                                         <Select name="country_id" value={countryId} onValueChange={(country_id) => setCountryId(country_id)}>
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Выберите страну автора" />
@@ -171,17 +184,22 @@ export default function AuthorsFormPartial({
                                         </Select>
                                         <InputError message={errors.type_id} className="mt-2" />
                                     </div>
-                                    {(name && organization && city && countryId) &&
+                                    <div className="space-y-2">
                                         <Button
                                             className="text-sm"
                                             onClick={addAuthor}
                                             type="button"
                                             variant={"outline"}
-                                        // size={"iconSmall"}
+                                            disabled={!name || !organization || !city || !countryId}
                                         >
                                             Добавить соавтора
                                         </Button>
-                                    }
+                                        {(!name || !organization || !city || !countryId) && (
+                                            <p className="text-sm text-muted-foreground">
+                                                {getMissingFieldsMessage()}
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>}
                         <InputError message={errors.content} className="mt-2" />

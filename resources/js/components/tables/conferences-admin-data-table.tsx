@@ -14,9 +14,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Link } from "@inertiajs/react"
+import { Link, useForm } from "@inertiajs/react"
 import { parseDateString } from "@/parse-date-string"
 import ProposalPreviewDialog from "@/components/proposals/proposal-preview-dialog"
+import { Trash2 } from "lucide-react"
+import { FormEventHandler } from "react"
+import { useToast } from "@/hooks/use-toast"
 
 const columns: ColumnDef<Conference>[] = [
     {
@@ -103,44 +106,79 @@ const columns: ColumnDef<Conference>[] = [
     {
         id: "actions",
         cell: ({ row }) => {
-            const conference = row.original
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Открыть меню</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                        <DropdownMenuLabel>Действия</DropdownMenuLabel>
-                        <DropdownMenuItem asChild>
-                            <Link href={route('adm.conferences.participations', conference.id)}>
-                                Участники
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                            <Link href={route('adm.conferences.responsible', conference.id)}>
-                                Ответственные
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                            <Link href={route('adm.conferences.show', conference.id)}>
-                                Блоки
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                            <Link href={route('adm.conferences.edit', conference.id)}>
-                                Изменить
-                            </Link>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
+            return <ConferenceActionsCell conference={row.original} />
         },
     },
 ]
+
+function ConferenceActionsCell({ conference }: { conference: Conference }) {
+    const { toast } = useToast()
+    const { delete: destroy, processing } = useForm({})
+
+    const handleDelete: FormEventHandler = (e) => {
+        e.preventDefault()
+        if (confirm(`Вы уверены, что хотите удалить конференцию "${conference.name}"? Это действие нельзя отменить.`)) {
+            destroy(route('adm.conferences.destroy', conference.id), {
+                onSuccess: () => {
+                    toast({
+                        variant: "success",
+                        title: "Конференция удалена!",
+                    })
+                },
+                onError: () => {
+                    toast({
+                        variant: "destructive",
+                        title: "Ошибка при удалении конференции",
+                    })
+                }
+            })
+        }
+    }
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                    <span className="sr-only">Открыть меню</span>
+                    <MoreHorizontal className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+                <DropdownMenuLabel>Действия</DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                    <Link href={route('adm.conferences.participations', conference.id)}>
+                        Участники
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href={route('adm.conferences.responsible', conference.id)}>
+                        Ответственные
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                    <Link href={route('adm.conferences.show', conference.id)}>
+                        Блоки
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href={route('adm.conferences.edit', conference.id)}>
+                        Изменить
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                    onClick={handleDelete}
+                    disabled={processing}
+                    className="text-red-600 focus:text-red-600"
+                >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Удалить
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
+}
 
 export default function ConferencesAdminDataTable({
     conferences,

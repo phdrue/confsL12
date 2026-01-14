@@ -59,6 +59,14 @@ export default function ReportParticipationForm({
         setData('reports', newContent);
     }
 
+    function getMissingFieldsMessage(): string {
+        const missing: string[] = [];
+        if (!topic) missing.push('тему доклада');
+        if (!reportTypeId) missing.push('вид доклада');
+        if (authors.length === 0) missing.push('добавить хотя бы одного автора');
+        return missing.length > 0 ? `Для добавления доклада необходимо заполнить: ${missing.join(', ')}` : '';
+    }
+
     return (
         <Card>
             <CardHeader className="p-4">
@@ -76,9 +84,9 @@ export default function ReportParticipationForm({
                                         onClick={() => remove(report)}
                                         type="button"
                                         className="shrink-0 hover:text-red-600"
-                                        variant={"outline"}
-                                        size={"iconSmall"}>
-                                        <Trash2 />
+                                        variant={"outline"}>
+                                        <Trash2 className="h-4 w-4" />
+                                        Удалить
                                     </Button>
                                 </div>
                             ))}
@@ -88,17 +96,17 @@ export default function ReportParticipationForm({
                         {!showForm ? <Button
                             onClick={() => setShowForm(true)}
                             type="button"
-                            variant={"outline"}
-                            size={"iconSmall"}>
-                            <Plus />
+                            variant={"outline"}>
+                            <Plus className="h-4 w-4" />
+                            Добавить доклад
                         </Button> :
                             <div className="space-y-4">
                                 <Button
                                     onClick={hideAndResetForm}
                                     type="button"
-                                    variant={"outline"}
-                                    size={"iconSmall"}>
-                                    <CircleX />
+                                    variant={"outline"}>
+                                    <CircleX className="h-4 w-4" />
+                                    Отмена
                                 </Button>
                                 <div className="grid gap-6">
                                     <div>
@@ -109,7 +117,7 @@ export default function ReportParticipationForm({
                                         <ScienceGuidesFormPartial scienceGuides={scienceGuides} setData={setScienceGuides} error={errors.science_guides} />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="report_type_id">Вид доклада</Label>
+                                        <Label htmlFor="report_type_id">Вид доклада <span className="text-red-500">*</span></Label>
                                         <Select
                                             required={true}
                                             name="report_type_id"
@@ -130,7 +138,7 @@ export default function ReportParticipationForm({
                                         </Select>
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="topic">Тема доклада</Label>
+                                        <Label htmlFor="topic">Тема доклада <span className="text-red-500">*</span></Label>
                                         <Textarea
                                             id="topic"
                                             maxLength={2000}
@@ -143,16 +151,22 @@ export default function ReportParticipationForm({
                                         />
                                     </div>
                                 </div>
-                                {(topic && reportTypeId && authors.length > 0) &&
+                                <div className="space-y-2">
                                     <Button
                                         className="text-sm"
                                         onClick={addToContent}
                                         type="button"
                                         variant={"outline"}
+                                        disabled={!topic || !reportTypeId || authors.length === 0}
                                     >
                                         Добавить
                                     </Button>
-                                }
+                                    {(!topic || !reportTypeId || authors.length === 0) && (
+                                        <p className="text-sm text-muted-foreground">
+                                            {getMissingFieldsMessage()}
+                                        </p>
+                                    )}
+                                </div>
                             </div>}
                         <InputError message={errors.content} className="mt-2" />
                         <InputError message={errors["content.items"]} className="mt-2" />

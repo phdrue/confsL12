@@ -90,7 +90,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // конференции
         Route::resource('conferences', ConferenceController::class)
-            ->only('store');
+            ->only('store', 'destroy');
 
         // предложения - только админ может редактировать
         Route::resource('proposals', ProposalController::class)

@@ -53,9 +53,9 @@ export default function ScienceGuidesFormPartial({
                                         onClick={() => remove(index)}
                                         type="button"
                                         className="shrink-0 hover:text-red-600"
-                                        variant={"outline"}
-                                        size={"iconSmall"}>
-                                        <Trash2 />
+                                        variant={"outline"}>
+                                        <Trash2 className="h-4 w-4" />
+                                        Удалить
                                     </Button>
                                 </div>
                             ))}
@@ -65,20 +65,20 @@ export default function ScienceGuidesFormPartial({
                         {!showForm ? <Button
                             onClick={() => setShowForm(true)}
                             type="button"
-                            variant={"outline"}
-                            size={"iconSmall"}>
-                            <Plus />
+                            variant={"outline"}>
+                            <Plus className="h-4 w-4" />
+                            Добавить руководителя
                         </Button> :
                             <div className="space-y-4">
                                 <Button
                                     onClick={hideAndResetForm}
                                     type="button"
-                                    variant={"outline"}
-                                    size={"iconSmall"}>
-                                    <CircleX />
+                                    variant={"outline"}>
+                                    <CircleX className="h-4 w-4" />
+                                    Отмена
                                 </Button>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="science-guide">Научный руководитель (для обучающихся)</Label>
+                                    <Label htmlFor="science-guide">Научный руководитель (для обучающихся) <span className="text-red-500">*</span></Label>
                                     <Input
                                         id="science-guide"
                                         type="text"
@@ -87,16 +87,22 @@ export default function ScienceGuidesFormPartial({
                                         onChange={(event) => setValue(event.target.value)}
                                     />
                                 </div>
-                                {value.trim() &&
+                                <div className="space-y-2">
                                     <Button
                                         className="text-sm"
                                         onClick={addGuide}
                                         type="button"
                                         variant={"outline"}
+                                        disabled={!value.trim()}
                                     >
                                         Добавить руководителя
                                     </Button>
-                                }
+                                    {!value.trim() && (
+                                        <p className="text-sm text-muted-foreground">
+                                            Для добавления руководителя необходимо указать ФИО научного руководителя
+                                        </p>
+                                    )}
+                                </div>
                             </div>}
                         <InputError message={error} className="mt-2" />
                     </div>

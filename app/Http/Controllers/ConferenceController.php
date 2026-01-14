@@ -19,6 +19,10 @@ use App\Http\Requests\CreateConferenceRequest;
 use App\Http\Requests\UpdateConferenceRequest;
 use App\Http\Requests\ChangeConferenceStateRequest;
 use App\Models\ConferenceUser;
+use App\Models\Document;
+use App\Models\ConferenceBlock;
+use App\Models\Proposal;
+use Illuminate\Support\Facades\DB;
 
 class ConferenceController extends Controller
 {
@@ -170,6 +174,38 @@ class ConferenceController extends Controller
      */
     public function destroy(Conference $conference)
     {
-        //
+        Gate::authorize('is-admin');
+
+        DB::transaction(function () use ($conference) {
+            // Delete all documents associated with conference users
+            $conferenceUserIds = ConferenceUser::where('conference_id', $conference->id)
+                ->pluck('id');
+            
+            Document::whereIn('conference_user_id', $conferenceUserIds)->delete();
+
+            // Delete all conference user pivot records
+            ConferenceUser::where('conference_id', $conference->id)->delete();
+
+            // Delete all responsibilities (pivot table)
+            $conference->responsible()->detach();
+
+            // Delete all conference blocks
+            ConferenceBlock::where('conference_id', $conference->id)->delete();
+
+            // Delete proposal if exists
+            Proposal::where('conference_id', $conference->id)->update([
+                'conference_id' => null,
+            ]);
+
+            // Delete conference image file from storage
+            if ($conference->img_path && Storage::exists($conference->img_path)) {
+                Storage::delete($conference->img_path);
+            }
+
+            // Delete the conference itself
+            $conference->delete();
+        });
+
+        return to_route('adm.conferences.index');
     }
 }
