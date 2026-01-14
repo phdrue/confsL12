@@ -78,7 +78,7 @@ export default function ScienceGuidesFormPartial({
                                     <CircleX />
                                 </Button>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="science-guide">Научный руководитель</Label>
+                                    <Label htmlFor="science-guide">Научный руководитель (для обучающихся)</Label>
                                     <Input
                                         id="science-guide"
                                         type="text"

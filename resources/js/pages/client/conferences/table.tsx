@@ -167,15 +167,6 @@ export default function TablePage({
     // Table columns for proposal data
     const proposalColumns: ColumnDef<Conference>[] = [
         {
-            id: 'index',
-            header: '#',
-            cell: ({ row }) => {
-                // Calculate index based on current page
-                const index = (conferences.current_page - 1) * 15 + row.index + 1;
-                return <div className="text-center font-medium">{index}</div>;
-            },
-        },
-        {
             accessorKey: 'proposal.payload.name',
             header: 'Название',
             cell: ({ row }) => {
@@ -214,7 +205,7 @@ export default function TablePage({
         },
         {
             accessorKey: 'proposal.payload.organization',
-            header: 'Организация',
+            header: 'Организатор',
             cell: ({ row }) => {
                 const proposal = row.original.proposal;
                 if (!proposal?.payload) return '—';
@@ -239,23 +230,7 @@ export default function TablePage({
                 const proposal = row.original.proposal;
                 return proposal?.payload?.bookType || '—';
             },
-        },
-        {
-            accessorKey: 'proposal.payload.topics',
-            header: 'Тематика',
-            cell: ({ row }) => {
-                const proposal = row.original.proposal;
-                return proposal?.payload?.topics || '—';
-            },
-        },
-        {
-            accessorKey: 'proposal.payload.department',
-            header: 'Кафедра',
-            cell: ({ row }) => {
-                const proposal = row.original.proposal;
-                return proposal?.payload?.department || '—';
-            },
-        },
+        }
     ];
 
     return (
