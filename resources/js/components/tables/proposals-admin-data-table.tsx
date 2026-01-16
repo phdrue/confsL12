@@ -136,11 +136,20 @@ function ProposalPreviewDialog({ proposal }: { proposal: Proposal }) {
                     Просмотр
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-4xl max-h-[80vh] overflow-y-auto">
+                <DialogContent className="sm:max-w-4xl max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Предварительный просмотр предложения</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-6">
+                    {proposal.img_path && (
+                        <div className="w-full max-w-md aspect-video bg-gray-100 rounded-md overflow-hidden">
+                            <img 
+                                className="w-full h-full object-cover" 
+                                alt={proposal.payload.shortName}
+                                src={`/storage/${proposal.img_path}`}
+                            />
+                        </div>
+                    )}
                     <div className="grid gap-4">
                         <div>
                             <h3 className="font-semibold text-lg">Основная информация</h3>
@@ -344,7 +353,18 @@ export default function ProposalsAdminDataTable({
             accessorFn: (row) => row.payload.shortName,
             header: "Краткое название",
             cell: ({ row }) => {
-                return <div className="flex items-center gap-2 font-semibold">{row.original.payload.shortName}</div>
+                return (
+                    <div className="flex items-center gap-2">
+                        {row.original.img_path && (
+                            <img 
+                                src={`/storage/${row.original.img_path}`} 
+                                alt={row.original.payload.shortName}
+                                className="w-12 h-12 object-cover rounded-md"
+                            />
+                        )}
+                        <span className="font-semibold">{row.original.payload.shortName}</span>
+                    </div>
+                )
             }
         },
         {

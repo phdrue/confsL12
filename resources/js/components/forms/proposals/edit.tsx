@@ -80,7 +80,7 @@ export default function ProposalEditForm({ proposal, trigger }: ProposalEditForm
     const [selectedAudiences, setSelectedAudiences] = useState<string[]>(proposal.payload.audiences || [])
 
     const { toast } = useToast()
-    const { data, setData, put, processing, errors, reset, transform } = useForm({
+    const { data, setData, post, processing, errors, reset, transform } = useForm({
         name: proposal.payload.name || '',
         shortName: proposal.payload.shortName || '',
         engName: proposal.payload.engName || '',
@@ -106,10 +106,12 @@ export default function ProposalEditForm({ proposal, trigger }: ProposalEditForm
         coverageInPerson: proposal.payload.coverageInPerson || '',
         coverageOnline: proposal.payload.coverageOnline || '',
         coverageProfession: proposal.payload.coverageProfession || '',
+        img: null as File | null,
     });
 
     transform((data) => ({
         ...data,
+        _method: 'put',
         audiences: selectedAudiences,
         amenities: selectedAmenities,
     }))
@@ -134,9 +136,15 @@ export default function ProposalEditForm({ proposal, trigger }: ProposalEditForm
         })
     }
 
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] || null
+        setData('img', file)
+    }
+
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        put(route('adm.proposals.update', proposal.id), {
+        post(route('adm.proposals.update', proposal.id), {
+            forceFormData: true,
             onSuccess: () => {
                 handleClose()
                 toast({
@@ -503,6 +511,32 @@ export default function ProposalEditForm({ proposal, trigger }: ProposalEditForm
                                 </div>
                             ))}
                             <InputError message={errors.amenities} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="img">Изображение (опционально)</Label>
+                            {(proposal.img_path || data.img) && (
+                                <div className="w-full max-w-[300px] aspect-video bg-gray-100 rounded-md overflow-hidden">
+                                    <img 
+                                        className="w-full h-full object-cover" 
+                                        alt="Preview" 
+                                        src={data.img 
+                                            ? URL.createObjectURL(data.img)
+                                            : `/storage/${proposal.img_path}`
+                                        } 
+                                    />
+                                </div>
+                            )}
+                            <Input
+                                id="img"
+                                name="img"
+                                type="file"
+                                accept="image/*"
+                                className="w-full"
+                                autoComplete="img"
+                                onChange={handleFileChange}
+                            />
+                            <InputError message={errors.img} className="mt-2" />
                         </div>
 
                         <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>

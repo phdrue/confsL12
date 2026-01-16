@@ -49,6 +49,7 @@ class UpdateProposalRequest extends FormRequest
             "coverageInPerson" => "required|string|max:1000",
             "coverageOnline" => "required|string|max:1000",
             "coverageProfession" => "required|string|max:1000",
+            "img" => "nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048",
         ];
     }
 }

@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Proposal extends Model
 {
+    protected $fillable = [
+        'user_id',
+        'conference_id',
+        'denied',
+        'payload',
+        'img_path',
+    ];
+
     protected $casts = [
         'payload' => 'array'
     ];

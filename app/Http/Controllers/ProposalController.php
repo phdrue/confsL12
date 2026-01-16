@@ -10,6 +10,7 @@ use App\Models\Proposal;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ProposalController extends Controller
@@ -29,10 +30,17 @@ class ProposalController extends Controller
      */
     public function store(CreateProposalRequest $request)
     {
-        Proposal::create([
+        $data = [
             'user_id' => Auth::id(),
-            'payload' => [...$request->safe()],
-        ]);
+            'payload' => [...$request->safe()->except('img')],
+        ];
+
+        if ($request->hasFile('img')) {
+            $path = 'img/proposals';
+            $data['img_path'] = $request->file('img')->store($path);
+        }
+
+        Proposal::create($data);
 
         return to_route('adm.proposals.index');
     }
@@ -74,9 +82,20 @@ class ProposalController extends Controller
             return redirect()->back()->with('error', 'Нельзя редактировать предложение, из которого уже создана конференция');
         }
 
-        $proposal->update([
-            'payload' => [...$request->safe()],
-        ]);
+        $data = [
+            'payload' => [...$request->safe()->except('img')],
+        ];
+
+        if ($request->hasFile('img')) {
+            // Delete old image if exists
+            if ($proposal->img_path && Storage::exists($proposal->img_path)) {
+                Storage::delete($proposal->img_path);
+            }
+            $path = 'img/proposals';
+            $data['img_path'] = $request->file('img')->store($path);
+        }
+
+        $proposal->update($data);
 
         return to_route('adm.proposals.index');
     }
@@ -117,6 +136,15 @@ class ProposalController extends Controller
             // Determine conference type based on proposal level
             $typeId = $this->mapLevelToTypeId($payload['level'] ?? '');
 
+            // Handle image: copy from proposal if exists, otherwise use default
+            $imgPath = 'img/placeholders/image.png';
+            if ($proposal->img_path && Storage::exists($proposal->img_path)) {
+                // Copy the image to conferences directory
+                $newPath = 'img/conferences/' . basename($proposal->img_path);
+                Storage::copy($proposal->img_path, $newPath);
+                $imgPath = $newPath;
+            }
+
             // Create conference
             $conference = Conference::create([
                 'type_id' => $typeId,
@@ -127,7 +155,7 @@ class ProposalController extends Controller
                 'date' => $payload['date'] ?? now()->addMonth(),
                 'allow_thesis' => true,
                 'allow_report' => true,
-                'img_path' => 'img/placeholders/image.png',
+                'img_path' => $imgPath,
                 'primary_color' => '#548FC7',
             ]);
 

@@ -24,6 +24,7 @@ export interface Proposal {
     conference_id?: number;
     denied: boolean;
     user: User;
+    img_path?: string | null;
     payload: {
         name: string;
         shortName: string;

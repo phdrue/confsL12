@@ -36,6 +36,15 @@ export default function ProposalPreviewDialog({
                     <DialogTitle>{title}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-6">
+                    {proposal.img_path && (
+                        <div className="w-full max-w-md aspect-video bg-gray-100 rounded-md overflow-hidden">
+                            <img 
+                                className="w-full h-full object-cover" 
+                                alt={proposal.payload.shortName}
+                                src={`/storage/${proposal.img_path}`}
+                            />
+                        </div>
+                    )}
                     <div className="grid gap-4">
                         <div>
                             <h3 className="font-semibold text-lg">Основная информация</h3>

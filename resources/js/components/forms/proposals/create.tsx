@@ -65,6 +65,7 @@ export default function ProposalCreateForm({ }) {
         coverageInPerson: '',
         coverageOnline: '',
         coverageProfession: '',
+        img: null as File | null,
     });
 
     transform((data) => ({
@@ -91,6 +92,11 @@ export default function ProposalCreateForm({ }) {
                 return [...prev, audience]
             }
         })
+    }
+
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] || null
+        setData('img', file)
     }
 
     const submit: FormEventHandler = (e) => {
@@ -467,6 +473,29 @@ export default function ProposalCreateForm({ }) {
                                 </div>
                             ))}
                             <InputError message={errors.amenities} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="img">Изображение (опционально)</Label>
+                            {data.img && (
+                                <div className="w-full max-w-[300px] aspect-video bg-gray-100 rounded-md overflow-hidden">
+                                    <img 
+                                        className="w-full h-full object-cover" 
+                                        alt="Preview" 
+                                        src={URL.createObjectURL(data.img)} 
+                                    />
+                                </div>
+                            )}
+                            <Input
+                                id="img"
+                                name="img"
+                                type="file"
+                                accept="image/*"
+                                className="w-full"
+                                autoComplete="img"
+                                onChange={handleFileChange}
+                            />
+                            <InputError message={errors.img} className="mt-2" />
                         </div>
 
                         <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
