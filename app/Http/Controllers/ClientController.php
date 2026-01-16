@@ -43,6 +43,7 @@ class ClientController extends Controller
     {
         $state = $request->query('state');
         $name = $request->query('name');
+        $type = $request->query('type');
         
         // Only allow states 3 (ACTIVE) and 4 (ARCHIVE) for index route
         // Block any other state values
@@ -53,6 +54,13 @@ class ClientController extends Controller
         
         if ($state && !in_array($state, $allowedStates, true)) {
             // Redirect to index without state parameter if invalid state is provided
+            return redirect()->route('conferences.index');
+        }
+        
+        // Validate type parameter - only allow 1, 2, 3, 4 or null
+        $allowedTypes = ['1', '2', '3', '4'];
+        if ($type && !in_array($type, $allowedTypes, true)) {
+            // Redirect to index without type parameter if invalid type is provided
             return redirect()->route('conferences.index');
         }
         
@@ -70,12 +78,18 @@ class ClientController extends Controller
             $query->where('name', 'like', '%' . $name . '%');
         }
         
+        // Add type filter if provided
+        if ($type && in_array($type, $allowedTypes, true)) {
+            $query->where('type_id', (int) $type);
+        }
+        
         $conferences = $query->orderBy('date', 'asc')->paginate(15);
         
         return Inertia::render('client/conferences/index', [
             'conferences' => $conferences,
             'currentState' => $state,
             'currentName' => $name,
+            'currentType' => $type,
             'currentStateName' => $state ? 
                 collect([
                     ['id' => ConferenceStateEnum::ACTIVE->value, 'name' => 'Актуальные'],

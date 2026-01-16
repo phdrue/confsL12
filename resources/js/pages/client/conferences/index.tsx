@@ -8,7 +8,7 @@ import Footer from '@/components/landing/footer';
 import { Button } from '@/components/ui/button';
 import { Pagination } from '@/components/ui/pagination';
 import { Input } from '@/components/ui/input';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -39,34 +39,18 @@ export default function Index({
     conferences,
     currentState,
     currentName,
+    currentType,
     currentStateName,
     states
 }: {
     conferences: PaginatedData;
     currentState: string | null;
     currentName: string | null;
+    currentType: string | null;
     currentStateName: string;
     states: Array<State>;
 }) {
-    const [_conferences, _setConferences] = useState(conferences.data);
-    const [type, setType] = useState<number | null>(null);
     const [nameFilter, setNameFilter] = useState(currentName || '');
-
-    // Update local state when conferences data changes (e.g., after pagination)
-    useEffect(() => {
-        _setConferences(conferences.data);
-    }, [conferences.data]);
-
-    const filterByType = (type_id: number | null): void => {
-        if (type_id === null) {
-            setType(null);
-            _setConferences(conferences.data);
-        } else {
-            setType(type_id);
-            const filtered = conferences.data.filter((conference) => conference.type_id === type_id);
-            _setConferences(filtered);
-        }
-    };
 
     const handleNameFilter = (value: string) => {
         setNameFilter(value);
@@ -75,6 +59,20 @@ export default function Index({
             url.searchParams.set('name', value.trim());
         } else {
             url.searchParams.delete('name');
+        }
+        url.searchParams.delete('page'); // Reset to first page when filtering
+        router.get(url.pathname + url.search, {}, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
+    const handleTypeFilter = (type_id: number | null) => {
+        const url = new URL(window.location.href);
+        if (type_id === null) {
+            url.searchParams.delete('type');
+        } else {
+            url.searchParams.set('type', type_id.toString());
         }
         url.searchParams.delete('page'); // Reset to first page when filtering
         router.get(url.pathname + url.search, {}, {
@@ -112,15 +110,15 @@ export default function Index({
                         
                         {/* Type Filters */}
                         <div className="flex flex-row flex-wrap gap-4 w-full">
-                            <Button onClick={() => filterByType(null)} variant={`${type === null ? "brandDarkBlue" : "ghost"}`}>Все</Button>
-                            <Button onClick={() => filterByType(1)} variant={`${type === 1 ? "brandDarkBlue" : "ghost"}`}>Международные</Button>
-                            <Button onClick={() => filterByType(2)} variant={`${type === 2 ? "brandDarkBlue" : "ghost"}`}>Всероссийские</Button>
-                            <Button onClick={() => filterByType(3)} variant={`${type === 3 ? "brandDarkBlue" : "ghost"}`}>Региональные</Button>
-                            <Button onClick={() => filterByType(4)} variant={`${type === 4 ? "brandDarkBlue" : "ghost"}`}>Другие</Button>
+                            <Button onClick={() => handleTypeFilter(null)} variant={`${currentType === null ? "brandDarkBlue" : "ghost"}`}>Все</Button>
+                            <Button onClick={() => handleTypeFilter(1)} variant={`${currentType === "1" ? "brandDarkBlue" : "ghost"}`}>Региональные</Button>
+                            <Button onClick={() => handleTypeFilter(2)} variant={`${currentType === "2" ? "brandDarkBlue" : "ghost"}`}>Всероссийские</Button>
+                            <Button onClick={() => handleTypeFilter(3)} variant={`${currentType === "3" ? "brandDarkBlue" : "ghost"}`}>Международные</Button>
+                            <Button onClick={() => handleTypeFilter(4)} variant={`${currentType === "4" ? "brandDarkBlue" : "ghost"}`}>Другие</Button>
                         </div>
                     </div>
-                    {_conferences && _conferences.length > 0 ? (
-                        _conferences.map((conference) => (
+                    {conferences.data && conferences.data.length > 0 ? (
+                        conferences.data.map((conference) => (
                             <ConferenceCard key={conference.id} conference={conference} />
                         ))
                     ) : (
