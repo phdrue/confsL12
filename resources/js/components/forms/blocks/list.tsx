@@ -4,7 +4,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, BadgeCheck, CircleX, Trash2 } from "lucide-react"
+import { Plus, BadgeCheck, CircleX, Trash2, ChevronUp, ChevronDown } from "lucide-react"
 
 export default function ListTextBlockFormComponent({
     content,
@@ -31,12 +31,14 @@ export default function ListTextBlockFormComponent({
     }
 
     function addToContent(): void {
-        if (content.length === 0) {
-            setData('content', [{ header, items }]);
-        } else {
-            setData('content', [...content, { header, items }]);
-        }
+        setData('content', [...(content || []), { header, items }]);
         hideAndResetForm()
+    }
+
+    function getMissingFieldsMessage(): string {
+        const missing: string[] = [];
+        if (!header) missing.push('заголовок');
+        return missing.length > 0 ? `Для добавления необходимо заполнить: ${missing.join(', ')}` : '';
     }
 
     function addToItems(): void {
@@ -45,8 +47,22 @@ export default function ListTextBlockFormComponent({
         setShowItemForm(false);
     }
 
-    function removeItem(itemRemove: { header: string; items: Array<string> }): void {
-        const newContent = content.filter((item: { header: string; items: Array<string> }, index: number) => index !== content.indexOf(itemRemove))
+    function removeItem(index: number): void {
+        const newContent = content.filter((_: any, i: number) => i !== index);
+        setData('content', newContent);
+    }
+
+    function moveUp(index: number): void {
+        if (index === 0) return;
+        const newContent = [...content];
+        [newContent[index - 1], newContent[index]] = [newContent[index], newContent[index - 1]];
+        setData('content', newContent);
+    }
+
+    function moveDown(index: number): void {
+        if (index === content.length - 1) return;
+        const newContent = [...content];
+        [newContent[index], newContent[index + 1]] = [newContent[index + 1], newContent[index]];
         setData('content', newContent);
     }
 
@@ -63,26 +79,46 @@ export default function ListTextBlockFormComponent({
                                 header: string
                                 items: Array<string>
                             }, index: number) => (
-                                <div className="flex gap-2 items-center justify-between" key={index}>
+                                <div className="flex gap-2 items-center justify-between" key={`list-${index}-${item.header}`}>
                                     <div>
                                         <p className="break-all">{item.header}</p>
                                         {
                                             (item.items.length > 0) &&
                                             <div className="space-y-1 pl-4">
-                                                {item.items.map((subitem: string, index) => (
-                                                    <p className="break-all" key={index}>{subitem}</p>
+                                                {item.items.map((subitem: string, subIndex: number) => (
+                                                    <p className="break-all" key={`subitem-${index}-${subIndex}`}>{subitem}</p>
                                                 ))}
                                             </div>
                                         }
                                     </div>
-                                    <Button
-                                        onClick={() => removeItem(item)}
-                                        type="button"
-                                        className="shrink-0 hover:text-red-600"
-                                        variant={"outline"}
-                                        size={"iconSmall"}>
-                                        <Trash2 />
-                                    </Button>
+                                    <div className="flex gap-1 shrink-0">
+                                        <Button
+                                            onClick={() => moveUp(index)}
+                                            type="button"
+                                            className="hover:text-blue-600"
+                                            variant={"outline"}
+                                            size={"iconSmall"}
+                                            disabled={index === 0}>
+                                            <ChevronUp />
+                                        </Button>
+                                        <Button
+                                            onClick={() => moveDown(index)}
+                                            type="button"
+                                            className="hover:text-blue-600"
+                                            variant={"outline"}
+                                            size={"iconSmall"}
+                                            disabled={index === content.length - 1}>
+                                            <ChevronDown />
+                                        </Button>
+                                        <Button
+                                            onClick={() => removeItem(index)}
+                                            type="button"
+                                            className="shrink-0 hover:text-red-600"
+                                            variant={"outline"}
+                                            size={"iconSmall"}>
+                                            <Trash2 />
+                                        </Button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -91,17 +127,17 @@ export default function ListTextBlockFormComponent({
                         {!showForm ? <Button
                             onClick={() => setShowForm(true)}
                             type="button"
-                            variant={"outline"}
-                            size={"iconSmall"}>
-                            <Plus />
+                            variant={"outline"}>
+                            <Plus className="h-4 w-4" />
+                            Добавить
                         </Button> :
                             <div className="space-y-4">
                                 <Button
                                     onClick={hideAndResetForm}
                                     type="button"
-                                    variant={"outline"}
-                                    size={"iconSmall"}>
-                                    <CircleX />
+                                    variant={"outline"}>
+                                    <CircleX className="h-4 w-4" />
+                                    Отмена
                                 </Button>
                                 <div className="grid gap-2">
                                     <Label htmlFor="key">Заголовок</Label>
@@ -164,16 +200,22 @@ export default function ListTextBlockFormComponent({
                                             </div>
                                         </fieldset>
                                 }
-                                {(header) &&
+                                <div className="space-y-2">
                                     <Button
                                         className="text-sm block"
                                         onClick={addToContent}
                                         type="button"
                                         variant={"outline"}
-                                    // size={"iconSmall"}
-                                    > Добавить элемент
+                                        disabled={!header}
+                                    >
+                                        Добавить элемент
                                     </Button>
-                                }
+                                    {!header && (
+                                        <p className="text-sm text-muted-foreground">
+                                            {getMissingFieldsMessage()}
+                                        </p>
+                                    )}
+                                </div>
                             </div>}
                         <InputError message={errors.content} className="mt-2" />
                     </div>
