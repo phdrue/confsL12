@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('conference_id')->nullable()->constrained('conferences');
             $table->boolean('denied')->default(false);
             $table->json('payload');
+            $table->string('img_path')->nullable();
             $table->timestamps();
         });
     }
