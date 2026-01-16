@@ -177,7 +177,7 @@ function KeyValueTextBlockComponent({ primaryColor, block }: { primaryColor: str
 function RegularTextBlockComponent({ block }: { block: RegularTextBlock }) {
     return (
         <div className="w-full px-11 pb-8">
-            <p className="text-center">{block.content.text}</p>
+            <p className="text-pretty">{block.content.text}</p>
         </div>
     );
 }

@@ -158,7 +158,7 @@ function ConferenceActionsCell({ conference }: { conference: Conference }) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                     <Link href={route('adm.conferences.show', conference.id)}>
-                        Блоки
+                        Конструктор
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

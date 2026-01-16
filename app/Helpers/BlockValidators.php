@@ -7,10 +7,6 @@ class BlockValidators
     /**
      * getRegularTextBlockValidation
      * id - 1
-     *
-     * @param array $rules
-     * @param array $rules
-     * @return void
      */
     public static function getRegularTextBlockValidation(array &$rules): void
     {
@@ -21,10 +17,6 @@ class BlockValidators
     /**
      * getListBlockValidation
      * id -2
-     *
-     * @param array $rules
-     * @param array $rules
-     * @return void
      */
     public static function getListBlockValidation(array &$rules): void
     {
@@ -38,9 +30,6 @@ class BlockValidators
     /**
      * getLinksBlockValidation
      * id - 3
-     *
-     * @param array $rules
-     * @return void
      */
     public static function getLinksBlockValidation(array &$rules): void
     {
@@ -53,9 +42,6 @@ class BlockValidators
     /**
      * getKeyValueBlockValidation
      * id - 4
-     *
-     * @param array $rules
-     * @return void
      */
     public static function getKeyValueBlockValidation(array &$rules): void
     {
@@ -71,9 +57,6 @@ class BlockValidators
     /**
      * getHeadingTextBlockValidation
      * id - 5
-     *
-     * @param array $rules
-     * @return void
      */
     public static function getHeadingTextBlockValidation(array &$rules): void
     {
@@ -85,9 +68,6 @@ class BlockValidators
     /**
      * getDisclaimerTextBlockValidation
      * id - 6
-     *
-     * @param array $rules
-     * @return void
      */
     public static function getDisclaimerTextBlockValidation(array &$rules): void
     {
@@ -98,22 +78,15 @@ class BlockValidators
     /**
      * getSeparatorBlockValidation
      * id - 7
-     *
-     * @param array $rules
-     * @return void
      */
     public static function getSeparatorBlockValidation(array &$rules): void
     {
         $rules['content'] = 'nullable';
     }
 
-
     /**
      * getImagesBlockValidation
      * id - 9
-     *
-     * @param array $rules
-     * @return void
      */
     public static function getImagesBlockValidation(array &$rules): void
     {
