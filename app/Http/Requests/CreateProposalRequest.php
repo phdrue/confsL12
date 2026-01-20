@@ -42,8 +42,6 @@ class CreateProposalRequest extends FormRequest
             "audiences.*" => "required|string|max:1000",
             "bookType" => "required|string|max:1000",
             "topics" => "required|string|max:1000",
-            "amenities" => "required|array",
-            "amenities.*" => "required|string|max:1000",
             "budget" => "required|string|max:1000",
             "budgetSource" => "required|string|max:1000",
             "coverageInPerson" => "required|string|max:1000",

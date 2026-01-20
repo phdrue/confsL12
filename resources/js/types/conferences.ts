@@ -46,7 +46,6 @@ export interface Proposal {
         audiences: Array<string>;
         bookType: string;
         topics: string;
-        amenities: Array<string>;
         budget: string;
         budgetSource: string;
         coverageInPerson: string;

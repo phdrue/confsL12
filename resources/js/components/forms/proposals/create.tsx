@@ -35,7 +35,6 @@ export default function ProposalCreateForm({ }) {
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
 
-    const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
     const [selectedAudiences, setSelectedAudiences] = useState<string[]>([])
 
     const { toast } = useToast()
@@ -59,7 +58,6 @@ export default function ProposalCreateForm({ }) {
         audiences: selectedAudiences,
         bookType: '',
         topics: '',
-        amenities: selectedAmenities,
         budget: '',
         budgetSource: '',
         coverageInPerson: '',
@@ -71,18 +69,7 @@ export default function ProposalCreateForm({ }) {
     transform((data) => ({
         ...data,
         audiences: selectedAudiences,
-        amenities: selectedAmenities,
     }))
-
-    const handleAmenitiesCheckboxChange = (amenity: string) => {
-        setSelectedAmenities((prev) => {
-            if (prev.includes(amenity)) {
-                return prev.filter((item) => item !== amenity)
-            } else {
-                return [...prev, amenity]
-            }
-        })
-    }
 
     const handleAudiencesCheckboxChange = (audience: string) => {
         setSelectedAudiences((prev) => {
@@ -456,23 +443,6 @@ export default function ProposalCreateForm({ }) {
                                 </div>
                             ))}
                             <InputError message={errors.audiences} />
-                        </div>
-
-                        <div className="grid gap-2">
-                            <Label htmlFor="amenities">Дополнительные услуги</Label>
-                            {options.amenities.map((option, index) => (
-                                <div key={index} className="flex items-center space-x-2 border p-3 rounded-md">
-                                    <Checkbox
-                                        id={`amenities${index}`}
-                                        checked={selectedAmenities.includes(option)}
-                                        onCheckedChange={() => handleAmenitiesCheckboxChange(option)}
-                                    />
-                                    <Label htmlFor={`amenities${index}`} className="flex-1 cursor-pointer">
-                                        {option}
-                                    </Label>
-                                </div>
-                            ))}
-                            <InputError message={errors.amenities} />
                         </div>
 
                         <div className="grid gap-2">

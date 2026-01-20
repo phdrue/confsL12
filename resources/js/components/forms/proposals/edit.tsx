@@ -76,7 +76,6 @@ export default function ProposalEditForm({ proposal, trigger }: ProposalEditForm
         );
     }
 
-    const [selectedAmenities, setSelectedAmenities] = useState<string[]>(proposal.payload.amenities || [])
     const [selectedAudiences, setSelectedAudiences] = useState<string[]>(proposal.payload.audiences || [])
 
     const { toast } = useToast()
@@ -100,7 +99,6 @@ export default function ProposalEditForm({ proposal, trigger }: ProposalEditForm
         audiences: selectedAudiences,
         bookType: proposal.payload.bookType || '',
         topics: proposal.payload.topics || '',
-        amenities: selectedAmenities,
         budget: proposal.payload.budget || '',
         budgetSource: proposal.payload.budgetSource || '',
         coverageInPerson: proposal.payload.coverageInPerson || '',
@@ -113,18 +111,7 @@ export default function ProposalEditForm({ proposal, trigger }: ProposalEditForm
         ...data,
         _method: 'put',
         audiences: selectedAudiences,
-        amenities: selectedAmenities,
     }))
-
-    const handleAmenitiesCheckboxChange = (amenity: string) => {
-        setSelectedAmenities((prev) => {
-            if (prev.includes(amenity)) {
-                return prev.filter((item) => item !== amenity)
-            } else {
-                return [...prev, amenity]
-            }
-        })
-    }
 
     const handleAudiencesCheckboxChange = (audience: string) => {
         setSelectedAudiences((prev) => {
@@ -494,23 +481,6 @@ export default function ProposalEditForm({ proposal, trigger }: ProposalEditForm
                                 </div>
                             ))}
                             <InputError message={errors.audiences} />
-                        </div>
-
-                        <div className="grid gap-2">
-                            <Label htmlFor="audiences">Дополнительные услуги</Label>
-                            {options.amenities.map((option, index) => (
-                                <div key={index} className="flex items-center space-x-2 border p-3 rounded-md">
-                                    <Checkbox
-                                        id={`amenities${index}`}
-                                        checked={selectedAmenities.includes(option)}
-                                        onCheckedChange={() => handleAmenitiesCheckboxChange(option)}
-                                    />
-                                    <Label htmlFor={`amenities${index}`} className="flex-1 cursor-pointer">
-                                        {option}
-                                    </Label>
-                                </div>
-                            ))}
-                            <InputError message={errors.amenities} />
                         </div>
 
                         <div className="grid gap-2">

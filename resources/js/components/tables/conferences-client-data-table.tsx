@@ -4,7 +4,7 @@ import { LoaderCircle, Star } from "lucide-react"
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@/components/ui/data-table"
 import { ConferenceTypeBadge, ConferenceStateBadge, ConferenceParticipationBadge } from "@/components/conferences/utils"
-import { Settings } from "lucide-react"
+import { Settings, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -66,6 +66,12 @@ export default function ConferencesClientDataTable({
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                            <DropdownMenuItem asChild>
+                                <Link href={route('conferences.show', row.original.id)} target="_blank">
+                                    <ExternalLink className="mr-2 h-4 w-4" />
+                                    Перейти к конференции
+                                </Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => download(row.original.id)}>
                                 Выгрузить файлы
                             </DropdownMenuItem>

@@ -17,7 +17,7 @@ import {
 import { Link, useForm } from "@inertiajs/react"
 import { parseDateString } from "@/parse-date-string"
 import ProposalPreviewDialog from "@/components/proposals/proposal-preview-dialog"
-import { Trash2 } from "lucide-react"
+import { Trash2, ExternalLink } from "lucide-react"
 import { FormEventHandler } from "react"
 import { useToast } from "@/hooks/use-toast"
 
@@ -145,6 +145,13 @@ function ConferenceActionsCell({ conference }: { conference: Conference }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
                 <DropdownMenuLabel>Действия</DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                    <Link href={route('conferences.show', conference.id)} target="_blank">
+                        <ExternalLink className="mr-2 h-4 w-4" />
+                        Перейти к конференции
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                     <Link href={route('adm.conferences.participations', conference.id)}>
                         Участники

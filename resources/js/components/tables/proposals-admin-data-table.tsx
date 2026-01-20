@@ -285,19 +285,6 @@ function ProposalPreviewDialog({ proposal }: { proposal: Proposal }) {
                                 </div>
                             </div>
                         )}
-
-                        {proposal.payload.amenities && proposal.payload.amenities.length > 0 && (
-                            <div>
-                                <h3 className="font-semibold text-lg">Дополнительные услуги</h3>
-                                <div className="mt-2">
-                                    <ul className="list-disc list-inside space-y-1">
-                                        {proposal.payload.amenities.map((amenity, index) => (
-                                            <li key={index} className="text-sm text-gray-600">{amenity}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
             </DialogContent>
