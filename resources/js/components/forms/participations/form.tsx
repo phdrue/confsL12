@@ -127,7 +127,7 @@ export default function ParticipationForm({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                     {participation ? (
                         <>
                             <Button className="w-max">Управление документами</Button>

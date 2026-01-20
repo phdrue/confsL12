@@ -17,9 +17,17 @@ export function ConferenceCard({ conference }: { conference: Conference }) {
     };
 
     return (
-        <article className="flex w-full hover:bg-slate-200 max-w-full flex-col">
+        <Link
+            prefetch
+            href={route('conferences.show', conference.id)}
+            className="group flex w-full max-w-full flex-col rounded-lg p-4 transition-all duration-300 will-change-transform hover:scale-[1.02] hover:bg-slate-100 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:bg-slate-800 dark:hover:shadow-slate-900/50"
+        >
             <div className="aspect-[584/384] w-full self-center overflow-hidden rounded-md bg-white xl:w-[584px]">
-                <img src={`/storage/${conference.img_path}`} className="size-full object-cover" alt={conference.name} />
+                <img
+                    src={`/storage/${conference.img_path}`}
+                    className="size-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    alt={conference.name}
+                />
             </div>
             <div className="w-full pt-5 lg:pt-6">
                 <div className="space-y-3">
@@ -27,23 +35,13 @@ export function ConferenceCard({ conference }: { conference: Conference }) {
                         <ConferenceTypeSpan />
                         <span>{conference.date}</span>
                     </span>
-                    <Link
-                        prefetch
-                        href={route('conferences.show', conference.id)}
-                        className="text-xl leading-tight font-semibold text-black sm:text-2xl dark:text-white"
-                    >
-                        {conference.name}
-                    </Link>
-                    <p className="">{conference.description}</p>
-                    <Link
-                        prefetch
-                        href={route('conferences.show', conference.id)}
-                        className="text-brand-red flex items-center gap-2 text-sm font-medium focus:underline focus:outline-none"
-                    >
-                        На страницу конференции <MoveRight size={20} />
-                    </Link>
+                    <h3 className="text-xl leading-tight font-semibold text-black transition-colors duration-300 sm:text-2xl">{conference.name}</h3>
+                    <p className="text-slate-600 dark:text-slate-300">{conference.description}</p>
+                    <div className="text-brand-red flex items-center gap-2 text-sm font-medium transition-all duration-300 group-hover:gap-3">
+                        На страницу конференции <MoveRight size={20} className="transition-transform duration-300 group-hover:translate-x-1" />
+                    </div>
                 </div>
             </div>
-        </article>
+        </Link>
     );
 }
