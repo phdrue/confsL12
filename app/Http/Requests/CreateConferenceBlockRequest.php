@@ -45,6 +45,7 @@ class CreateConferenceBlockRequest extends FormRequest
             6 => BlockValidators::getDisclaimerTextBlockValidation($rules),
             7 => BlockValidators::getSeparatorBlockValidation($rules),
             9 => BlockValidators::getImagesBlockValidation($rules),
+            10 => BlockValidators::getSubheaderTextBlockValidation($rules),
             default => $rules['content'] = 'required',
         };
 

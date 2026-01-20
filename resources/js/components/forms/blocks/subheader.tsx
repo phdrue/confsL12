@@ -1,0 +1,32 @@
+import InputError from '@/components/input-error';
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from '@/components/ui/label';
+
+export default function SubheaderTextBlockFormComponent({
+    content,
+    setData,
+    errors
+}: {
+    content: any,
+    setData: any,
+    errors: any
+}) {
+    const safeContent = content || { text: '' };
+    
+    return (
+        <>
+            <div className="grid gap-2">
+                <Label htmlFor="text">Подзаголовок</Label>
+                <Textarea
+                    id="text"
+                    required
+                    tabIndex={1}
+                    value={safeContent.text || ''}
+                    onChange={(e) => setData('content', { ...safeContent, text: e.target.value })}
+                />
+                <InputError message={errors.content} className="mt-2" />
+                {errors["content.text"] && <InputError message={errors["content.text"]} className="mt-2" />}
+            </div>
+        </>
+    )
+}

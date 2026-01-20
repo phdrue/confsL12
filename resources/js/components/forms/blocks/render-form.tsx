@@ -4,6 +4,7 @@ import LinksTextBlockFormComponent from "@/components/forms/blocks/links";
 import ListTextBlockFormComponent from "@/components/forms/blocks/list";
 import KeyValueTextBlockFormComponent from "@/components/forms/blocks/key-value";
 import HeadingTextBlockFormComponent from "@/components/forms/blocks/heading";
+import SubheaderTextBlockFormComponent from "@/components/forms/blocks/subheader";
 import DisclamerTextBlockFormComponent from "@/components/forms/blocks/disclamer";
 import SeparatorBlockFormComponent from "@/components/forms/blocks/separator";
 import { Image, ImageCategory } from "@/types/blocks";
@@ -45,6 +46,8 @@ export default function RenderBlockForm({
         //     return <ButtonsBlockFormComponent content={content} setData={setData} errors={errors} />
         case 9:
             return <ImagesBlockFormComponent imagesBlockData={imagesBlockData} content={content} setData={setData} errors={errors} />
+        case 10:
+            return <SubheaderTextBlockFormComponent content={content} setData={setData} errors={errors} />
         default:
             return null;
     }

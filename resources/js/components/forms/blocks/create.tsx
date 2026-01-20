@@ -115,6 +115,10 @@ export default function CreateConferenceBlockForm({
                 setData('content', { images: [] })
                 setData('name', `Изображения 1`)
                 break
+            case "10":
+                setData('content', { text: '' })
+                setData('name', `Подзаголовок 1`)
+                break
             default:
                 return null;
         }

@@ -100,4 +100,14 @@ class BlockValidators
         $rules['content.images.*.path'] = 'required|string|max:255';
         $rules['content.images.*.name'] = 'required|string|max:255';
     }
+
+    /**
+     * getSubheaderTextBlockValidation
+     * id - 10
+     */
+    public static function getSubheaderTextBlockValidation(array &$rules): void
+    {
+        $rules['content'] = 'required|array:text';
+        $rules['content.text'] = 'required|string|max:255';
+    }
 }

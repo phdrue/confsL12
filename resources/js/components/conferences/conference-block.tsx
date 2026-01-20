@@ -7,6 +7,7 @@ import {
     LinksTextBlock,
     ListTextBlock,
     RegularTextBlock,
+    SubheaderTextBlock,
 } from '@/types/blocks';
 import AutoScroll from 'embla-carousel-auto-scroll';
 import { Dot, Link } from 'lucide-react';
@@ -31,6 +32,8 @@ export const ConferenceBlock = ({ primaryColor, block }: { primaryColor: string;
             return <SeparatorBlockComponent />;
         case 9:
             return <ImageBlockComponent block={block} />;
+        case 10:
+            return <SubheaderTextBlockComponent block={block} />;
         default:
             return null;
     }
@@ -233,4 +236,12 @@ function HeadingTextBlockComponent({ primaryColor, block }: { primaryColor: stri
     };
 
     return <>{block.content.colorDisplay ? colorRender() : defaultRender()}</>;
+}
+
+function SubheaderTextBlockComponent({ block }: { block: SubheaderTextBlock }) {
+    return (
+        <div className="w-full pb-4">
+            <p className="text-center text-lg font-semibold">{block.content.text}</p>
+        </div>
+    );
 }

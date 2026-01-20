@@ -7,7 +7,8 @@ export type ConferenceBlock =
     DisclamerTextBlock |
     SeparatorBlock |
     ButtonsBlock |
-    ImagesBlock
+    ImagesBlock |
+    SubheaderTextBlock
 
 export type RegularTextBlock = {
     id: number;
@@ -107,6 +108,16 @@ export type ImagesBlock = {
             path: string,
             name: string
         }>
+    }
+}
+
+export type SubheaderTextBlock = {
+    id: number;
+    name: string;
+    position: number;
+    type_id: 10;
+    content: {
+        text: string
     }
 }
 
