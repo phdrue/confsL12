@@ -17,6 +17,7 @@ class BlockValidators
     /**
      * getListBlockValidation
      * id -2
+     * Structure: content[*].header (string), content[*].items[*].header (string), content[*].items[*].items[*] (string)
      */
     public static function getListBlockValidation(array &$rules): void
     {
@@ -24,7 +25,10 @@ class BlockValidators
         $rules['content.*'] = 'required|array:header,items';
         $rules['content.*.header'] = 'required|string|max:255';
         $rules['content.*.items'] = 'nullable|array';
-        $rules['content.*.items.*'] = 'nullable|string|max:255';
+        $rules['content.*.items.*'] = 'required|array:header,items';
+        $rules['content.*.items.*.header'] = 'required|string|max:255';
+        $rules['content.*.items.*.items'] = 'nullable|array';
+        $rules['content.*.items.*.items.*'] = 'nullable|string|max:255';
     }
 
     /**

@@ -90,14 +90,28 @@ function ListTextBlockComponent({ block }: { block: ListTextBlock }) {
                         <Dot className="shrink-0" />
                         <p>{item.header}</p>
                     </div>
-                    <div className="pl-6">
-                        {item.items.map((subitem, subIndex) => (
-                            <div key={subIndex} className="flex gap-2">
-                                <Dot className="shrink-0" />
-                                <p>{subitem}</p>
-                            </div>
-                        ))}
-                    </div>
+                    {item.items && item.items.length > 0 && (
+                        <div className="pl-6">
+                            {item.items.map((subitem, subIndex) => (
+                                <div key={subIndex} className="flex flex-col gap-0">
+                                    <div className="flex gap-2">
+                                        <Dot className="shrink-0" />
+                                        <p>{subitem.header}</p>
+                                    </div>
+                                    {subitem.items && subitem.items.length > 0 && (
+                                        <div className="pl-6">
+                                            {subitem.items.map((nestedItem, nestedIndex) => (
+                                                <div key={nestedIndex} className="flex gap-2">
+                                                    <Dot className="shrink-0" />
+                                                    <p>{nestedItem}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </li>
             ))}
         </ul>

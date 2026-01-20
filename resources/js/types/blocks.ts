@@ -26,7 +26,10 @@ export type ListTextBlock = {
     type_id: 2;
     content: Array<{
         header: string,
-        items: Array<string>
+        items: Array<{
+            header: string,
+            items: Array<string>
+        }>
     }>
 }
 
