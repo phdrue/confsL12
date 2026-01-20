@@ -110,6 +110,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('conferences', ConferenceController::class)
             ->only('index');
 
+        // статистика
+        Route::get('statistics', [ConferenceController::class, 'statistics'])
+            ->name('statistics.index');
+
         // предложения
         Route::resource('proposals', ProposalController::class)
             ->only('index', 'show', 'store');

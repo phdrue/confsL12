@@ -4,7 +4,7 @@ import { Star, ArrowUpDown, LoaderCircle } from "lucide-react"
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@/components/ui/data-table"
 import { ConferenceTypeBadge, ConferenceStateBadge } from "@/components/conferences/utils"
-import { MoreHorizontal } from "lucide-react"
+import { Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -71,7 +71,7 @@ export default function ResponsibleAdminDataTable({
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="h-8 w-8 p-0">
                                 <span className="sr-only">Открыть меню</span>
-                                <MoreHorizontal className="h-4 w-4" />
+                                <Settings className="h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">

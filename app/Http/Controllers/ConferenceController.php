@@ -80,6 +80,14 @@ class ConferenceController extends Controller
     }
 
     /**
+     * Display statistics page.
+     */
+    public function statistics(): Response
+    {
+        return Inertia::render('admin/statistics/index');
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show(Conference $conference)

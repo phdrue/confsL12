@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, Auth } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, CloudCog, Folder, ImageIcon, LayoutGrid, UsersIcon } from 'lucide-react';
+import { BarChart3, BookOpen, CloudCog, Folder, ImageIcon, LayoutGrid, UsersIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
@@ -31,6 +31,11 @@ export function AppSidebar() {
             title: 'Конференции',
             url: '/dashboard',
             icon: LayoutGrid,
+        },
+        {
+            title: 'Статистика',
+            url: route('adm.statistics.index'),
+            icon: BarChart3,
         },
         {
             title: 'Предложения',

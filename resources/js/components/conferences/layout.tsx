@@ -41,6 +41,10 @@ export default function ConferenceLayout({ heading, children, showHeader = true 
                         <p className="mt-2 text-center text-sm">Коллекция гуманитарных исследований научный журнал</p>
                         <p className="text-center text-sm">Электронный научный журнал</p>
                     </a>
+                    <a href="https://www.vektor-journal.ru/jour" target="_blank" className="flex flex-col items-center">
+                        <img src="/img/landing/icons/sp3.svg" alt="журнал ВМН" className="aspect-square h-[150px] object-center" />
+                        <p className="mt-2 text-center text-sm">Вектор молодёжной медицинской науки</p>
+                    </a>
                 </div>
             </div>
         </div>
