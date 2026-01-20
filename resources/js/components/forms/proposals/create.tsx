@@ -117,7 +117,7 @@ export default function ProposalCreateForm({ }) {
     return (
         <Dialog open={open} onOpenChange={setOpen} modal>
             <DialogTrigger asChild>
-                <Button variant="outline">Создать</Button>
+                <Button variant="outline">Предложить</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl">
                 <DialogHeader>
@@ -500,7 +500,7 @@ export default function ProposalCreateForm({ }) {
 
                         <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
                             {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                            Создать
+                            Предложить
                         </Button>
                     </div>
                 </form>

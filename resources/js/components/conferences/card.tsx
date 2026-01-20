@@ -17,7 +17,7 @@ export function ConferenceCard({ conference }: { conference: Conference }) {
     };
 
     return (
-        <article className="flex w-full max-w-full flex-col">
+        <article className="flex w-full hover:bg-slate-200 max-w-full flex-col">
             <div className="aspect-[584/384] w-full self-center overflow-hidden rounded-md bg-white xl:w-[584px]">
                 <img src={`/storage/${conference.img_path}`} className="size-full object-cover" alt={conference.name} />
             </div>

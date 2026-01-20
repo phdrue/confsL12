@@ -18,6 +18,7 @@ use App\Http\Controllers\ConferenceBlockController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Middleware\EnsureCanAccessConference;
 use App\Http\Middleware\EnsureUserIsResponsible;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 Route::get('/proj', fn () => inertia()->render('proj'));
