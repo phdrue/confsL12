@@ -46,9 +46,23 @@ class CreateConferenceBlockRequest extends FormRequest
             7 => BlockValidators::getSeparatorBlockValidation($rules),
             9 => BlockValidators::getImagesBlockValidation($rules),
             10 => BlockValidators::getSubheaderTextBlockValidation($rules),
+            11 => BlockValidators::getFilesBlockValidation($rules),
             default => $rules['content'] = 'required',
         };
 
         return $rules;
+    }
+    
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        // For files block, content can be optional if files are being uploaded
+        if ($this->request->get('type_id') == 11 && $this->hasFile('files')) {
+            $this->merge([
+                'content' => $this->input('content') ?? ['files' => []]
+            ]);
+        }
     }
 }

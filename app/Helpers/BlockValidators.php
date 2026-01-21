@@ -110,4 +110,19 @@ class BlockValidators
         $rules['content'] = 'required|array:text';
         $rules['content.text'] = 'required|string|max:255';
     }
+
+    /**
+     * getFilesBlockValidation
+     * id - 11
+     */
+    public static function getFilesBlockValidation(array &$rules): void
+    {
+        $rules['content'] = 'nullable|array:files';
+        $rules['content.files'] = 'nullable|array';
+        $rules['content.files.*'] = 'nullable|array:path,name';
+        $rules['content.files.*.path'] = 'nullable|string|max:255';
+        $rules['content.files.*.name'] = 'nullable|string|max:255';
+        $rules['files'] = 'nullable|array';
+        $rules['files.*'] = 'nullable|file|mimes:docx,pdf|max:10240'; // 10MB max
+    }
 }

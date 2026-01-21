@@ -44,7 +44,8 @@ export default function CreateConferenceBlockForm({
         type_id: '',
         conference_id: conferenceId,
         name: '',
-        content: null as any | null
+        content: null as any | null,
+        files: [] as File[]
     })
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
@@ -53,7 +54,9 @@ export default function CreateConferenceBlockForm({
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
+        const hasFiles = data.type_id === "11" && data.files && data.files.length > 0
         post(route('adm.blocks.store'), {
+            forceFormData: hasFiles,
             onSuccess: () => {
                 handleClose()
                 toast({
@@ -118,6 +121,11 @@ export default function CreateConferenceBlockForm({
             case "10":
                 setData('content', { text: '' })
                 setData('name', `Подзаголовок 1`)
+                break
+            case "11":
+                setData('content', { files: [] })
+                setData('name', `Файлы 1`)
+                setData('files', [])
                 break
             default:
                 return null;

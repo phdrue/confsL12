@@ -37,7 +37,8 @@ export function EditConferenceBlockForm({
     const { data, setData, put, reset, processing, errors, clearErrors } = useForm({
         type_id: block?.type_id,
         name: block?.name,
-        content: block?.content
+        content: block?.content,
+        files: [] as File[]
     })
 
     useEffect(() => {
@@ -45,13 +46,16 @@ export function EditConferenceBlockForm({
         setData({
             type_id: block?.type_id,
             name: block?.name,
-            content: block?.content
+            content: block?.content,
+            files: []
         })
     }, [block])
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
+        const hasFiles = block?.type_id === 11 && data.files && data.files.length > 0
         put(route('adm.blocks.update', block?.id), {
+            forceFormData: hasFiles,
             onSuccess: () => {
                 toast({
                     variant: "success",

@@ -97,7 +97,8 @@ class BaseSeeder extends Seeder
             7 => 'Разделитель',
             // 8 => 'Кнопки',
             9 => 'Картинки',
-            10 => 'Подзаголовок'
+            10 => 'Подзаголовок',
+            11 => 'Файлы'
         ])->each(function ($name, $id) {
             ConferenceBlockType::create([
                 'id' => $id,

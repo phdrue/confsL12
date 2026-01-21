@@ -8,7 +8,8 @@ export type ConferenceBlock =
     SeparatorBlock |
     ButtonsBlock |
     ImagesBlock |
-    SubheaderTextBlock
+    SubheaderTextBlock |
+    FilesBlock
 
 export type RegularTextBlock = {
     id: number;
@@ -118,6 +119,19 @@ export type SubheaderTextBlock = {
     type_id: 10;
     content: {
         text: string
+    }
+}
+
+export type FilesBlock = {
+    id: number;
+    name: string;
+    position: number;
+    type_id: 11;
+    content: {
+        files: Array<{
+            path: string;
+            name: string;
+        }>
     }
 }
 

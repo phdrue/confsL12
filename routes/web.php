@@ -35,6 +35,10 @@ Route::get('conferences/plan', [ClientController::class, 'conferencesTable'])
 Route::get('conferences/{conference}', [ClientController::class, 'conference'])
     ->name('conferences.show');
 
+// File downloads from conference blocks (public)
+Route::get('blocks/{block}/download/{fileIndex}', [ConferenceBlockController::class, 'downloadFile'])
+    ->name('blocks.download-file');
+
 Route::get('contacts', [ClientController::class, 'contacts'])
     ->name('contacts');
 
