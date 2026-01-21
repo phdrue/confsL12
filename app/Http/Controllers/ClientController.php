@@ -6,6 +6,7 @@ use App\Enums\ConferenceStateEnum;
 use App\Http\Requests\ConferenceParticipateRequest;
 use App\Http\Requests\CreateDocumentRequest;
 use App\Models\Conference;
+use App\Models\ConferenceType;
 use App\Models\ConferenceUser;
 use App\Models\Country;
 use App\Models\Document;
@@ -19,13 +20,23 @@ class ClientController extends Controller
 {
     public function landing()
     {
+        $conferences = Conference::query()
+            ->where('front_page', true)
+            ->where('state_id', ConferenceStateEnum::ACTIVE)
+            ->orderBy('date', 'asc')
+            ->limit(4)
+            ->get();
+        
+        // Add starred status if user is authenticated
+        if (Auth::check()) {
+            $starredIds = Auth::user()->starredConferences()->pluck('conferences.id')->toArray();
+            $conferences->each(function ($conference) use ($starredIds) {
+                $conference->is_starred = in_array($conference->id, $starredIds);
+            });
+        }
+        
         return Inertia::render('client/landing', [
-            'conferences' => Conference::query()
-                ->where('front_page', true)
-                ->where('state_id', ConferenceStateEnum::ACTIVE)
-                ->orderBy('date', 'asc')
-                ->limit(4)
-                ->get()
+            'conferences' => $conferences
         ]);
     }
 
@@ -84,6 +95,14 @@ class ClientController extends Controller
         }
         
         $conferences = $query->orderBy('date', 'asc')->paginate(15);
+        
+        // Add starred status if user is authenticated
+        if (Auth::check()) {
+            $starredIds = Auth::user()->starredConferences()->pluck('conferences.id')->toArray();
+            $conferences->getCollection()->each(function ($conference) use ($starredIds) {
+                $conference->is_starred = in_array($conference->id, $starredIds);
+            });
+        }
         
         return Inertia::render('client/conferences/index', [
             'conferences' => $conferences,
@@ -260,6 +279,11 @@ class ClientController extends Controller
             }
         }
 
+        // Add starred status if user is authenticated
+        if (Auth::check()) {
+            $conference->is_starred = Auth::user()->starredConferences()->where('conferences.id', $conference->id)->exists();
+        }
+        
         return Inertia::render('client/conferences/show', [
             'conference' => $conference,
             'blocks' => $conference->blocks()->orderBy('position')->get(),
@@ -366,5 +390,57 @@ class ClientController extends Controller
         });
 
         return to_route('conferences.show', $conference);
+    }
+
+    public function starredConferences(Request $request)
+    {
+        $name = $request->query('name');
+        $type = $request->query('type');
+        
+        // Validate type parameter - only allow 1, 2, 3, 4 or null
+        $allowedTypes = ['1', '2', '3', '4'];
+        if ($type && !in_array($type, $allowedTypes, true)) {
+            return redirect()->route('client.conferences.starred');
+        }
+        
+        $query = Auth::user()->starredConferences();
+        
+        // Add name filter if provided
+        if ($name) {
+            $query->where('name', 'like', '%' . $name . '%');
+        }
+        
+        // Add type filter if provided
+        if ($type && in_array($type, $allowedTypes, true)) {
+            $query->where('type_id', (int) $type);
+        }
+        
+        $conferences = $query->orderBy('date', 'asc')->get();
+        
+        // Mark all as starred since they're from starredConferences
+        $conferences->each(function ($conference) {
+            $conference->is_starred = true;
+        });
+        
+        return Inertia::render('client/conferences/starred', [
+            'conferences' => $conferences,
+            'currentName' => $name,
+            'currentType' => $type,
+            'types' => ConferenceType::select('id', 'name')->get(),
+        ]);
+    }
+
+    public function star(Conference $conference)
+    {
+        Auth::user()->starredConferences()->syncWithoutDetaching([$conference->id]);
+        
+        return back();
+    }
+
+    public function unstar(Conference $conference)
+    {
+        Auth::user()->starredConferences()->detach($conference->id);
+        
+        return back();
     }
 }

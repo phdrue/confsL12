@@ -176,6 +176,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('my-thesis/{conference}', [DocumentController::class, 'myThesis'])
             ->name('conferences.my-thesis');
+        
+        // starred conferences
+        Route::get('starred-conferences', [ClientController::class, 'starredConferences'])
+            ->name('conferences.starred');
+        
+        Route::post('star/{conference}', [ClientController::class, 'star'])
+            ->name('conferences.star');
+        
+        Route::delete('unstar/{conference}', [ClientController::class, 'unstar'])
+            ->name('conferences.unstar');
         //-- заявить доклад / тезисы
         // Route::post('submit-document/{conference}', [ClientController::class, 'submitDocument'])
         //     ->name('conferences.submit-document');

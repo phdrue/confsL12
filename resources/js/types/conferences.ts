@@ -16,6 +16,7 @@ export interface Conference {
     pivot?: {
         confirmed: boolean;
     };
+    is_starred?: boolean;
 }
 
 export interface Proposal {

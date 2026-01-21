@@ -80,4 +80,9 @@ class Conference extends Model
     {
         return $this->hasOne(Proposal::class);
     }
+
+    public function starredBy(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'conference_stars', 'conference_id', 'user_id');
+    }
 }

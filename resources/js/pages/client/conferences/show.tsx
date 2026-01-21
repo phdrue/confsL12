@@ -43,7 +43,7 @@ export default function Show({
             <Head title={conference.name} />
             <ConferenceLayout heading={conference.name} showHeader={false}>
                 <div className="flex w-full flex-col items-center gap-12">
-                    <div className="px-4 sm:px-6 lg:px-16">
+                    <div className="px-4 sm:px-6 lg:px-16 w-full">
                         <ShowConference conference={conference} blocks={blocks} />
                     </div>
 

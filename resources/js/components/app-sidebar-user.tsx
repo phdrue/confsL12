@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Home, User } from 'lucide-react';
+import { Home, User, Star, CalendarCheck } from 'lucide-react';
 import AppLogoIcon from './app-logo-icon';
 
 const mainNavItems: NavItem[] = [
@@ -25,6 +25,16 @@ const mainNavItems: NavItem[] = [
         title: 'Мой профиль',
         url: route('profile.edit'),
         icon: User,
+    },
+    {
+        title: 'Избранные конференции',
+        url: route('client.conferences.starred'),
+        icon: Star,
+    },
+    {
+        title: 'Мои участия',
+        url: route('dashboard'),
+        icon: CalendarCheck,
     },
 ];
 
