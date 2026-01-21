@@ -41,7 +41,7 @@ export default function ProposalPreviewDialog({
                             <img 
                                 className="w-full h-full object-cover" 
                                 alt={proposal.payload.shortName}
-                                src={`/storage/${proposal.img_path}`}
+                                src={`/files/${proposal.img_path}`}
                             />
                         </div>
                     )}

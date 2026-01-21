@@ -41,7 +41,8 @@ class ConferenceBlockController extends Controller
                 $conferenceDir = "conferences/{$conference->id}/files";
 
                 foreach ($request->file('files') as $file) {
-                    $path = $file->store($conferenceDir);
+                    // Store file to FTP disk
+                    $path = $file->store($conferenceDir, 'ftp');
                     $files[] = [
                         'path' => $path,
                         'name' => $file->getClientOriginalName(),
@@ -82,7 +83,8 @@ class ConferenceBlockController extends Controller
                 $conferenceDir = "conferences/{$block->conference_id}/files";
 
                 foreach ($request->file('files') as $file) {
-                    $path = $file->store($conferenceDir);
+                    // Store file to FTP disk
+                    $path = $file->store($conferenceDir, 'ftp');
                     $newFiles[] = [
                         'path' => $path,
                         'name' => $file->getClientOriginalName(),
@@ -96,9 +98,7 @@ class ConferenceBlockController extends Controller
             $removedFilePaths = array_diff($oldFilePaths, $newFilePaths);
 
             foreach ($removedFilePaths as $removedPath) {
-                if (Storage::exists($removedPath)) {
-                    Storage::delete($removedPath);
-                }
+                $this->deleteFileFromStorage($removedPath);
             }
 
             $data['content'] = ['files' => $newFiles];
@@ -122,9 +122,7 @@ class ConferenceBlockController extends Controller
         // Delete associated files if it's a files block
         if ((int) $block->type_id === 11 && isset($block->content['files'])) {
             foreach ($block->content['files'] as $file) {
-                if (Storage::exists($file['path'])) {
-                    Storage::delete($file['path']);
-                }
+                $this->deleteFileFromStorage($file['path']);
             }
         }
 
@@ -143,14 +141,90 @@ class ConferenceBlockController extends Controller
         }
 
         $file = $block->content['files'][$fileIndex];
+        $path = $file['path'];
 
-        if (! Storage::exists($file['path'])) {
-            abort(404);
+        // Try FTP first, then fall back to public disk
+        $disks = ['ftp', 'public'];
+        $foundDisk = null;
+
+        foreach ($disks as $disk) {
+            if (Storage::disk($disk)->exists($path)) {
+                $foundDisk = $disk;
+                break;
+            }
         }
 
+        if (! $foundDisk) {
+            abort(404, 'File not found');
+        }
+
+        // For FTP, we need to get the file content and stream it
+        // For local storage, we can use the file path directly
+        if ($foundDisk === 'ftp') {
+            try {
+                $fileContent = Storage::disk('ftp')->get($path);
+                $mimeType = $this->getMimeTypeFromPath($path);
+                
+                return response($fileContent, 200)
+                    ->header('Content-Type', $mimeType)
+                    ->header('Content-Disposition', 'attachment; filename="' . $file['name'] . '"');
+            } catch (\Exception $e) {
+                abort(500, 'Error downloading file from FTP');
+            }
+        }
+
+        // For local storage, use the path directly
         return response()->download(
-            Storage::path($file['path']),
+            Storage::disk('public')->path($path),
             $file['name']
         );
+    }
+
+    /**
+     * Delete a file from storage (checks FTP and public disks).
+     */
+    private function deleteFileFromStorage(string $path): void
+    {
+        $disks = ['ftp', 'public'];
+        
+        foreach ($disks as $disk) {
+            if (Storage::disk($disk)->exists($path)) {
+                try {
+                    Storage::disk($disk)->delete($path);
+                    break; // File found and deleted, no need to check other disks
+                } catch (\Exception $e) {
+                    // Continue to next disk if deletion fails
+                    continue;
+                }
+            }
+        }
+    }
+
+    /**
+     * Get MIME type from file path extension.
+     */
+    private function getMimeTypeFromPath(string $path): string
+    {
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        
+        return match ($extension) {
+            'pdf' => 'application/pdf',
+            'doc' => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'xls' => 'application/vnd.ms-excel',
+            'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'ppt' => 'application/vnd.ms-powerpoint',
+            'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'zip' => 'application/zip',
+            'rar' => 'application/x-rar-compressed',
+            'txt' => 'text/plain',
+            'rtf' => 'application/rtf',
+            'jpg', 'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'webp' => 'image/webp',
+            'svg' => 'image/svg+xml',
+            default => 'application/octet-stream',
+        };
     }
 }

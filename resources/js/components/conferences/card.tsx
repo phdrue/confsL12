@@ -111,7 +111,7 @@ export function ConferenceCard({ conference }: { conference: Conference }) {
             >
                 <div className="aspect-[584/384] w-full self-center overflow-hidden rounded-md bg-white xl:w-[584px]">
                     <img
-                        src={`/storage/${conference.img_path}`}
+                        src={`/files/${conference.img_path}`}
                         className="size-full object-cover transition-transform duration-500 group-hover:scale-110"
                         alt={conference.name}
                     />

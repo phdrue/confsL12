@@ -35,6 +35,12 @@ Route::get('conferences/plan', [ClientController::class, 'conferencesTable'])
 Route::get('conferences/{conference}', [ClientController::class, 'conference'])
     ->name('conferences.show');
 
+// Serve images from storage (supports FTP and local storage)
+// Using 'files' instead of 'storage' to avoid conflict with public/storage symlink
+Route::get('files/{path}', [ImageController::class, 'serve'])
+    ->where('path', '.*')
+    ->name('storage.serve');
+
 // File downloads from conference blocks (public)
 Route::get('blocks/{block}/download/{fileIndex}', [ConferenceBlockController::class, 'downloadFile'])
     ->name('blocks.download-file');

@@ -169,7 +169,7 @@ export default function EditConferenceForm({
                                 <div className="grid gap-2">
                                     <Label htmlFor="img">Основная картинка</Label>
                                     <div className="self-center aspect-[584/384] w-full max-w-[584px] bg-white rounded-md overflow-hidden">
-                                        <img className="size-full object-cover" alt="" src={`/storage/${conference.img_path}`} />
+                                        <img className="size-full object-cover" alt="" src={`/files/${conference.img_path}`} />
                                     </div>
                                     <Input
                                         id="img"

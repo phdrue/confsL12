@@ -146,7 +146,7 @@ function ProposalPreviewDialog({ proposal }: { proposal: Proposal }) {
                             <img 
                                 className="w-full h-full object-cover" 
                                 alt={proposal.payload.shortName}
-                                src={`/storage/${proposal.img_path}`}
+                                src={`/files/${proposal.img_path}`}
                             />
                         </div>
                     )}
@@ -344,7 +344,7 @@ export default function ProposalsAdminDataTable({
                     <div className="flex items-center gap-2">
                         {row.original.img_path && (
                             <img 
-                                src={`/storage/${row.original.img_path}`} 
+                                src={`/files/${row.original.img_path}`} 
                                 alt={row.original.payload.shortName}
                                 className="w-12 h-12 object-cover rounded-md"
                             />

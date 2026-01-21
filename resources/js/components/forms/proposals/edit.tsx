@@ -492,7 +492,7 @@ export default function ProposalEditForm({ proposal, trigger }: ProposalEditForm
                                         alt="Preview" 
                                         src={data.img 
                                             ? URL.createObjectURL(data.img)
-                                            : `/storage/${proposal.img_path}`
+                                            : `/files/${proposal.img_path}`
                                         } 
                                     />
                                 </div>

@@ -115,8 +115,8 @@ class ConferenceController extends Controller
     public function store(CreateConferenceRequest $request)
     {
         $path = 'img/conferences';
-        // dd($request->validated());
-        $imgPath = $request->file('img')->store($path);
+        // Store image to FTP disk
+        $imgPath = $request->file('img')->store($path, 'ftp');
         Conference::create([
             ...$request->safe()->except('img'),
             'img_path' =>  $imgPath
@@ -146,8 +146,10 @@ class ConferenceController extends Controller
 
         if ($request->hasFile('img')) {
             $path = 'img/conferences';
-            $imgPath = $request->file('img')->store($path);
-            Storage::delete($conference->img_path);
+            // Store new image to FTP disk
+            $imgPath = $request->file('img')->store($path, 'ftp');
+            // Delete old image from storage (checks both FTP and public)
+            $this->deleteImageFromStorage($conference->img_path);
         }
 
         $conference->update([
@@ -205,9 +207,9 @@ class ConferenceController extends Controller
                 'conference_id' => null,
             ]);
 
-            // Delete conference image file from storage
-            if ($conference->img_path && Storage::exists($conference->img_path)) {
-                Storage::delete($conference->img_path);
+            // Delete conference image file from storage (checks both FTP and public)
+            if ($conference->img_path) {
+                $this->deleteImageFromStorage($conference->img_path);
             }
 
             // Delete the conference itself
@@ -215,5 +217,25 @@ class ConferenceController extends Controller
         });
 
         return to_route('adm.conferences.index');
+    }
+
+    /**
+     * Delete an image from storage (checks FTP and public disks).
+     */
+    private function deleteImageFromStorage(string $path): void
+    {
+        $disks = ['ftp', 'public'];
+        
+        foreach ($disks as $disk) {
+            if (Storage::disk($disk)->exists($path)) {
+                try {
+                    Storage::disk($disk)->delete($path);
+                    break; // Image found and deleted, no need to check other disks
+                } catch (\Exception $e) {
+                    // Continue to next disk if deletion fails
+                    continue;
+                }
+            }
+        }
     }
 }

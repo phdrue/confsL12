@@ -37,7 +37,8 @@ class ProposalController extends Controller
 
         if ($request->hasFile('img')) {
             $path = 'img/proposals';
-            $data['img_path'] = $request->file('img')->store($path);
+            // Store image to FTP disk
+            $data['img_path'] = $request->file('img')->store($path, 'ftp');
         }
 
         Proposal::create($data);
@@ -87,12 +88,13 @@ class ProposalController extends Controller
         ];
 
         if ($request->hasFile('img')) {
-            // Delete old image if exists
-            if ($proposal->img_path && Storage::exists($proposal->img_path)) {
-                Storage::delete($proposal->img_path);
+            // Delete old image if exists (checks both FTP and public)
+            if ($proposal->img_path) {
+                $this->deleteImageFromStorage($proposal->img_path);
             }
             $path = 'img/proposals';
-            $data['img_path'] = $request->file('img')->store($path);
+            // Store new image to FTP disk
+            $data['img_path'] = $request->file('img')->store($path, 'ftp');
         }
 
         $proposal->update($data);
@@ -138,11 +140,24 @@ class ProposalController extends Controller
 
             // Handle image: copy from proposal if exists, otherwise use default
             $imgPath = 'img/placeholders/image.png';
-            if ($proposal->img_path && Storage::exists($proposal->img_path)) {
-                // Copy the image to conferences directory
-                $newPath = 'img/conferences/' . basename($proposal->img_path);
-                Storage::copy($proposal->img_path, $newPath);
-                $imgPath = $newPath;
+            if ($proposal->img_path) {
+                // Find which disk contains the proposal image
+                $sourceDisk = null;
+                $disks = ['ftp', 'public'];
+                foreach ($disks as $disk) {
+                    if (Storage::disk($disk)->exists($proposal->img_path)) {
+                        $sourceDisk = $disk;
+                        break;
+                    }
+                }
+                
+                if ($sourceDisk) {
+                    // Copy the image to conferences directory on FTP
+                    $newPath = 'img/conferences/' . basename($proposal->img_path);
+                    $fileContent = Storage::disk($sourceDisk)->get($proposal->img_path);
+                    Storage::disk('ftp')->put($newPath, $fileContent);
+                    $imgPath = $newPath;
+                }
             }
 
             // Create conference
@@ -192,5 +207,25 @@ class ProposalController extends Controller
             'Другой' => 4,
             default => 4, // Default to "Другие"
         };
+    }
+
+    /**
+     * Delete an image from storage (checks FTP and public disks).
+     */
+    private function deleteImageFromStorage(string $path): void
+    {
+        $disks = ['ftp', 'public'];
+        
+        foreach ($disks as $disk) {
+            if (Storage::disk($disk)->exists($path)) {
+                try {
+                    Storage::disk($disk)->delete($path);
+                    break; // Image found and deleted, no need to check other disks
+                } catch (\Exception $e) {
+                    // Continue to next disk if deletion fails
+                    continue;
+                }
+            }
+        }
     }
 }
