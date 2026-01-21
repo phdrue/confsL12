@@ -127,6 +127,10 @@ export default function CreateConferenceBlockForm({
                 setData('name', `Файлы 1`)
                 setData('files', [])
                 break
+            case "12":
+                setData('content', { text: '' })
+                setData('name', `Цитата 1`)
+                break
             default:
                 return null;
         }

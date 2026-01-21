@@ -9,7 +9,8 @@ export type ConferenceBlock =
     ButtonsBlock |
     ImagesBlock |
     SubheaderTextBlock |
-    FilesBlock
+    FilesBlock |
+    QuoteBlock
 
 export type RegularTextBlock = {
     id: number;
@@ -132,6 +133,16 @@ export type FilesBlock = {
             path: string;
             name: string;
         }>
+    }
+}
+
+export type QuoteBlock = {
+    id: number;
+    name: string;
+    position: number;
+    type_id: 12;
+    content: {
+        text: string
     }
 }
 

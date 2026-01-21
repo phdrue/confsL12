@@ -10,6 +10,7 @@ import SeparatorBlockFormComponent from "@/components/forms/blocks/separator";
 import { Image, ImageCategory } from "@/types/blocks";
 import ImagesBlockFormComponent from "@/components/forms/blocks/images";
 import FilesBlockFormComponent from "@/components/forms/blocks/files";
+import QuoteBlockFormComponent from "@/components/forms/blocks/quote";
 // import ButtonsBlockFormComponent from "@/Components/Forms/Blocks/Buttons";
 
 export default function RenderBlockForm({
@@ -51,6 +52,8 @@ export default function RenderBlockForm({
             return <SubheaderTextBlockFormComponent content={content} setData={setData} errors={errors} />
         case 11:
             return <FilesBlockFormComponent content={content} setData={setData} errors={errors} />
+        case 12:
+            return <QuoteBlockFormComponent content={content} setData={setData} errors={errors} />
         default:
             return null;
     }
