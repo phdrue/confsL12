@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
 
@@ -37,7 +37,7 @@ export default function Register() {
     return (
         <AuthLayout title="Регистрация" description="Заполните поля ниже для создания аккаунта платформы Конференций КГМУ">
             <Head title="Регистрация" />
-            <form className="flex flex-col gap-6" onSubmit={submit}>
+            <form className="flex flex-col gap-6 py-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
                         <Label htmlFor="email">Адрес электронной почты</Label>
@@ -140,11 +140,17 @@ export default function Register() {
                     </Button>
                 </div>
 
-                <div className="text-muted-foreground text-center text-sm">
-                    Уже зарегистрированы?{' '}
-                    <TextLink href={route('login')} tabIndex={6}>
-                        Войти
-                    </TextLink>
+                <div className="text-center">
+                    <Button
+                        variant="outline"
+                        asChild
+                        className="w-full"
+                        tabIndex={6}
+                    >
+                        <Link href={route('login')}>
+                            Войти
+                        </Link>
+                    </Button>
                 </div>
             </form>
         </AuthLayout>
