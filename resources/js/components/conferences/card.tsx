@@ -2,6 +2,7 @@ import { Conference } from '@/types/conferences';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { MoveRight, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { type SharedData } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 
@@ -73,20 +74,36 @@ export function ConferenceCard({ conference }: { conference: Conference }) {
         }
     };
 
+    const getTooltipText = () => {
+        if (!auth.user) {
+            return "Войдите, чтобы добавить в избранное";
+        }
+        return isStarred ? "Удалить из избранного" : "Добавить в избранное";
+    };
+
     return (
         <div className="group relative flex w-full max-w-full flex-col rounded-lg p-4 transition-all duration-300 will-change-transform hover:scale-[1.02] hover:bg-slate-100 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:bg-slate-800 dark:hover:shadow-slate-900/50">
-            <Button
-                variant="ghost"
-                size="icon"
-                className="absolute right-2 top-2 z-10 h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-800"
-                onClick={handleStarToggle}
-                disabled={processing}
-            >
-                <Star 
-                    size={18} 
-                    className={isStarred ? "fill-amber-400 text-amber-400" : "text-gray-400"} 
-                />
-            </Button>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-2 top-2 z-10 h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-800"
+                            onClick={handleStarToggle}
+                            disabled={processing}
+                        >
+                            <Star 
+                                size={18} 
+                                className={isStarred ? "fill-amber-400 text-amber-400" : "text-gray-400"} 
+                            />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>{getTooltipText()}</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
             <Link
                 prefetch
                 href={route('conferences.show', conference.id)}
