@@ -166,7 +166,7 @@ class ProposalController extends Controller
                 'state_id' => ConferenceStateEnum::PLANNED->value,
                 'front_page' => false,
                 'name' => $payload['name'] ?? $payload['shortName'] ?? 'Новая конференция',
-                'description' => $payload['topics'] ?? 'Описание конференции',
+                'description' => 'Пример описания: Международная научно-практическая конференция. 1 января 2030 года, гибридный формат, бесплатное участие, сертификат участника, дедлайн - 31 декабря 2029 года.',
                 'date' => $payload['date'] ?? now()->addMonth(),
                 'allow_thesis' => true,
                 'allow_report' => true,

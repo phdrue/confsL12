@@ -74,7 +74,7 @@ export default function Features() {
             className="bg-slate-50 w-full pt-16 pb-16 overflow-hidden">
             <div className="max-w-screen-xl mx-auto">
                 <div className="px-4 sm:px-6">
-                    <h2 className="text-center text-4xl font-semibold">Платформа конференций</h2>
+                    <h2 className="text-center text-4xl font-semibold">Сайт конференций</h2>
                     <p className="text-brand-textSecondary text-center mt-2">Какие блага получает участник научных мероприятий, принимая в них участие?</p>
                 </div>
                 <div className="px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-3 gap-6 mt-12">

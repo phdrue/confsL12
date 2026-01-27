@@ -66,7 +66,7 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <SidebarGroup className="px-2 py-0">
-                    <SidebarGroupLabel>Платформа</SidebarGroupLabel>
+                    <SidebarGroupLabel>Сайт</SidebarGroupLabel>
                     <SidebarMenu>
                         {mainNavItems.map((item) => (
                             <SidebarMenuItem key={item.title}>

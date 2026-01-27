@@ -202,7 +202,6 @@ function RegularTextBlockComponent({ block }: { block: RegularTextBlock }) {
         <div className="w-full px-11 pb-8">
             <style>{`
                 .regular-text-content p {
-                    text-indent: 1.5em;
                 }
             `}</style>
             <div className="regular-text-content text-pretty" dangerouslySetInnerHTML={{ __html: block.content.text || '' }} />

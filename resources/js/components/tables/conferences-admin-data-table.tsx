@@ -170,7 +170,7 @@ function ConferenceActionsCell({ conference }: { conference: Conference }) {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                     <Link href={route('adm.conferences.edit', conference.id)}>
-                        Изменить
+                        Превью
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
