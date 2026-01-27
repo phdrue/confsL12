@@ -28,8 +28,34 @@ class ConferenceParticipateRequest extends FormRequest
 
     protected function failedAuthorization()
     {
+        $user = $this->user();
+        $conference = $this->route('conference');
+
+        // Check if profile is incomplete
+        $requiredFields = [
+            'first_name',
+            'last_name',
+            'second_name',
+            'organization',
+            'position',
+            'city',
+            'phone',
+            'country_id',
+            'degree_id',
+            'title_id',
+        ];
+
+        foreach ($requiredFields as $field) {
+            if (empty($user->$field)) {
+                throw ValidationException::withMessages([
+                    'authorization' => 'Для участия в конференции необходимо заполнить все данные профиля.'
+                ]);
+            }
+        }
+
+        // Conference is not active
         throw ValidationException::withMessages([
-            'authorization' => 'You are not authorized to update this post.'
+            'authorization' => 'Приём заявок на данную конференцию закрыт.'
         ]);
     }
 

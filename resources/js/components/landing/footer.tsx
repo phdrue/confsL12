@@ -28,6 +28,9 @@ export default function Footer() {
                             <Link className="px-3" href={route('contacts')}>
                                 Контакты
                             </Link>
+                            <a className='px-3' target="_blank" href="https://ksmuconfs.org/?cat=9">
+                                Архивный сайт
+                            </a>
                         </div>
                     </div>
                 </div>

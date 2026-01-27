@@ -58,10 +58,11 @@ class AppServiceProvider extends ServiceProvider
     private function participationGates(): void
     {
         Gate::define('can-participate', function ($user, $conference) {
-            // Allow participation if conference is active
+            // Allow participation if conference is active and profile is complete
             // User can participate once, but can manage documents after participation
             $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
-            return $conferenceIsActive;
+            $profileIsComplete = $this->userHasCompleteProfile($user);
+            return $conferenceIsActive && $profileIsComplete;
         });
 
         Gate::define('can-manage-documents', function ($user, $conference) {
@@ -85,6 +86,30 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('is-responsible', function ($user) {
             return $user->hasRole(Role::RESPONSIBLE);
         });
+    }
+
+    private function userHasCompleteProfile($user): bool
+    {
+        $requiredFields = [
+            'first_name',
+            'last_name',
+            'second_name',
+            'organization',
+            'position',
+            'city',
+            'phone',
+            'country_id',
+            'degree_id',
+            'title_id',
+        ];
+
+        foreach ($requiredFields as $field) {
+            if (empty($user->$field)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function old()

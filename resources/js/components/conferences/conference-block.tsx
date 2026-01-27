@@ -12,37 +12,102 @@ import {
     SubheaderTextBlock,
 } from '@/types/blocks';
 import AutoScroll from 'embla-carousel-auto-scroll';
-import { Dot, Link } from 'lucide-react';
-import { JSX } from 'react';
+import { Dot, Link, Pencil } from 'lucide-react';
+import { JSX, useCallback, useEffect, useRef } from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '../ui/carousel';
+import { cn } from '@/lib/utils';
 
-export const ConferenceBlock = ({ primaryColor, block }: { primaryColor: string; block: ConferenceBlockType }): JSX.Element | null => {
-    switch (block.type_id) {
-        case 1:
-            return <RegularTextBlockComponent block={block} />;
-        case 2:
-            return <ListTextBlockComponent block={block} />;
-        case 3:
-            return <LinksTextBlockComponent block={block} />;
-        case 4:
-            return <KeyValueTextBlockComponent primaryColor={primaryColor} block={block} />;
-        case 5:
-            return <HeadingTextBlockComponent primaryColor={primaryColor} block={block} />;
-        case 6:
-            return <DisclamerTextBlockComponent block={block} />;
-        case 7:
-            return <SeparatorBlockComponent />;
-        case 9:
-            return <ImageBlockComponent block={block} />;
-        case 10:
-            return <SubheaderTextBlockComponent block={block} />;
-        case 11:
-            return <FilesBlockComponent block={block} />;
-        case 12:
-            return <QuoteBlockComponent primaryColor={primaryColor} block={block} />;
-        default:
-            return null;
+interface ConferenceBlockProps {
+    primaryColor: string;
+    block: ConferenceBlockType;
+    isEditable?: boolean;
+    isHighlighted?: boolean;
+    onBlockClick?: (block: ConferenceBlockType) => void;
+    registerBlockRef?: (blockId: number, ref: HTMLDivElement | null) => void;
+}
+
+export const ConferenceBlock = ({ 
+    primaryColor, 
+    block,
+    isEditable = false,
+    isHighlighted = false,
+    onBlockClick,
+    registerBlockRef
+}: ConferenceBlockProps): JSX.Element | null => {
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (registerBlockRef) {
+            registerBlockRef(block.id, ref.current);
+            return () => registerBlockRef(block.id, null);
+        }
+    }, [block.id, registerBlockRef]);
+
+    const handleClick = useCallback(() => {
+        if (isEditable && onBlockClick) {
+            onBlockClick(block);
+        }
+    }, [isEditable, onBlockClick, block]);
+
+    const renderBlock = () => {
+        switch (block.type_id) {
+            case 1:
+                return <RegularTextBlockComponent block={block} />;
+            case 2:
+                return <ListTextBlockComponent block={block} />;
+            case 3:
+                return <LinksTextBlockComponent block={block} />;
+            case 4:
+                return <KeyValueTextBlockComponent primaryColor={primaryColor} block={block} />;
+            case 5:
+                return <HeadingTextBlockComponent primaryColor={primaryColor} block={block} />;
+            case 6:
+                return <DisclamerTextBlockComponent block={block} />;
+            case 7:
+                return <SeparatorBlockComponent />;
+            case 9:
+                return <ImageBlockComponent block={block} />;
+            case 10:
+                return <SubheaderTextBlockComponent block={block} />;
+            case 11:
+                return <FilesBlockComponent block={block} />;
+            case 12:
+                return <QuoteBlockComponent primaryColor={primaryColor} block={block} />;
+            default:
+                return null;
+        }
+    };
+
+    if (isEditable) {
+        return (
+            <div
+                ref={ref}
+                onClick={handleClick}
+                className={cn(
+                    "relative group cursor-pointer transition-all duration-300 rounded-lg",
+                    isHighlighted && "ring-2 ring-blue-500 ring-offset-2 bg-blue-50/50",
+                    !isHighlighted && "hover:ring-2 hover:ring-blue-300 hover:ring-offset-2 hover:bg-blue-50/30"
+                )}
+            >
+                {/* Edit overlay on hover */}
+                <div className={cn(
+                    "absolute inset-0 flex items-center justify-center bg-blue-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-none",
+                    isHighlighted && "opacity-100"
+                )}>
+                    <div className="bg-white rounded-full p-2 shadow-lg border border-blue-200">
+                        <Pencil size={16} className="text-blue-600" />
+                    </div>
+                </div>
+                {/* Block name tooltip on hover */}
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20 pointer-events-none">
+                    {block.name}
+                </div>
+                {renderBlock()}
+            </div>
+        );
     }
+
+    return renderBlock();
 };
 
 // function ImageBlockComponent({ block }: { block: ImagesBlock }) {
@@ -57,7 +122,7 @@ export const ConferenceBlock = ({ primaryColor, block }: { primaryColor: string;
 function ImageBlockComponent({ block }: { block: ImagesBlock }) {
     return (
         <div className="mx-auto mt-0 max-w-screen-xl px-4 pb-8 sm:px-6">
-            <p className="text-brand-textSecondary text-center text-sm font-semibold uppercase">Информационные партнеры</p>
+            {/* <p className="text-brand-textSecondary text-center text-sm font-semibold uppercase">Информационные партнеры</p> */}
             <Carousel
                 className="mt-6 w-full"
                 opts={{

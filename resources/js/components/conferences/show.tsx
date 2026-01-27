@@ -10,10 +10,18 @@ import { useToast } from "@/hooks/use-toast"
 
 export default function Show({
     blocks,
-    conference
+    conference,
+    isEditable = false,
+    highlightedBlockId = null,
+    onBlockClick,
+    registerBlockRef
 }: {
     blocks: Array<ConferenceBlockType>,
-    conference: Conference
+    conference: Conference,
+    isEditable?: boolean,
+    highlightedBlockId?: number | null,
+    onBlockClick?: (block: ConferenceBlockType) => void,
+    registerBlockRef?: (blockId: number, ref: HTMLDivElement | null) => void
 }) {
     const { auth } = usePage<SharedData>().props;
     const { post, delete: destroy, processing } = useForm({});
@@ -107,7 +115,15 @@ export default function Show({
             </div>
             <div>
                 {blocks.map((block) => (
-                    <ConferenceBlock primaryColor={conference.primary_color} key={block.id} block={block} />
+                    <ConferenceBlock 
+                        primaryColor={conference.primary_color} 
+                        key={block.id} 
+                        block={block}
+                        isEditable={isEditable}
+                        isHighlighted={highlightedBlockId === block.id}
+                        onBlockClick={onBlockClick}
+                        registerBlockRef={registerBlockRef}
+                    />
                 ))}
             </div>
         </div>

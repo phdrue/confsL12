@@ -101,10 +101,11 @@ export default function ParticipationForm({
         // Use router.post directly with the cleaned data
         router.post(route('client.conferences.participate', conference.id), cleanedData, {
             onError: (err) => {
+                console.log(err)
                 if (err.authorization) {
                     toast({
                         variant: 'destructive',
-                        title: 'Ошибка авторизации',
+                        title: err.authorization,
                     })
                 }
             },

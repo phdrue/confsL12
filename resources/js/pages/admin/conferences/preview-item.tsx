@@ -1,20 +1,23 @@
 import { ConferenceBlock } from "@/types/blocks"
 import { Reorder, useDragControls } from "framer-motion"
-import { GripVertical, Pencil, Trash2 } from "lucide-react"
+import { GripVertical, Pencil, Trash2, Eye } from "lucide-react"
 import { useForm } from "@inertiajs/react"
 import { Button } from "@/components/ui/button"
 import { FormEventHandler } from "react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 export function PreviewItem({
     block,
     toast,
     setOpenEdit,
-    setBlockToEdit
+    setBlockToEdit,
+    onHighlightBlock
 }: {
     block: ConferenceBlock,
     toast: any,
     setOpenEdit: (openEdit: boolean) => void,
-    setBlockToEdit: (block: ConferenceBlock | null) => void
+    setBlockToEdit: (block: ConferenceBlock | null) => void,
+    onHighlightBlock: (blockId: number) => void
 }) {
     const controls = useDragControls()
 
@@ -45,13 +48,48 @@ export function PreviewItem({
                 {block.name}
             </span>
             <div className="flex gap-2">
-                <Button onClick={() => { setOpenEdit(true); setBlockToEdit(block) }} type="button" variant={"outline"} size={"iconSmall"}>
-                    <Pencil size={12} className="text-black/50" />
-                </Button>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button 
+                                onClick={() => onHighlightBlock(block.id)} 
+                                type="button" 
+                                variant={"outline"} 
+                                size={"iconSmall"}
+                            >
+                                <Eye size={12} className="text-black/50" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Показать в превью</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button onClick={() => { setOpenEdit(true); setBlockToEdit(block) }} type="button" variant={"outline"} size={"iconSmall"}>
+                                <Pencil size={12} className="text-black/50" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Редактировать</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
                 <form onSubmit={handleDeleteSubmit}>
-                    <Button type="submit" variant={"outline"} className="group" size={"iconSmall"}>
-                        <Trash2 size={12} className="text-black/50 group-hover:text-rose-600" />
-                    </Button>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button type="submit" variant={"outline"} className="group" size={"iconSmall"}>
+                                    <Trash2 size={12} className="text-black/50 group-hover:text-rose-600" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Удалить</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </form>
             </div>
         </Reorder.Item>

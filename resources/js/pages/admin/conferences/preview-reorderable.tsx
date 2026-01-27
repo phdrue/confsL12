@@ -6,7 +6,7 @@ import { Card, CardHeader, CardContent, CardTitle, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { ConferenceBlock, ConferenceBlockType, Image, ImageCategory } from "@/types/blocks"
 import { Reorder } from "framer-motion"
-import { FormEventHandler, useState } from "react";
+import { FormEventHandler } from "react";
 
 import { LoaderCircle } from "lucide-react";
 
@@ -17,7 +17,12 @@ export default function PreviewReorderComponent({
     conferenceId,
     blocks,
     blockTypes,
-    imagesBlockData
+    imagesBlockData,
+    onHighlightBlock,
+    blockToEdit,
+    setBlockToEdit,
+    openEdit,
+    setOpenEdit
 }: {
     handleReorder: (values: Array<ConferenceBlock>) => void,
     conferenceId: number,
@@ -26,9 +31,14 @@ export default function PreviewReorderComponent({
     imagesBlockData: {
         images: Array<Image>,
         imageCategories: Array<ImageCategory>
-    }
+    },
+    onHighlightBlock: (blockId: number) => void,
+    blockToEdit: ConferenceBlock | null,
+    setBlockToEdit: (block: ConferenceBlock | null) => void,
+    openEdit: boolean,
+    setOpenEdit: (open: boolean) => void
 }) {
-    const { data, setData, put, processing, transform } = useForm({
+    const { put, processing, transform } = useForm({
         blocks: '',
     })
     transform((data) => ({
@@ -40,13 +50,6 @@ export default function PreviewReorderComponent({
             }
         }),
     }))
-    const [open, setOpen] = useState(false);
-    const handleClose = () => setOpen(false);
-
-    const [openEdit, setOpenEdit] = useState(false);
-    const handleCloseEdit = () => setOpenEdit(false);
-
-    const [blockToEdit, setBlockToEdit] = useState<ConferenceBlock | null>(null);
 
     const { toast } = useToast()
 
@@ -54,7 +57,6 @@ export default function PreviewReorderComponent({
         e.preventDefault()
         put(route('adm.blocks.reorder', conferenceId), {
             onSuccess: () => {
-                handleClose()
                 toast({
                     variant: "success",
                     title: "Порядок блоков был сохранен!",
@@ -82,6 +84,7 @@ export default function PreviewReorderComponent({
                             toast={toast}
                             setOpenEdit={setOpenEdit}
                             setBlockToEdit={setBlockToEdit}
+                            onHighlightBlock={onHighlightBlock}
                         />
                     ))}
                 </Reorder.Group>
