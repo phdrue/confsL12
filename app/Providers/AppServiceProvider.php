@@ -60,16 +60,20 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('can-participate', function ($user, $conference) {
             // Allow participation if conference is active and profile is complete
             // User can participate once, but can manage documents after participation
+            // Cannot participate if less than a month before conference date
             $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
             $profileIsComplete = $this->userHasCompleteProfile($user);
-            return $conferenceIsActive && $profileIsComplete;
+            $moreThanMonthAway = now()->addMonth()->lt($conference->date);
+            return $conferenceIsActive && $profileIsComplete && $moreThanMonthAway;
         });
 
         Gate::define('can-manage-documents', function ($user, $conference) {
             // User can manage documents if they participate and conference is active
+            // Cannot manage documents if less than a month before conference date
             $participates = $user->conferences()->where('conference_id', $conference->id)->exists();
             $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
-            return $participates && $conferenceIsActive;
+            $moreThanMonthAway = now()->addMonth()->lt($conference->date);
+            return $participates && $conferenceIsActive && $moreThanMonthAway;
         });
     }
 

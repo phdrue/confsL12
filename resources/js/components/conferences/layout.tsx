@@ -20,9 +20,15 @@ export default function ConferenceLayout({ heading, children, showHeader = true 
                             {/* <p className="font-semibold text-center">350+ проведенных конференций</p> */}
                             <p className="mt-2 text-center leading-tight">Присоединяйтесь к научному сообществу вместе с КГМУ</p>
                             <div className="mt-6 flex h-9 justify-center gap-4">
-                                <img src="/img/landing/icons/telegram.svg" alt="telegram" className="aspect-square h-full" />
-                                <img src="/img/landing/icons/vk.svg" alt="vk" className="aspect-square h-full" />
-                                <img src="/img/landing/icons/yt.svg" alt="yt" className="aspect-square h-full" />
+                                <a href="https://max.ru/id4629027572_biz">
+                                    <img src="/img/landing/icons/max.png" alt="max" className="aspect-square h-full" />
+                                </a>
+                                <a href="https://t.me/KSMU_Kursk">
+                                    <img src="/img/landing/icons/telegram.svg" alt="telegram" className="aspect-square h-full" />
+                                </a>
+                                <a href="https://vk.com/kurskmedcom">
+                                    <img src="/img/landing/icons/vk.svg" alt="vk" className="aspect-square h-full" />
+                                </a>
                             </div>
                         </div>
                         {/* </AuroraBackground> */}
