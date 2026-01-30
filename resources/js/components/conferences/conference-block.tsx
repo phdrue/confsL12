@@ -299,7 +299,9 @@ function RegularTextBlockComponent({ block }: { block: RegularTextBlock }) {
     return (
         <div className="w-full px-11 pb-8">
             <style>{`
-                .regular-text-content p {
+                .regular-text-content,
+                .regular-text-content * {
+                    font-family: inherit;
                 }
             `}</style>
             <div className="regular-text-content text-pretty" dangerouslySetInnerHTML={{ __html: block.content.text || '' }} />
@@ -423,7 +425,13 @@ function QuoteBlockComponent({ primaryColor, block }: { primaryColor: string; bl
                     </svg>
                 </div>
                 <div className="text-pretty lg:max-w-2xl">
-                    <div className="text-pretty" dangerouslySetInnerHTML={{ __html: block.content.text || '' }} />
+                    <style>{`
+                        .quote-text-content,
+                        .quote-text-content * {
+                            font-family: inherit;
+                        }
+                    `}</style>
+                    <div className="quote-text-content text-pretty" dangerouslySetInnerHTML={{ __html: block.content.text || '' }} />
                 </div>
             </div>
         </div>
