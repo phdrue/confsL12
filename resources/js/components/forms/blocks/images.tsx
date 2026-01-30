@@ -34,21 +34,18 @@ export default function ImagesBlockFormComponent({
 
     function addImageToContent() {
         if (imageId) {
-            const image = imagesBlockData.images.find((image) => image.id === Number(imageId));
-            const imageToAdd = {
-                path: image?.default ? image?.path : `storage/${image?.path}`,
-                name: image?.name
-            }
+            const imageIdNum = Number(imageId);
             setData('content', {
                 images: [
-                    ...content.images, imageToAdd
+                    ...(content.images || []), imageIdNum
                 ]
             })
+            setImageId(''); // Reset selection after adding
         }
     }
 
-    function removeImageFromContent(imageToRemove: { path: string; name: string }) {
-        const newContent = content.images.filter((image: { path: string; name: string }, index: number) => index !== content.images.indexOf(imageToRemove));
+    function removeImageFromContent(imageIdToRemove: number) {
+        const newContent = (content.images || []).filter((imageId: number) => imageId !== imageIdToRemove);
         setData('content', { images: newContent });
     }
 
@@ -60,20 +57,22 @@ export default function ImagesBlockFormComponent({
                 </CardHeader>
                 <CardContent className="p-4 pt-0 space-y-2">
                     <div className="w-full space-y-1">
-                        {content.images && content.images.map((image: { path: string, name: string }, index: number) => (
-                            <div key={index} className="w-full flex grow gap-2 items-center justify-center">
-                                <div className="flex grow">{image.name}</div>
-                                <Button
-                                    onClick={() => removeImageFromContent(image)}
-                                    type="button"
-                                    className="shrink-0 hover:text-red-600"
-                                    variant={"outline"}
-                                    size={"iconSmall"}>
-                                    <Trash2 />
-                                </Button>
-                            </div>
-
-                        ))}
+                        {content.images && content.images.map((imageId: number, index: number) => {
+                            const image = imagesBlockData.images.find((img) => img.id === imageId);
+                            return (
+                                <div key={index} className="w-full flex grow gap-2 items-center justify-center">
+                                    <div className="flex grow">{image?.name || `Image ID: ${imageId}`}</div>
+                                    <Button
+                                        onClick={() => removeImageFromContent(imageId)}
+                                        type="button"
+                                        className="shrink-0 hover:text-red-600"
+                                        variant={"outline"}
+                                        size={"iconSmall"}>
+                                        <Trash2 />
+                                    </Button>
+                                </div>
+                            );
+                        })}
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="categoryId">Категория изображения</Label>

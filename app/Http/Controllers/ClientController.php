@@ -10,6 +10,7 @@ use App\Models\ConferenceType;
 use App\Models\ConferenceUser;
 use App\Models\Country;
 use App\Models\Document;
+use App\Models\Image;
 use App\Models\ReportType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -287,6 +288,7 @@ class ClientController extends Controller
         return Inertia::render('client/conferences/show', [
             'conference' => $conference,
             'blocks' => $conference->blocks()->orderBy('position')->get(),
+            'images' => Image::all(),
             'countries' => Country::select('id', 'name')->get(),
             'reportTypes' => ReportType::select('id', 'name')->get(),
             'participation' => $participation ? [

@@ -81,6 +81,7 @@ export default function Show({
                         <ShowConference 
                             conference={conference} 
                             blocks={blocks}
+                            images={imagesBlockData.images}
                             isEditable={true}
                             highlightedBlockId={highlightedBlockId}
                             onBlockClick={handleBlockClick}

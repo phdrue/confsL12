@@ -130,7 +130,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // банк изображений
         Route::resource('images', ImageController::class)
-            ->only('index', 'store');
+            ->only('index', 'store', 'edit', 'update');
 
         // блоки
         Route::resource('blocks', ConferenceBlockController::class)

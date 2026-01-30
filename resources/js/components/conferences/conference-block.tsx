@@ -4,6 +4,7 @@ import {
     FilesBlock,
     HeadingTextBlock,
     ImagesBlock,
+    Image,
     KeyValueTextBlock,
     LinksTextBlock,
     ListTextBlock,
@@ -15,11 +16,13 @@ import AutoScroll from 'embla-carousel-auto-scroll';
 import { Dot, Link, Pencil } from 'lucide-react';
 import { JSX, useCallback, useEffect, useRef } from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '../ui/carousel';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { cn } from '@/lib/utils';
 
 interface ConferenceBlockProps {
     primaryColor: string;
     block: ConferenceBlockType;
+    images?: Array<Image>;
     isEditable?: boolean;
     isHighlighted?: boolean;
     onBlockClick?: (block: ConferenceBlockType) => void;
@@ -29,6 +32,7 @@ interface ConferenceBlockProps {
 export const ConferenceBlock = ({ 
     primaryColor, 
     block,
+    images = [],
     isEditable = false,
     isHighlighted = false,
     onBlockClick,
@@ -66,7 +70,7 @@ export const ConferenceBlock = ({
             case 7:
                 return <SeparatorBlockComponent />;
             case 9:
-                return <ImageBlockComponent block={block} />;
+                return <ImageBlockComponent block={block} images={images} />;
             case 10:
                 return <SubheaderTextBlockComponent block={block} />;
             case 11:
@@ -119,34 +123,63 @@ export const ConferenceBlock = ({
 //     );
 // }
 
-function ImageBlockComponent({ block }: { block: ImagesBlock }) {
+function ImageBlockComponent({ block, images }: { block: ImagesBlock; images: Array<Image> }) {
     return (
         <div className="mx-auto mt-0 max-w-screen-xl px-4 pb-8 sm:px-6">
             {/* <p className="text-brand-textSecondary text-center text-sm font-semibold uppercase">Информационные партнеры</p> */}
-            <Carousel
-                className="mt-6 w-full"
-                opts={{
-                    loop: true,
-                    watchDrag: false,
-                }}
-                plugins={[
-                    AutoScroll({
-                        speed: 0.5,
-                    }),
-                ]}
-            >
-                <div className="absolute top-0 left-0 z-10 h-full w-[100px] bg-gradient-to-r from-white"></div>
-                <div className="absolute top-0 right-0 z-10 h-full w-[100px] bg-gradient-to-l from-white"></div>
-                <CarouselContent>
-                    {block.content.images.map((image, index) => (
-                        <CarouselItem key={index} className="flex max-h-16 basis-1/2 items-center justify-center md:basis-1/3 lg:basis-1/5">
-                            <div className="size-full pl-4">
-                                <img className="size-full object-contain" src={`/${image.path}`} alt="partner" />
-                            </div>
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-            </Carousel>
+            <TooltipProvider delayDuration={0}>
+                <Carousel
+                    className="mt-6 w-full"
+                    opts={{
+                        loop: true,
+                        watchDrag: false,
+                    }}
+                    plugins={[
+                        AutoScroll({
+                            speed: 0.5,
+                            stopOnMouseEnter: true,
+                        }),
+                    ]}
+                >
+                    <div className="absolute top-0 left-0 z-10 h-full w-[100px] bg-gradient-to-r from-white pointer-events-none"></div>
+                    <div className="absolute top-0 right-0 z-10 h-full w-[100px] bg-gradient-to-l from-white pointer-events-none"></div>
+                    <CarouselContent>
+                        {block.content.images.map((imageId, index) => {
+                            const image = images.find((img) => img.id === imageId);
+                            if (!image || !image.name) return null;
+                            
+                            const imagePath = image.default ? `/${image.path}` : `/files/${image.path}`;
+                            const imageUrl = image.url || imagePath;
+                            
+                            return (
+                                <CarouselItem key={index} className="flex max-h-16 basis-1/2 items-center justify-center md:basis-1/3 lg:basis-1/5">
+                                    <div className="size-full pl-4">
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <a
+                                                    href={imageUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="block size-full cursor-pointer"
+                                                >
+                                                    <img 
+                                                        className="size-full object-contain hover:opacity-80 transition-opacity" 
+                                                        src={imagePath} 
+                                                        alt={image.name} 
+                                                    />
+                                                </a>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="top" align="center" className="z-[100] max-w-xs">
+                                                <p className="text-xs">{image.name}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                                </CarouselItem>
+                            );
+                        })}
+                    </CarouselContent>
+                </Carousel>
+            </TooltipProvider>
         </div>
     );
 }

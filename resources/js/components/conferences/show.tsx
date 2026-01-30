@@ -1,4 +1,4 @@
-import { ConferenceBlock as ConferenceBlockType } from "@/types/blocks"
+import { ConferenceBlock as ConferenceBlockType, Image } from "@/types/blocks"
 import { Conference } from "@/types/conferences"
 import { ConferenceBlock } from "./conference-block"
 import { Button } from "@/components/ui/button"
@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast"
 export default function Show({
     blocks,
     conference,
+    images = [],
     isEditable = false,
     highlightedBlockId = null,
     onBlockClick,
@@ -18,6 +19,7 @@ export default function Show({
 }: {
     blocks: Array<ConferenceBlockType>,
     conference: Conference,
+    images?: Array<Image>,
     isEditable?: boolean,
     highlightedBlockId?: number | null,
     onBlockClick?: (block: ConferenceBlockType) => void,
@@ -119,6 +121,7 @@ export default function Show({
                         primaryColor={conference.primary_color} 
                         key={block.id} 
                         block={block}
+                        images={images}
                         isEditable={isEditable}
                         isHighlighted={highlightedBlockId === block.id}
                         onBlockClick={onBlockClick}

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateImageRequest;
+use App\Http\Requests\UpdateImageRequest;
 use Inertia\Inertia;
 use App\Models\Image;
 use App\Models\ImageCategory;
@@ -33,6 +34,37 @@ class ImageController extends Controller
         $disk = env('IMAGE_STORAGE_DISK', 'ftp');
         $imgPath = $request->file('img')->store($path, $disk);
         Image::create([...$request->safe()->except('img'), 'path' =>  $imgPath]);
+
+        return to_route('adm.images.index');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Image $image)
+    {
+        return Inertia::render('admin/images/edit', [
+            'image' => $image->load('category'),
+            'imageCategories' => ImageCategory::select('id', 'name')->get(),
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateImageRequest $request, Image $image)
+    {
+        $data = $request->safe()->except('img');
+
+        // If a new image is uploaded, store it and update the path
+        if ($request->hasFile('img')) {
+            $path = 'img/images';
+            $disk = env('IMAGE_STORAGE_DISK', 'ftp');
+            $imgPath = $request->file('img')->store($path, $disk);
+            $data['path'] = $imgPath;
+        }
+
+        $image->update($data);
 
         return to_route('adm.images.index');
     }

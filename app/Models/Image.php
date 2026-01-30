@@ -17,10 +17,10 @@ class Image extends Model
     /**
      * Get the full URL for this image (served via FTP/local storage)
      */
-    protected function url(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => "/files/{$this->path}",
-        );
-    }
+    // protected function url(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn () => "/files/{$this->path}",
+    //     );
+    // }
 }

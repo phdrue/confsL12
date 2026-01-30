@@ -4,7 +4,7 @@ import ParticipationForm from '@/components/forms/participations/form';
 import Footer from '@/components/landing/footer';
 import ClientLayout from '@/layouts/client-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { ConferenceBlock as ConferenceBlockType } from '@/types/blocks';
+import { ConferenceBlock as ConferenceBlockType, Image } from '@/types/blocks';
 import { Conference, ReportType } from '@/types/conferences';
 import { Country } from '@/types/other';
 import { Head, Link, usePage } from '@inertiajs/react';
@@ -13,6 +13,7 @@ import { Lock } from 'lucide-react';
 export default function Show({
     conference,
     blocks,
+    images,
     countries,
     reportTypes,
     participation,
@@ -20,6 +21,7 @@ export default function Show({
 }: {
     conference: Conference;
     blocks: Array<ConferenceBlockType>;
+    images: Array<Image>;
     countries: Array<Country>;
     reportTypes: Array<ReportType>;
     participation?: { id: number; confirmed: boolean } | null;
@@ -44,7 +46,7 @@ export default function Show({
             <ConferenceLayout heading={conference.name} showHeader={false}>
                 <div className="flex w-full flex-col items-center gap-12">
                     <div className="px-4 sm:px-6 lg:px-16 w-full">
-                        <ShowConference conference={conference} blocks={blocks} />
+                        <ShowConference conference={conference} blocks={blocks} images={images} />
                     </div>
 
                     {conference.state_id == 3 && (

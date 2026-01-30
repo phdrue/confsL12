@@ -17,6 +17,7 @@ import {
 import { Link } from "@inertiajs/react"
 import { parseDateString } from "@/parse-date-string"
 import { Image, ImageCategory } from "@/types/blocks"
+import ImageEditForm from "@/components/forms/images/edit"
 
 export default function ImagesAdminDataTable({
     images,
@@ -96,6 +97,10 @@ export default function ImagesAdminDataTable({
                             <DropdownMenuLabel>Действия</DropdownMenuLabel>
                             <DropdownMenuItem onClick={() => { setOpenPreview(true); setImage(image) }}>
                                 Просмотр
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem asChild>
+                                <ImageEditForm image={image} categories={imageCategories} />
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu >
