@@ -33,12 +33,21 @@ export type Title = {
     name: string
 }
 
+export type ScienceGuide = {
+    name: string
+    degree: string
+    title: string
+    city: string
+    country_id: string | number
+    organization: string
+}
+
 export interface Report {
     id?: number,
     topic: string,
     report_type_id: string,
     authors: Array<any>,
-    science_guides: Array<string>
+    science_guides: Array<ScienceGuide>
 }
 
 export interface Thesis {
@@ -47,5 +56,5 @@ export interface Thesis {
     text: string,
     literature: string,
     authors: Array<any>,
-    science_guides: Array<string>
+    science_guides: Array<ScienceGuide>
 }

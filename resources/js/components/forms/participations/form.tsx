@@ -28,7 +28,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import AuthorsFormPartial from './authors';
-import { Country, Report } from '@/types/other';
+import { Country, Degree, Report, Title } from '@/types/other';
 import { Conference, ReportType } from "@/types/conferences";
 import InputError from "@/components/input-error";
 import ReportParticipationForm from "./report";
@@ -38,12 +38,16 @@ export default function ParticipationForm({
     conference,
     reportTypes,
     countries,
+    degrees,
+    titles,
     participation,
     existingDocuments
 }: {
     conference: Conference,
     reportTypes: Array<ReportType>,
     countries: Array<Country>,
+    degrees: Array<Degree>,
+    titles: Array<Title>,
     participation?: { id: number; confirmed: boolean } | null,
     existingDocuments?: { reports: Array<any>; thesises: Array<any> }
 }) {
@@ -165,11 +169,11 @@ export default function ParticipationForm({
                 <form className="flex flex-col gap-6" onSubmit={submit}>
                     <div className="grid gap-6">
                         {Boolean(conference.allow_report) &&
-                            <ReportParticipationForm setData={setData} errors={errors} reports={data.reports} conference={conference} reportTypes={reportTypes} countries={countries} />
+                            <ReportParticipationForm setData={setData} errors={errors} reports={data.reports} conference={conference} reportTypes={reportTypes} countries={countries} degrees={degrees} titles={titles} />
                         }
                         <InputError message={errors.reports} className="mt-2" />
                         {Boolean(conference.allow_thesis) &&
-                            <ThesisParticipationForm setData={setData} errors={errors} thesises={data.thesises} conference={conference} countries={countries} />
+                            <ThesisParticipationForm setData={setData} errors={errors} thesises={data.thesises} conference={conference} countries={countries} degrees={degrees} titles={titles} />
                         }
                         <InputError message={errors.thesises} className="mt-2" />
                         <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>

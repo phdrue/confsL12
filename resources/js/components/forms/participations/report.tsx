@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select"
 import AuthorsFormPartial from './authors';
 import ScienceGuidesFormPartial from './science-guides';
-import { Country, Report } from '@/types/other';
+import { Country, Degree, Report, ScienceGuide, Title } from '@/types/other';
 import { Conference, ReportType } from "@/types/conferences";
 import { Label } from '@/components/ui/label';
 
@@ -25,19 +25,23 @@ export default function ReportParticipationForm({
     setData,
     conference,
     reportTypes,
-    countries
+    countries,
+    degrees,
+    titles
 }: {
     reports: Array<Report>,
     errors: any,
     setData: any,
     conference: Conference,
     reportTypes: Array<ReportType>,
-    countries: Array<Country>
+    countries: Array<Country>,
+    degrees: Array<Degree>,
+    titles: Array<Title>
 }) {
     const [topic, setTopic] = useState('');
     const [reportTypeId, setReportTypeId] = useState('');
     const [authors, setAuthors] = useState([]);
-    const [scienceGuides, setScienceGuides] = useState<Array<string>>([]);
+    const [scienceGuides, setScienceGuides] = useState<Array<ScienceGuide>>([]);
 
     const [showForm, setShowForm] = useState(false);
 
@@ -114,7 +118,7 @@ export default function ReportParticipationForm({
                                         <InputError message={errors.authors} className="mt-2" />
                                     </div>
                                     <div>
-                                        <ScienceGuidesFormPartial scienceGuides={scienceGuides} setData={setScienceGuides} error={errors.science_guides} />
+                                        <ScienceGuidesFormPartial scienceGuides={scienceGuides} setData={setScienceGuides} error={errors.science_guides} countries={countries} degrees={degrees} titles={titles} />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="report_type_id">Вид доклада <span className="text-red-500">*</span></Label>

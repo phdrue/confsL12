@@ -55,7 +55,13 @@ class CreateDocumentRequest extends FormRequest
             'authors.*.city' => 'required|string|max:500',
             'authors.*.country_id' => 'required|numeric|exists:countries,id',
             'science_guides' => 'nullable|array',
-            'science_guides.*' => 'required|string|max:500',
+            'science_guides.*' => 'required|array:name,degree,title,city,country_id,organization',
+            'science_guides.*.name' => 'required|string|max:500',
+            'science_guides.*.degree' => 'required|string|max:500',
+            'science_guides.*.title' => 'required|string|max:500',
+            'science_guides.*.city' => 'required|string|max:500',
+            'science_guides.*.country_id' => 'required|numeric|exists:countries,id',
+            'science_guides.*.organization' => 'required|string|max:500',
         ];
     }
 }

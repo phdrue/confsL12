@@ -87,7 +87,13 @@ class ConferenceParticipateRequest extends FormRequest
             $rules['thesises.*.authors.*.city'] = 'required|string|max:500';
             $rules['thesises.*.authors.*.country_id'] = 'required|numeric|exists:countries,id';
             $rules['thesises.*.science_guides'] = 'nullable|array';
-            $rules['thesises.*.science_guides.*'] = 'required|string|max:500';
+            $rules['thesises.*.science_guides.*'] = 'required|array:name,degree,title,city,country_id,organization';
+            $rules['thesises.*.science_guides.*.name'] = 'required|string|max:500';
+            $rules['thesises.*.science_guides.*.degree'] = 'required|string|max:500';
+            $rules['thesises.*.science_guides.*.title'] = 'required|string|max:500';
+            $rules['thesises.*.science_guides.*.city'] = 'required|string|max:500';
+            $rules['thesises.*.science_guides.*.country_id'] = 'required|numeric|exists:countries,id';
+            $rules['thesises.*.science_guides.*.organization'] = 'required|string|max:500';
         }
 
         if ($conference->allow_report) {
@@ -102,7 +108,13 @@ class ConferenceParticipateRequest extends FormRequest
             $rules['reports.*.authors.*.city'] = 'required|string|max:500';
             $rules['reports.*.authors.*.country_id'] = 'required|numeric|exists:countries,id';
             $rules['reports.*.science_guides'] = 'nullable|array';
-            $rules['reports.*.science_guides.*'] = 'required|string|max:500';
+            $rules['reports.*.science_guides.*'] = 'required|array:name,degree,title,city,country_id,organization';
+            $rules['reports.*.science_guides.*.name'] = 'required|string|max:500';
+            $rules['reports.*.science_guides.*.degree'] = 'required|string|max:500';
+            $rules['reports.*.science_guides.*.title'] = 'required|string|max:500';
+            $rules['reports.*.science_guides.*.city'] = 'required|string|max:500';
+            $rules['reports.*.science_guides.*.country_id'] = 'required|numeric|exists:countries,id';
+            $rules['reports.*.science_guides.*.organization'] = 'required|string|max:500';
         }
 
         return $rules;

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from "@/components/ui/textarea"
 import AuthorsFormPartial from './authors';
 import ScienceGuidesFormPartial from './science-guides';
-import { Country, Thesis } from '@/types/other';
+import { Country, Degree, ScienceGuide, Thesis, Title } from '@/types/other';
 import { Label } from '@/components/ui/label';
 
 export default function ThesisParticipationForm({
@@ -15,19 +15,23 @@ export default function ThesisParticipationForm({
     errors,
     setData,
     conference,
-    countries
+    countries,
+    degrees,
+    titles
 }: {
     thesises: Array<Thesis>,
     errors: any,
     setData: any,
     conference: Conference,
-    countries: Array<Country>
+    countries: Array<Country>,
+    degrees: Array<Degree>,
+    titles: Array<Title>
 }) {
     const [topic, setTopic] = useState('');
     const [text, setText] = useState('');
     const [literature, setLiterature] = useState('');
     const [authors, setAuthors] = useState([]);
-    const [scienceGuides, setScienceGuides] = useState<Array<string>>([]);
+    const [scienceGuides, setScienceGuides] = useState<Array<ScienceGuide>>([]);
 
     const [showForm, setShowForm] = useState(false);
 
@@ -106,7 +110,7 @@ export default function ThesisParticipationForm({
                                         <InputError message={errors.authors} className="mt-2" />
                                     </div>
                                     <div>
-                                        <ScienceGuidesFormPartial scienceGuides={scienceGuides} setData={setScienceGuides} error={errors.science_guides} />
+                                        <ScienceGuidesFormPartial scienceGuides={scienceGuides} setData={setScienceGuides} error={errors.science_guides} countries={countries} degrees={degrees} titles={titles} />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="topic">Тема тезисов <span className="text-red-500">*</span></Label>

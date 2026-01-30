@@ -6,7 +6,7 @@ import ClientLayout from '@/layouts/client-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { ConferenceBlock as ConferenceBlockType, Image } from '@/types/blocks';
 import { Conference, ReportType } from '@/types/conferences';
-import { Country } from '@/types/other';
+import { Country, Degree, Title } from '@/types/other';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Lock } from 'lucide-react';
 
@@ -15,6 +15,8 @@ export default function Show({
     blocks,
     images,
     countries,
+    degrees,
+    titles,
     reportTypes,
     participation,
     existingDocuments,
@@ -23,6 +25,8 @@ export default function Show({
     blocks: Array<ConferenceBlockType>;
     images: Array<Image>;
     countries: Array<Country>;
+    degrees: Array<Degree>;
+    titles: Array<Title>;
     reportTypes: Array<ReportType>;
     participation?: { id: number; confirmed: boolean } | null;
     existingDocuments?: { reports: Array<any>; thesises: Array<any> };
@@ -65,6 +69,8 @@ export default function Show({
                             <div className="flex w-full flex-wrap items-center justify-center gap-3 md:flex-row lg:gap-6">
                                 <ParticipationForm
                                     countries={countries}
+                                    degrees={degrees}
+                                    titles={titles}
                                     reportTypes={reportTypes}
                                     conference={conference}
                                     participation={participation}
