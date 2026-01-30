@@ -30,9 +30,7 @@ class ImageController extends Controller
     public function store(CreateImageRequest $request)
     {
         $path = 'img/images';
-        // Store to FTP by default, can be changed via env
-        $disk = env('IMAGE_STORAGE_DISK', 'ftp');
-        $imgPath = $request->file('img')->store($path, $disk);
+        $imgPath = $request->file('img')->store($path);
         Image::create([...$request->safe()->except('img'), 'path' =>  $imgPath]);
 
         return to_route('adm.images.index');
@@ -58,10 +56,17 @@ class ImageController extends Controller
 
         // If a new image is uploaded, store it and update the path
         if ($request->hasFile('img')) {
+            // Store the old path before updating
+            $oldPath = $image->path;
+
             $path = 'img/images';
-            $disk = env('IMAGE_STORAGE_DISK', 'ftp');
-            $imgPath = $request->file('img')->store($path, $disk);
+            $imgPath = $request->file('img')->store($path);
             $data['path'] = $imgPath;
+
+            // Delete the old image file if it exists
+            if ($oldPath && Storage::exists($oldPath)) {
+                Storage::delete($oldPath);
+            }
         }
 
         $image->update($data);

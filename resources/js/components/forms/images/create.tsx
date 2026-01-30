@@ -47,6 +47,13 @@ export default function CreateImageForm({
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+        if (!data.img) {
+            toast({
+                variant: "destructive",
+                title: "Пожалуйста, выберите изображение",
+            })
+            return;
+        }
         post(route('adm.images.store'), {
             forceFormData: true,
             onSuccess: () => {
@@ -56,6 +63,12 @@ export default function CreateImageForm({
                     title: "Изображение успешно создана!",
                 })
                 reset()
+            },
+            onError: () => {
+                toast({
+                    variant: "destructive",
+                    title: "Ошибка при создании изображения",
+                })
             }
         })
     };
@@ -124,6 +137,7 @@ export default function CreateImageForm({
                                 id="img"
                                 name="img"
                                 type="file"
+                                accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml"
                                 className="w-full"
                                 autoComplete="img"
                                 onChange={handleFileChange}
