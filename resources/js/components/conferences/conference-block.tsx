@@ -14,10 +14,25 @@ import {
 } from '@/types/blocks';
 import AutoScroll from 'embla-carousel-auto-scroll';
 import { Dot, Link, Pencil } from 'lucide-react';
-import { JSX, useCallback, useEffect, useRef } from 'react';
+import { JSX, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '../ui/carousel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { cn } from '@/lib/utils';
+
+/**
+ * Removes font-family from all style attributes in HTML so content inherits app font.
+ */
+function stripFontFamilyFromHtml(html: string): string {
+    if (!html) return '';
+    return html.replace(/style="([^"]*)"/g, (_, styleContent) => {
+        const withoutFontFamily = styleContent
+            .replace(/\s*font-family\s*:\s*[^;]+;?\s*/gi, ' ')
+            .replace(/\s*;\s*;/g, ';')
+            .replace(/^[\s;]+|[\s;]+$/g, '')
+            .trim();
+        return withoutFontFamily ? `style="${withoutFontFamily}"` : '';
+    });
+}
 
 interface ConferenceBlockProps {
     primaryColor: string;
@@ -296,15 +311,14 @@ function KeyValueTextBlockComponent({ primaryColor, block }: { primaryColor: str
 }
 
 function RegularTextBlockComponent({ block }: { block: RegularTextBlock }) {
+    const sanitizedHtml = useMemo(
+        () => stripFontFamilyFromHtml(block.content.text || ''),
+        [block.content.text]
+    );
+
     return (
         <div className="w-full px-11 pb-8">
-            <style>{`
-                .regular-text-content,
-                .regular-text-content * {
-                    font-family: inherit;
-                }
-            `}</style>
-            <div className="regular-text-content text-pretty" dangerouslySetInnerHTML={{ __html: block.content.text || '' }} />
+            <div className="regular-text-content text-pretty" dangerouslySetInnerHTML={{ __html: sanitizedHtml }} />
         </div>
     );
 }
@@ -396,6 +410,10 @@ function lightenColor(color: string, percent: number): string {
 
 function QuoteBlockComponent({ primaryColor, block }: { primaryColor: string; block: QuoteBlock }) {
     const lightenedColor = lightenColor(primaryColor, 0.9);
+    const sanitizedHtml = useMemo(
+        () => stripFontFamilyFromHtml(block.content.text || ''),
+        [block.content.text]
+    );
 
     return (
         <div className="w-full pb-8">
@@ -425,13 +443,7 @@ function QuoteBlockComponent({ primaryColor, block }: { primaryColor: string; bl
                     </svg>
                 </div>
                 <div className="text-pretty lg:max-w-2xl">
-                    <style>{`
-                        .quote-text-content,
-                        .quote-text-content * {
-                            font-family: inherit;
-                        }
-                    `}</style>
-                    <div className="quote-text-content text-pretty" dangerouslySetInnerHTML={{ __html: block.content.text || '' }} />
+                    <div className="quote-text-content text-pretty" dangerouslySetInnerHTML={{ __html: sanitizedHtml }} />
                 </div>
             </div>
         </div>
