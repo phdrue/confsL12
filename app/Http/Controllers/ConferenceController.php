@@ -3,26 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Role;
-use App\Models\User;
-use Inertia\Inertia;
-use App\Models\Image;
-use Inertia\Response;
-use App\Models\Conference;
-use Illuminate\Http\Request;
-use App\Models\ImageCategory;
-use App\Models\ConferenceType;
-use App\Models\ConferenceState;
-use App\Models\ConferenceBlockType;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\ChangeConferenceStateRequest;
 use App\Http\Requests\CreateConferenceRequest;
 use App\Http\Requests\UpdateConferenceRequest;
-use App\Http\Requests\ChangeConferenceStateRequest;
-use App\Models\ConferenceUser;
-use App\Models\Document;
+use App\Models\Conference;
 use App\Models\ConferenceBlock;
+use App\Models\ConferenceBlockType;
+use App\Models\ConferenceState;
+use App\Models\ConferenceType;
+use App\Models\ConferenceUser;
+use App\Models\Degree;
+use App\Models\Document;
+use App\Models\Image;
+use App\Models\ImageCategory;
 use App\Models\Proposal;
+use App\Models\Title;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ConferenceController extends Controller
 {
@@ -30,7 +31,9 @@ class ConferenceController extends Controller
     {
         return Inertia::render('admin/conferences/participations', [
             'conference' => $conference,
-            'users' => $conference->users()->get()
+            'users' => $conference->users()->get(),
+            'degrees' => Degree::select('id', 'name')->get(),
+            'titles' => Title::select('id', 'name')->get(),
         ]);
     }
 
@@ -39,7 +42,7 @@ class ConferenceController extends Controller
         return Inertia::render('admin/conferences/responsible', [
             'conference' => $conference,
             'responsible' => $conference->responsible,
-            'availableToBeResponsible' => $conference->getAvailableToBeResponsible()
+            'availableToBeResponsible' => $conference->getAvailableToBeResponsible(),
         ]);
     }
 
@@ -52,6 +55,7 @@ class ConferenceController extends Controller
         }
 
         $conference->responsible()->toggle($user->id);
+
         return to_route('adm.conferences.responsible', $conference);
     }
 
@@ -62,7 +66,7 @@ class ConferenceController extends Controller
             ->where('conference_id', $conference->id)
             ->firstOrFail();
 
-        $pivot->update(['confirmed' => !$pivot->confirmed]);
+        $pivot->update(['confirmed' => ! $pivot->confirmed]);
 
         return to_route('adm.conferences.participations', $conference);
     }
@@ -99,13 +103,13 @@ class ConferenceController extends Controller
                 'position',
                 'name',
                 'type_id',
-                'content'
+                'content',
             ])->orderBy('position')->get(),
             'blockTypes' => ConferenceBlockType::select('id', 'name')->get(),
             'imagesBlockData' => [
                 'images' => Image::all(),
-                'imageCategories' => ImageCategory::select('id', 'name')->get()
-            ]
+                'imageCategories' => ImageCategory::select('id', 'name')->get(),
+            ],
         ]);
     }
 
@@ -119,7 +123,7 @@ class ConferenceController extends Controller
         $imgPath = $request->file('img')->store($path, 'ftp');
         Conference::create([
             ...$request->safe()->except('img'),
-            'img_path' =>  $imgPath
+            'img_path' => $imgPath,
         ]);
 
         return to_route('adm.conferences.index');
@@ -154,7 +158,7 @@ class ConferenceController extends Controller
 
         $conference->update([
             ...$request->safe()->except('img'),
-            'img_path' =>  $imgPath
+            'img_path' => $imgPath,
         ]);
 
         return to_route('adm.conferences.edit', $conference);
@@ -164,7 +168,7 @@ class ConferenceController extends Controller
     {
         // $conference->toggle('front_page');
         $conference->update([
-            'front_page' => $conference->front_page ? false : true
+            'front_page' => $conference->front_page ? false : true,
         ]);
 
         return to_route('adm.conferences.edit', $conference);
@@ -173,7 +177,7 @@ class ConferenceController extends Controller
     public function changeState(ChangeConferenceStateRequest $request, Conference $conference)
     {
         $conference->update([
-            'state_id' => $request->validated('state_id')
+            'state_id' => $request->validated('state_id'),
         ]);
 
         return to_route('adm.conferences.edit', $conference);
@@ -190,7 +194,7 @@ class ConferenceController extends Controller
             // Delete all documents associated with conference users
             $conferenceUserIds = ConferenceUser::where('conference_id', $conference->id)
                 ->pluck('id');
-            
+
             Document::whereIn('conference_user_id', $conferenceUserIds)->delete();
 
             // Delete all conference user pivot records
@@ -225,7 +229,7 @@ class ConferenceController extends Controller
     private function deleteImageFromStorage(string $path): void
     {
         $disks = ['ftp', 'public'];
-        
+
         foreach ($disks as $disk) {
             if (Storage::disk($disk)->exists($path)) {
                 try {

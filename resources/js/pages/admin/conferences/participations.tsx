@@ -1,20 +1,23 @@
 import AppLayout from '@/layouts/app-layout';
 import { User, type BreadcrumbItem } from '@/types';
 import { Conference } from '@/types/conferences';
+import { Degree, Title } from '@/types/other';
 import { Head } from '@inertiajs/react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import ParticipationsAdminDataTable from '@/components/tables/participations-admin-data-table';
-import ParticipationsChart from "@/components/charts/conferences/participations";
+import AttendanceAdminDataTable from '@/components/tables/attendance-admin-data-table';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from 'react';
 
 export default function Participations({
     conference,
-    users
+    users,
+    degrees,
+    titles,
 }: {
     conference: Conference,
     users: Array<User>,
+    degrees: Array<Degree>,
+    titles: Array<Title>,
 }) {
     const { toast } = useToast();
     const [isDownloadingBook, setIsDownloadingBook] = useState(false);
@@ -194,7 +197,12 @@ export default function Participations({
                         {isDownloadingAttendance ? 'Загрузка...' : 'Список присутствующих'}
                     </Button>
                 </div>
-                <ParticipationsAdminDataTable conference={conference} participants={users} />
+                <AttendanceAdminDataTable 
+                    conference={conference}
+                    participants={users} 
+                    degrees={degrees}
+                    titles={titles}
+                />
             </div>
         </AppLayout>
     );

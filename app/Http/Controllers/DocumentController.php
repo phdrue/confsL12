@@ -252,7 +252,7 @@ class DocumentController extends Controller
 
         // Replace conference name and date
         $templateProcessor->setValue('conferenceName', $this->prepareText($conference->name));
-        $templateProcessor->setValue('conferenceData', $this->prepareText($conference->date->format('d.m.Y')));
+        $templateProcessor->setValue('conferenceDate', $this->prepareText($conference->date->format('d.m.Y')));
 
         // Prepare values for cloning rows (starting from index 1)
         $values = [];

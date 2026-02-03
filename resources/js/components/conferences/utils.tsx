@@ -20,7 +20,7 @@ export function ConferenceStateBadge({ state_id }: { state_id: number }) {
 
 export function ConferenceParticipationBadge({ confirmed }: { confirmed: Boolean }) {
     switch (confirmed) {
-        case false: return (<Badge variant="blue">Нет</Badge>)
+        case false: return (<Badge variant="rose">Нет</Badge>)
         case true: return (<Badge variant="emerald">Да</Badge>)
     }
 }
