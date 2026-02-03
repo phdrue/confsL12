@@ -29,9 +29,68 @@ class ConferenceController extends Controller
 {
     public function participations(Conference $conference)
     {
+        $users = $conference->users()->get();
+
+        // Transform users to include documents in a structured format
+        $users = $users->map(function ($user) use ($conference) {
+            $participation = ConferenceUser::where('conference_id', $conference->id)
+                ->where('user_id', $user->id)
+                ->with(['documents' => function ($query) {
+                    $query->with('reportType');
+                }])
+                ->first();
+
+            $documents = [
+                'reports' => [],
+                'thesises' => [],
+            ];
+
+            if ($participation && $participation->documents) {
+                $documents['reports'] = $participation->documents
+                    ->where('type_id', 1)
+                    ->map(function ($doc) {
+                        return [
+                            'id' => $doc->id,
+                            'topic' => $doc->topic,
+                            'report_type_id' => $doc->report_type_id,
+                            'report_type' => $doc->reportType ? [
+                                'id' => $doc->reportType->id,
+                                'name' => $doc->reportType->name,
+                            ] : null,
+                            'authors' => $doc->authors,
+                            'science_guides' => $doc->science_guides ?? [],
+                        ];
+                    })
+                    ->toArray();
+
+                $documents['thesises'] = $participation->documents
+                    ->where('type_id', 2)
+                    ->map(function ($doc) {
+                        return [
+                            'id' => $doc->id,
+                            'topic' => $doc->topic,
+                            'text' => $doc->text,
+                            'literature' => $doc->literature,
+                            'authors' => $doc->authors,
+                            'science_guides' => $doc->science_guides ?? [],
+                        ];
+                    })
+                    ->toArray();
+            }
+
+            $userArray = $user->toArray();
+            $userArray['participation_documents'] = $documents;
+            $userArray['participation'] = $participation ? [
+                'id' => $participation->id,
+                'confirmed' => $participation->confirmed,
+            ] : null;
+
+            return $userArray;
+        });
+
         return Inertia::render('admin/conferences/participations', [
             'conference' => $conference,
-            'users' => $conference->users()->get(),
+            'users' => $users,
             'degrees' => Degree::select('id', 'name')->get(),
             'titles' => Title::select('id', 'name')->get(),
         ]);

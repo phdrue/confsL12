@@ -5,7 +5,7 @@ import { Conference } from "@/types/conferences"
 import { Degree, Title } from "@/types/other"
 import { DataTableFilter } from "@/types/other"
 import { ConferenceParticipationBadge } from "@/components/conferences/utils"
-import { Settings, LoaderCircle } from "lucide-react"
+import { Settings, LoaderCircle, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useForm } from "@inertiajs/react"
 import { useToast } from "@/hooks/use-toast"
+import { useState } from "react"
+import { ParticipationDetailsDialog } from "./participation-details-dialog"
 
 export default function AttendanceAdminDataTable({
     conference,
@@ -29,6 +31,8 @@ export default function AttendanceAdminDataTable({
     titles: Array<Title>,
 }) {
     const { toast } = useToast()
+    const [selectedUser, setSelectedUser] = useState<User | null>(null)
+    const [dialogOpen, setDialogOpen] = useState(false)
 
     const { post, processing } = useForm({
         _method: 'put'
@@ -36,7 +40,6 @@ export default function AttendanceAdminDataTable({
 
     const submit = (userId: number) => {
         post(route('adm.conferences.toggle-confirmed', [conference.id, userId]), {
-            onBefore: () => confirm("Вы уверены, что хотите переключить присутствие?"),
             onSuccess: () => {
                 toast({
                     variant: "success",
@@ -44,6 +47,12 @@ export default function AttendanceAdminDataTable({
                 })
             }
         })
+    }
+
+    const handleRowClick = (user: User) => {
+        if (!processing) {
+            submit(user.id)
+        }
     }
     const getDegreeName = (degreeId: number | null): string => {
         if (!degreeId) return ''
@@ -115,7 +124,10 @@ export default function AttendanceAdminDataTable({
         {
             header: "Участие подтверждено",
             cell: ({ row }) => {
-                return <ConferenceParticipationBadge confirmed={Boolean(row.original.pivot?.confirmed)} />
+                const user = row.original as User & {
+                    participation?: { confirmed: boolean } | null
+                }
+                return <ConferenceParticipationBadge confirmed={Boolean(user.participation?.confirmed)} />
             }
         },
         {
@@ -124,16 +136,26 @@ export default function AttendanceAdminDataTable({
                 return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button 
+                                variant="ghost" 
+                                className="h-8 w-8 p-0"
+                                onClick={(e) => e.stopPropagation()}
+                            >
                                 <span className="sr-only">Открыть меню</span>
                                 <Settings className="h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
                             <DropdownMenuLabel>Действия</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => submit(row.original.id)} disabled={processing}>
-                                {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                Переключить присутствие
+                            <DropdownMenuItem
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    setSelectedUser(row.original)
+                                    setDialogOpen(true)
+                                }}
+                            >
+                                <Eye className="mr-2 h-4 w-4" />
+                                Просмотреть данные
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -166,5 +188,23 @@ export default function AttendanceAdminDataTable({
         }
     ]
 
-    return <DataTable columns={columns} data={participants} filters={filters} />
+    return (
+        <>
+            <DataTable 
+                columns={columns} 
+                data={participants} 
+                filters={filters}
+                onRowClick={handleRowClick}
+            />
+            {selectedUser && (
+                <ParticipationDetailsDialog
+                    open={dialogOpen}
+                    onOpenChange={setDialogOpen}
+                    user={selectedUser}
+                    degrees={degrees}
+                    titles={titles}
+                />
+            )}
+        </>
+    )
 }
