@@ -125,6 +125,7 @@ export default function ParticipationForm({
                 if (!isExisting) {
                     reset()
                 }
+                router.reload()
             }
         });
     };
@@ -135,13 +136,7 @@ export default function ParticipationForm({
                 <div className="flex gap-2 flex-wrap">
                     {participation ? (
                         <>
-                            <Button className="w-max">Управление документами</Button>
-                            {Boolean(conference.allow_report) &&
-                                <Button className="w-max" variant={"brandRed"}>Редактировать доклады</Button>
-                            }
-                            {Boolean(conference.allow_thesis) &&
-                                <Button className="w-max" variant={"brandDarkBlue"}>Редактировать тезисы</Button>
-                            }
+                            <Button className="w-max" variant={"brandDarkBlue"}>Управление заявкой</Button>
                         </>
                     ) : (
                         <>

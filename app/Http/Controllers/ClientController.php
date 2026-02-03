@@ -17,6 +17,7 @@ use App\Models\Title;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class ClientController extends Controller
@@ -29,7 +30,7 @@ class ClientController extends Controller
             ->orderBy('date', 'asc')
             ->limit(4)
             ->get();
-        
+
         // Add starred status if user is authenticated
         if (Auth::check()) {
             $starredIds = Auth::user()->starredConferences()->pluck('conferences.id')->toArray();
@@ -37,9 +38,9 @@ class ClientController extends Controller
                 $conference->is_starred = in_array($conference->id, $starredIds);
             });
         }
-        
+
         return Inertia::render('client/landing', [
-            'conferences' => $conferences
+            'conferences' => $conferences,
         ]);
     }
 
@@ -58,47 +59,47 @@ class ClientController extends Controller
         $state = $request->query('state');
         $name = $request->query('name');
         $type = $request->query('type');
-        
+
         // Only allow states 3 (ACTIVE) and 4 (ARCHIVE) for index route
         // Block any other state values
         $allowedStates = [
             (string) ConferenceStateEnum::ACTIVE->value,
-            (string) ConferenceStateEnum::ARCHIVE->value
+            (string) ConferenceStateEnum::ARCHIVE->value,
         ];
-        
-        if ($state && !in_array($state, $allowedStates, true)) {
+
+        if ($state && ! in_array($state, $allowedStates, true)) {
             // Redirect to index without state parameter if invalid state is provided
             return redirect()->route('conferences.index');
         }
-        
+
         // Validate type parameter - only allow 1, 2, 3, 4 or null
         $allowedTypes = ['1', '2', '3', '4'];
-        if ($type && !in_array($type, $allowedTypes, true)) {
+        if ($type && ! in_array($type, $allowedTypes, true)) {
             // Redirect to index without type parameter if invalid type is provided
             return redirect()->route('conferences.index');
         }
-        
+
         $query = Conference::query();
-        
+
         if ($state && in_array($state, $allowedStates, true)) {
             $query->where('state_id', (int) $state);
         } else {
             // By default, show only ACTIVE conferences
             $query->where('state_id', ConferenceStateEnum::ACTIVE);
         }
-        
+
         // Add name filter if provided
         if ($name) {
-            $query->where('name', 'like', '%' . $name . '%');
+            $query->where('name', 'like', '%'.$name.'%');
         }
-        
+
         // Add type filter if provided
         if ($type && in_array($type, $allowedTypes, true)) {
             $query->where('type_id', (int) $type);
         }
-        
+
         $conferences = $query->orderBy('date', 'asc')->paginate(15);
-        
+
         // Add starred status if user is authenticated
         if (Auth::check()) {
             $starredIds = Auth::user()->starredConferences()->pluck('conferences.id')->toArray();
@@ -106,22 +107,22 @@ class ClientController extends Controller
                 $conference->is_starred = in_array($conference->id, $starredIds);
             });
         }
-        
+
         return Inertia::render('client/conferences/index', [
             'conferences' => $conferences,
             'currentState' => $state,
             'currentName' => $name,
             'currentType' => $type,
-            'currentStateName' => $state ? 
+            'currentStateName' => $state ?
                 collect([
                     ['id' => ConferenceStateEnum::ACTIVE->value, 'name' => 'Актуальные'],
                     ['id' => ConferenceStateEnum::ARCHIVE->value, 'name' => 'Архив'],
-                ])->firstWhere('id', (int) $state)['name'] ?? 'Актуальные' : 
+                ])->firstWhere('id', (int) $state)['name'] ?? 'Актуальные' :
                 'Актуальные',
             'states' => [
                 ['id' => ConferenceStateEnum::ACTIVE->value, 'name' => 'Актуальные'],
                 ['id' => ConferenceStateEnum::ARCHIVE->value, 'name' => 'Архив'],
-            ]
+            ],
         ]);
     }
 
@@ -130,76 +131,76 @@ class ClientController extends Controller
         $sortBy = $request->query('sort_by');
         $sortOrder = $request->query('sort_order', 'asc');
         $search = $request->query('search');
-        
+
         $query = Conference::query()
             ->whereIn('state_id', [ConferenceStateEnum::PLANNED, ConferenceStateEnum::ACTIVE])
             ->with('proposal');
-        
+
         // Join with proposals for sorting and searching
         $query->leftJoin('proposals', 'conferences.id', '=', 'proposals.conference_id');
-        
+
         // Apply search filter
         if ($search) {
-            $searchTerm = '%' . $search . '%';
+            $searchTerm = '%'.$search.'%';
             $dbDriver = config('database.default');
-            
+
             if ($dbDriver === 'sqlite') {
                 // SQLite JSON syntax
                 $query->where(function ($q) use ($searchTerm) {
                     $q->whereRaw("json_extract(proposals.payload, '$.name') LIKE ?", [$searchTerm])
-                      ->orWhereRaw("json_extract(proposals.payload, '$.organization') LIKE ?", [$searchTerm])
-                      ->orWhereRaw("json_extract(proposals.payload, '$.organizationOther') LIKE ?", [$searchTerm])
-                      ->orWhereRaw("json_extract(proposals.payload, '$.topics') LIKE ?", [$searchTerm])
-                      ->orWhereRaw("json_extract(proposals.payload, '$.department') LIKE ?", [$searchTerm]);
+                        ->orWhereRaw("json_extract(proposals.payload, '$.organization') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("json_extract(proposals.payload, '$.organizationOther') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("json_extract(proposals.payload, '$.topics') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("json_extract(proposals.payload, '$.department') LIKE ?", [$searchTerm]);
                 });
             } elseif ($dbDriver === 'mysql') {
                 // MySQL/MariaDB JSON syntax
                 $query->where(function ($q) use ($searchTerm) {
                     $q->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.name')) LIKE ?", [$searchTerm])
-                      ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.organization')) LIKE ?", [$searchTerm])
-                      ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.organizationOther')) LIKE ?", [$searchTerm])
-                      ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.topics')) LIKE ?", [$searchTerm])
-                      ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.department')) LIKE ?", [$searchTerm]);
+                        ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.organization')) LIKE ?", [$searchTerm])
+                        ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.organizationOther')) LIKE ?", [$searchTerm])
+                        ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.topics')) LIKE ?", [$searchTerm])
+                        ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.department')) LIKE ?", [$searchTerm]);
                 });
             } else {
                 // PostgreSQL JSON syntax
                 $query->where(function ($q) use ($searchTerm) {
                     $q->whereRaw("proposals.payload->>'name' LIKE ?", [$searchTerm])
-                      ->orWhereRaw("proposals.payload->>'organization' LIKE ?", [$searchTerm])
-                      ->orWhereRaw("proposals.payload->>'organizationOther' LIKE ?", [$searchTerm])
-                      ->orWhereRaw("proposals.payload->>'topics' LIKE ?", [$searchTerm])
-                      ->orWhereRaw("proposals.payload->>'department' LIKE ?", [$searchTerm]);
+                        ->orWhereRaw("proposals.payload->>'organization' LIKE ?", [$searchTerm])
+                        ->orWhereRaw("proposals.payload->>'organizationOther' LIKE ?", [$searchTerm])
+                        ->orWhereRaw("proposals.payload->>'topics' LIKE ?", [$searchTerm])
+                        ->orWhereRaw("proposals.payload->>'department' LIKE ?", [$searchTerm]);
                 });
             }
         }
-        
+
         // Apply sorting
         if ($sortBy) {
             $validSortFields = ['date', 'form', 'bookType'];
             $validSortOrder = in_array(strtolower($sortOrder), ['asc', 'desc']) ? strtolower($sortOrder) : 'asc';
             $dbDriver = config('database.default');
-            
+
             if (in_array($sortBy, $validSortFields)) {
                 if ($dbDriver === 'sqlite') {
                     // SQLite JSON syntax
                     if ($sortBy === 'date') {
-                        $query->orderByRaw("date(json_extract(proposals.payload, '$.date')) " . $validSortOrder);
+                        $query->orderByRaw("date(json_extract(proposals.payload, '$.date')) ".$validSortOrder);
                     } else {
-                        $query->orderByRaw("json_extract(proposals.payload, '$.{$sortBy}') " . $validSortOrder);
+                        $query->orderByRaw("json_extract(proposals.payload, '$.{$sortBy}') ".$validSortOrder);
                     }
                 } elseif ($dbDriver === 'mysql') {
                     // MySQL/MariaDB JSON syntax
                     if ($sortBy === 'date') {
-                        $query->orderByRaw("CAST(JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.date')) AS DATE) " . $validSortOrder);
+                        $query->orderByRaw("CAST(JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.date')) AS DATE) ".$validSortOrder);
                     } else {
-                        $query->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.{$sortBy}')) " . $validSortOrder);
+                        $query->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.{$sortBy}')) ".$validSortOrder);
                     }
                 } else {
                     // PostgreSQL JSON syntax
                     if ($sortBy === 'date') {
-                        $query->orderByRaw("CAST(proposals.payload->>'date' AS DATE) " . $validSortOrder);
+                        $query->orderByRaw("CAST(proposals.payload->>'date' AS DATE) ".$validSortOrder);
                     } else {
-                        $query->orderByRaw("proposals.payload->>'{$sortBy}' " . $validSortOrder);
+                        $query->orderByRaw("proposals.payload->>'{$sortBy}' ".$validSortOrder);
                     }
                 }
             }
@@ -214,13 +215,13 @@ class ClientController extends Controller
                 $query->orderByRaw("CAST(proposals.payload->>'date' AS DATE) ASC");
             }
         }
-        
+
         // Select distinct conferences to avoid duplicates from join
         $query->select('conferences.*');
         $query->distinct();
-        
+
         $conferences = $query->paginate(15);
-        
+
         return Inertia::render('client/conferences/table', [
             'conferences' => $conferences,
             'currentSortBy' => $sortBy,
@@ -239,7 +240,7 @@ class ClientController extends Controller
         $participation = null;
         $existingDocuments = [
             'reports' => [],
-            'thesises' => []
+            'thesises' => [],
         ];
 
         if (Auth::check()) {
@@ -286,7 +287,27 @@ class ClientController extends Controller
         if (Auth::check()) {
             $conference->is_starred = Auth::user()->starredConferences()->where('conferences.id', $conference->id)->exists();
         }
-        
+
+        // Check participation eligibility
+        $canParticipate = false;
+        $participationReason = null;
+
+        if (Auth::check() && $conference->state_id === ConferenceStateEnum::ACTIVE->value) {
+            $canParticipate = Gate::allows('can-participate', $conference);
+
+            if (! $canParticipate) {
+                // Determine the reason
+                $profileIsComplete = $this->userHasCompleteProfile(Auth::user());
+                $moreThanMonthAway = now()->addMonth()->lt($conference->date);
+
+                if (! $profileIsComplete) {
+                    $participationReason = 'incomplete_profile';
+                } elseif (! $moreThanMonthAway) {
+                    $participationReason = 'too_close';
+                }
+            }
+        }
+
         return Inertia::render('client/conferences/show', [
             'conference' => $conference,
             'blocks' => $conference->blocks()->orderBy('position')->get(),
@@ -300,6 +321,8 @@ class ClientController extends Controller
                 'confirmed' => $participation->confirmed,
             ] : null,
             'existingDocuments' => $existingDocuments,
+            'canParticipate' => $canParticipate,
+            'participationReason' => $participationReason,
         ]);
     }
 
@@ -312,7 +335,7 @@ class ClientController extends Controller
                 ->first();
 
             // If no participation exists, create one
-            if (!$participation) {
+            if (! $participation) {
                 $participation = ConferenceUser::create([
                     'conference_id' => $conference->id,
                     'user_id' => Auth::id(),
@@ -331,7 +354,7 @@ class ClientController extends Controller
 
                 // Create new reports if any are provided
                 $reports = $request->validated('reports');
-                if ($reports && !empty($reports)) {
+                if ($reports && ! empty($reports)) {
                     collect($reports)->each(function ($report) use ($participationId) {
                         Document::create([
                             'conference_user_id' => $participationId,
@@ -355,7 +378,7 @@ class ClientController extends Controller
 
                 // Create new thesises if any are provided
                 $thesises = $request->validated('thesises');
-                if ($thesises && !empty($thesises)) {
+                if ($thesises && ! empty($thesises)) {
                     collect($thesises)->each(function ($thesis) use ($participationId) {
                         Document::create([
                             'conference_user_id' => $participationId,
@@ -391,7 +414,7 @@ class ClientController extends Controller
 
             Auth::user()->conferences()->attach($conference, [
                 'document_id' => $document->id,
-                'type_id' => $request->validated('type_id') + 1
+                'type_id' => $request->validated('type_id') + 1,
             ]);
         });
 
@@ -402,32 +425,32 @@ class ClientController extends Controller
     {
         $name = $request->query('name');
         $type = $request->query('type');
-        
+
         // Validate type parameter - only allow 1, 2, 3, 4 or null
         $allowedTypes = ['1', '2', '3', '4'];
-        if ($type && !in_array($type, $allowedTypes, true)) {
+        if ($type && ! in_array($type, $allowedTypes, true)) {
             return redirect()->route('client.conferences.starred');
         }
-        
+
         $query = Auth::user()->starredConferences();
-        
+
         // Add name filter if provided
         if ($name) {
-            $query->where('name', 'like', '%' . $name . '%');
+            $query->where('name', 'like', '%'.$name.'%');
         }
-        
+
         // Add type filter if provided
         if ($type && in_array($type, $allowedTypes, true)) {
             $query->where('type_id', (int) $type);
         }
-        
+
         $conferences = $query->orderBy('date', 'asc')->get();
-        
+
         // Mark all as starred since they're from starredConferences
         $conferences->each(function ($conference) {
             $conference->is_starred = true;
         });
-        
+
         return Inertia::render('client/conferences/starred', [
             'conferences' => $conferences,
             'currentName' => $name,
@@ -439,14 +462,38 @@ class ClientController extends Controller
     public function star(Conference $conference)
     {
         Auth::user()->starredConferences()->syncWithoutDetaching([$conference->id]);
-        
+
         return back();
     }
 
     public function unstar(Conference $conference)
     {
         Auth::user()->starredConferences()->detach($conference->id);
-        
+
         return back();
+    }
+
+    private function userHasCompleteProfile($user): bool
+    {
+        $requiredFields = [
+            'first_name',
+            'last_name',
+            'second_name',
+            'organization',
+            'position',
+            'city',
+            'phone',
+            'country_id',
+            'degree_id',
+            'title_id',
+        ];
+
+        foreach ($requiredFields as $field) {
+            if (empty($user->$field)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
