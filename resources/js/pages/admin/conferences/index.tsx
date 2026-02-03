@@ -1,3 +1,4 @@
+import CreateConferenceForm from '@/components/forms/conferences/create';
 import ConferencesAdminDataTable from '@/components/tables/conferences-admin-data-table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
@@ -28,7 +29,7 @@ export default function Index({
                     <div className="mb-8">
                         <h1 className="text-3xl font-semibold">Конференции</h1>
                     </div>
-                    {/* <CreateConferenceForm types={types} /> */}
+                    <CreateConferenceForm types={types} />
                     <ConferencesAdminDataTable conferences={conferences} states={states} types={types} />
                 </div>
             </div>

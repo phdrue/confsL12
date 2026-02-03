@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ConferenceStateEnum;
 use App\Http\Requests\ConferenceParticipateRequest;
 use App\Http\Requests\CreateDocumentRequest;
+use App\Mail\ParticipationConfirmationMail;
 use App\Models\Conference;
 use App\Models\ConferenceType;
 use App\Models\ConferenceUser;
@@ -18,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class ClientController extends Controller
@@ -328,7 +330,10 @@ class ClientController extends Controller
 
     public function participate(ConferenceParticipateRequest $request, Conference $conference)
     {
-        DB::transaction(function () use ($request, $conference) {
+        $isNewParticipation = false;
+        $participationId = null;
+
+        DB::transaction(function () use ($request, $conference, &$isNewParticipation, &$participationId) {
             // Check if user already participates
             $participation = ConferenceUser::where('conference_id', $conference->id)
                 ->where('user_id', Auth::id())
@@ -340,6 +345,7 @@ class ClientController extends Controller
                     'conference_id' => $conference->id,
                     'user_id' => Auth::id(),
                 ]);
+                $isNewParticipation = true;
             }
 
             $participationId = $participation->id;
@@ -393,6 +399,15 @@ class ClientController extends Controller
                 }
             }
         });
+
+        // Send email only on initial participation (after transaction completes)
+        if ($isNewParticipation && $participationId) {
+            $participation = ConferenceUser::with(['documents.reportType'])->find($participationId);
+
+            Mail::to(Auth::user())->send(
+                new ParticipationConfirmationMail(Auth::user(), $conference, $participation)
+            );
+        }
 
         return to_route('conferences.show', $conference);
     }
