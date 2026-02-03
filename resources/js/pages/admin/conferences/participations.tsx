@@ -19,6 +19,7 @@ export default function Participations({
     const { toast } = useToast();
     const [isDownloadingBook, setIsDownloadingBook] = useState(false);
     const [isDownloadingReports, setIsDownloadingReports] = useState(false);
+    const [isDownloadingAttendance, setIsDownloadingAttendance] = useState(false);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -123,6 +124,52 @@ export default function Participations({
         }
     };
 
+    const handleDownloadAttendance = async () => {
+        setIsDownloadingAttendance(true);
+        try {
+            const response = await fetch(route('adm.conferences.get-attendance-list', conference.id));
+            
+            if (response.ok) {
+                // Check if response is a file download
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/')) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `attendance-${conference.id}.docx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    // Handle JSON error response
+                    const errorData = await response.json();
+                    toast({
+                        variant: "destructive",
+                        title: "Ошибка",
+                        description: errorData.error || "Произошла ошибка при загрузке файла"
+                    });
+                }
+            } else {
+                const errorData = await response.json();
+                toast({
+                    variant: "destructive",
+                    title: "Ошибка",
+                    description: errorData.error || "Произошла ошибка при загрузке файла"
+                });
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Ошибка",
+                description: "Произошла ошибка при загрузке файла"
+            });
+        } finally {
+            setIsDownloadingAttendance(false);
+        }
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Администрирование" />
@@ -139,6 +186,12 @@ export default function Participations({
                         disabled={isDownloadingReports}
                     >
                         {isDownloadingReports ? 'Загрузка...' : 'Сборник докладов'}
+                    </Button>
+                    <Button 
+                        onClick={handleDownloadAttendance}
+                        disabled={isDownloadingAttendance}
+                    >
+                        {isDownloadingAttendance ? 'Загрузка...' : 'Список присутствующих'}
                     </Button>
                 </div>
                 <ParticipationsAdminDataTable conference={conference} participants={users} />

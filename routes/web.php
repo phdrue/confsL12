@@ -1,24 +1,21 @@
 <?php
 
-use App\Enums\Role;
-use App\Models\User;
-use Inertia\Inertia;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ConferenceBlockController;
+use App\Http\Controllers\ConferenceController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\ImageController;
+use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\UserController;
+use App\Http\Middleware\EnsureCanAccessConference;
+use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\EnsureUserIsResponsible;
 use App\Models\Conference;
 use App\Models\Responsibility;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ImageController;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-use App\Http\Controllers\ClientController;
-use App\Http\Middleware\EnsureUserIsAdmin;
-use App\Http\Controllers\ProposalController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ConferenceController;
-use App\Http\Controllers\ConferenceBlockController;
-use App\Http\Controllers\DocumentController;
-use App\Http\Middleware\EnsureCanAccessConference;
-use App\Http\Middleware\EnsureUserIsResponsible;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
 Route::get('/proj', fn () => inertia()->render('proj'));
@@ -54,17 +51,19 @@ Route::get('subscribe', [ClientController::class, 'subscribe'])
 // Route::get('policy', fn() => Storage::download('policy.pdf'))
 //     ->name('download.policy');
 
-Route::get('sogl1', function() {
+Route::get('sogl1', function () {
     $file = Storage::get('sogl1.pdf');
     $mimeType = Storage::mimeType('sogl1.pdf');
+
     return response($file, 200)
         ->header('Content-Type', $mimeType ?: 'application/pdf')
         ->header('Content-Disposition', 'inline; filename="sogl1.pdf"');
 })->name('download.sogl1');
 
-Route::get('sogl2', function() {
+Route::get('sogl2', function () {
     $file = Storage::get('sogl2.pdf');
     $mimeType = Storage::mimeType('sogl2.pdf');
+
     return response($file, 200)
         ->header('Content-Type', $mimeType ?: 'application/pdf')
         ->header('Content-Disposition', 'inline; filename="sogl2.pdf"');
@@ -106,7 +105,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // предложения - только админ может редактировать
         Route::resource('proposals', ProposalController::class)
             ->only('edit', 'update');
-        
+
         // Admin proposal management
         Route::put('proposals/{proposal}/deny', [ProposalController::class, 'deny'])
             ->name('proposals.deny');
@@ -161,13 +160,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('toggle-confirmed/{conference}/{user}', [ConferenceController::class, 'toggleConfirmed'])
             ->name('conferences.toggle-confirmed');
 
-        //сборник тезисов
+        // сборник тезисов
         Route::get('get-book/{conference}', [DocumentController::class, 'getBook'])
             ->name('conferences.get-book');
 
-        //сборник докладов
+        // сборник докладов
         Route::get('get-reports-book/{conference}', [DocumentController::class, 'getReportsBook'])
             ->name('conferences.get-reports-book');
+
+        // список присутствующих
+        Route::get('get-attendance-list/{conference}', [DocumentController::class, 'getAttendanceList'])
+            ->name('conferences.get-attendance-list');
 
         // блоки
         Route::put('blocks/reorder/{conference}', [ConferenceBlockController::class, 'reorder'])
@@ -182,21 +185,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('my-thesis/{conference}', [DocumentController::class, 'myThesis'])
             ->name('conferences.my-thesis');
-        
+
         // starred conferences
         Route::get('starred-conferences', [ClientController::class, 'starredConferences'])
             ->name('conferences.starred');
-        
+
         Route::post('star/{conference}', [ClientController::class, 'star'])
             ->name('conferences.star');
-        
+
         Route::delete('unstar/{conference}', [ClientController::class, 'unstar'])
             ->name('conferences.unstar');
-        //-- заявить доклад / тезисы
+        // -- заявить доклад / тезисы
         // Route::post('submit-document/{conference}', [ClientController::class, 'submitDocument'])
         //     ->name('conferences.submit-document');
     });
 });
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';
