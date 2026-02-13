@@ -100,7 +100,7 @@ class ClientController extends Controller
             $query->where('type_id', (int) $type);
         }
 
-        $conferences = $query->orderBy('date', 'asc')->paginate(15);
+        $conferences = $query->orderBy('date', 'asc')->paginate(10);
 
         // Add starred status if user is authenticated
         if (Auth::check()) {

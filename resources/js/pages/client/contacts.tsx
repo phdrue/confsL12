@@ -100,63 +100,6 @@ export default function Contacts({ }) {
                                             Вячеслав Александрович Липатов, действующий на основании Устава.
                                         </dd>
                                     </div>
-                                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                        <dt className="text-sm/6 font-medium">
-                                            ИНН
-                                        </dt>
-                                        <dd className="mt-1 text-sm/6 text-muted-foreground sm:col-span-2 sm:mt-0">
-                                            4632160493
-                                        </dd>
-                                    </div>
-                                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                        <dt className="text-sm/6 font-medium">
-                                            КПП
-                                        </dt>
-                                        <dd className="mt-1 text-sm/6 text-muted-foreground sm:col-span-2 sm:mt-0">
-                                            463201001
-                                        </dd>
-                                    </div>
-                                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                        <dt className="text-sm/6 font-medium">
-                                            ОКПО
-                                        </dt>
-                                        <dd className="mt-1 text-sm/6 text-muted-foreground sm:col-span-2 sm:mt-0">
-                                            30864956
-                                        </dd>
-                                    </div>
-                                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                        <dt className="text-sm/6 font-medium">
-                                            ОГРН
-                                        </dt>
-                                        <dd className="mt-1 text-sm/6 text-muted-foreground sm:col-span-2 sm:mt-0">
-                                            1124632000052 от 10.01. 2012 г.
-                                        </dd>
-                                    </div>
-                                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                        <dt className="text-sm/6 font-medium">
-                                            Расчетный счет
-                                        </dt>
-                                        <dd className="mt-1 text-sm/6 text-muted-foreground sm:col-span-2 sm:mt-0">
-                                            № 40702810001600000433 в ПАО «Курскпромбанк», г. Курск  305000, ул. Ленина ,13
-                                        </dd>
-                                    </div>
-                                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                        <dt className="text-sm/6 font-medium">
-                                            БИК
-                                        </dt>
-                                        <dd className="mt-1 text-sm/6 text-muted-foreground sm:col-span-2 sm:mt-0">
-                                            043807708
-                                        </dd>
-                                    </div>
-                                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                        <dt className="text-sm/6 font-medium">
-                                            Кор./счет
-                                        </dt>
-                                        <dd className="mt-1 text-sm/6 text-muted-foreground sm:col-span-2 sm:mt-0">
-                                            30101810800000000708 в отделении Курск
-                                        </dd>
-                                    </div>
-
                                     {/* <div className="px-4 py-6 sm:px-0 mt-1 text-sm/6 sm:mt-0">
                                         <a target="_blank" href="" className="text-brand-darkBlue underline underline-offset-2">
                                             Скачать бланк квитанции для перевода денежных средств на расчетный счет ООО “МедТестИнфо”

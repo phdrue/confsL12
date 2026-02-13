@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateImageRequest;
 use App\Http\Requests\UpdateImageRequest;
-use Inertia\Inertia;
 use App\Models\Image;
 use App\Models\ImageCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class ImageController extends Controller
 {
@@ -31,7 +31,7 @@ class ImageController extends Controller
     {
         $path = 'img/images';
         $imgPath = $request->file('img')->store($path);
-        Image::create([...$request->safe()->except('img'), 'path' =>  $imgPath]);
+        Image::create([...$request->safe()->except('img'), 'path' => $imgPath]);
 
         return to_route('adm.images.index');
     }
@@ -77,41 +77,48 @@ class ImageController extends Controller
     /**
      * Serve an image from storage (supports FTP and local storage).
      */
-    public function serve(string $path)
+    public function serve(Request $request, string $path)
     {
+        if (empty($path)) {
+            abort(404, 'Invalid file path');
+        }
+
         // Decode URL-encoded path
         $path = urldecode($path);
-        
+
         // Log for debugging
         Log::info('Serving file from storage', ['path' => $path]);
-        
+
         // Try FTP first, then fall back to public disk
         $disks = ['ftp', 'public'];
-        
+
+        // dd($path);
+
         foreach ($disks as $disk) {
             if (Storage::disk($disk)->exists($path)) {
                 try {
                     $file = Storage::disk($disk)->get($path);
-                    
+
                     // Determine mime type from file extension
                     $mimeType = $this->getMimeTypeFromPath($path);
-                    
+
                     Log::info('File served successfully', ['path' => $path, 'disk' => $disk]);
-                    
+
                     return response($file, 200)
                         ->header('Content-Type', $mimeType)
                         ->header('Cache-Control', 'public, max-age=31536000');
                 } catch (\Exception $e) {
                     Log::error('Error serving file from disk', [
-                        'path' => $path, 
-                        'disk' => $disk, 
-                        'error' => $e->getMessage()
+                        'path' => $path,
+                        'disk' => $disk,
+                        'error' => $e->getMessage(),
                     ]);
+
                     continue;
                 }
             }
         }
-        
+
         Log::error('File not found in any disk', ['path' => $path, 'disks_checked' => $disks]);
         abort(404, 'Image not found');
     }
@@ -122,7 +129,7 @@ class ImageController extends Controller
     private function getMimeTypeFromPath(string $path): string
     {
         $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-        
+
         return match ($extension) {
             'jpg', 'jpeg' => 'image/jpeg',
             'png' => 'image/png',
