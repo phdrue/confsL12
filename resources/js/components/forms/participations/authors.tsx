@@ -58,7 +58,7 @@ export default function AuthorsFormPartial({
 
     function addUserAsAuthor(): void {
         if (auth.user) {
-            setData([...authors, { name: auth.user.first_name ? auth.user.first_name + ' ' + auth.user.second_name + ' ' + auth.user.last_name : 'Не указано', organization: auth.user.organization ?? 'Не указано', city: auth.user.city ?? 'Не указано', country_id: auth.user.country_id ?? '1' }]);
+            setData([...authors, { name: auth.user.first_name ? auth.user.last_name + ' ' + auth.user.first_name + ' ' + auth.user.second_name : 'Не указано', organization: auth.user.organization ?? 'Не указано', city: auth.user.city ?? 'Не указано', country_id: auth.user.country_id ?? '1' }]);
         }
     }
 

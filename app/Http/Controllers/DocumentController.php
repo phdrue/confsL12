@@ -177,6 +177,8 @@ class DocumentController extends Controller
             $authors = collect($document->authors);
             $authorsString = '';
             $authorsFullString = '';
+            $scienceGuides = collect($document->science_guides ?? []);
+            $scienceGuidesFullString = '';
 
             $authors->each(function (array $author) use (&$authorsString, &$authorsFullString, $countries) {
                 $name = $this->prepareText($author['name'] ?? '');
@@ -188,10 +190,40 @@ class DocumentController extends Controller
                 $authorsFullString .= $name.' '.$organization.', '.$city.' '.$country.'; ';
             });
 
+            $scienceGuides->each(function (mixed $guide) use (&$scienceGuidesFullString, $countries) {
+                if (! is_array($guide)) {
+                    $guide = ['name' => (string) $guide];
+                }
+
+                $name = $this->prepareText($guide['name'] ?? '');
+                $degree = $this->prepareText($guide['degree'] ?? '');
+                $title = $this->prepareText($guide['title'] ?? '');
+                $organization = $this->prepareText($guide['organization'] ?? '');
+                $city = $this->prepareText($guide['city'] ?? '');
+                $countryId = $guide['country_id'] ?? null;
+                $countryName = $countryId !== null && isset($countries[$countryId])
+                    ? $this->prepareText($countries[$countryId])
+                    : '';
+
+                $parts = array_filter([
+                    $name,
+                    $degree,
+                    $title,
+                    $organization,
+                    $city,
+                    $countryName,
+                ]);
+
+                if (! empty($parts)) {
+                    $scienceGuidesFullString .= implode(', ', $parts).'; ';
+                }
+            });
+
             $replacements[] = [
                 'topic' => $this->prepareText($document->topic),
                 'authors' => rtrim($authorsString, ', '),
                 'authorsFull' => rtrim($authorsFullString, '; '),
+                'scienceGuidesFull' => rtrim($scienceGuidesFullString, '; '),
                 'text' => $this->prepareText($document->text),
                 'literature' => $this->prepareText($document->literature),
             ];
@@ -219,6 +251,8 @@ class DocumentController extends Controller
             $authors = collect($document->authors);
             $authorsString = '';
             $authorsFullString = '';
+            $scienceGuides = collect($document->science_guides ?? []);
+            $scienceGuidesFullString = '';
 
             $authors->each(function (array $author) use (&$authorsString, &$authorsFullString, $countries) {
                 $name = $this->prepareText($author['name'] ?? '');
@@ -230,10 +264,40 @@ class DocumentController extends Controller
                 $authorsFullString .= $name.' '.$organization.', '.$city.' '.$country.'; ';
             });
 
+            $scienceGuides->each(function (mixed $guide) use (&$scienceGuidesFullString, $countries) {
+                if (! is_array($guide)) {
+                    $guide = ['name' => (string) $guide];
+                }
+
+                $name = $this->prepareText($guide['name'] ?? '');
+                $degree = $this->prepareText($guide['degree'] ?? '');
+                $title = $this->prepareText($guide['title'] ?? '');
+                $organization = $this->prepareText($guide['organization'] ?? '');
+                $city = $this->prepareText($guide['city'] ?? '');
+                $countryId = $guide['country_id'] ?? null;
+                $countryName = $countryId !== null && isset($countries[$countryId])
+                    ? $this->prepareText($countries[$countryId])
+                    : '';
+
+                $parts = array_filter([
+                    $name,
+                    $degree,
+                    $title,
+                    $organization,
+                    $city,
+                    $countryName,
+                ]);
+
+                if (! empty($parts)) {
+                    $scienceGuidesFullString .= implode(', ', $parts).'; ';
+                }
+            });
+
             $replacements[] = [
                 'topic' => $this->prepareText($document->topic),
                 'authors' => rtrim($authorsString, ', '),
                 'authorsFull' => rtrim($authorsFullString, '; '),
+                'scienceGuidesFull' => rtrim($scienceGuidesFullString, '; '),
                 'type' => $this->prepareText($document->reportType->name ?? ''),
             ];
         });
