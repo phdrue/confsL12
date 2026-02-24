@@ -76,30 +76,30 @@ export default function Contacts({ }) {
                             </div>
                             <div className="mt-6 border-t">
                                 <dl className="divide-y">
-                                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                    {/* <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                         <dt className="text-sm/6 font-medium">
                                             Адрес
                                         </dt>
                                         <dd className="mt-1 text-sm/6 text-muted-foreground sm:col-span-2 sm:mt-0">
                                             305041, Россия, г. Курск, ул. Карла Маркса, д. 3, Курский государственный медицинский университет
                                         </dd>
-                                    </div>
+                                    </div> */}
                                     <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                         <dt className="text-sm/6 font-medium">
-                                            E-mail
+                                            Официальный сайт
                                         </dt>
                                         <dd className="mt-1 text-sm/6 text-brand-red sm:col-span-2 sm:mt-0">
-                                            <a href="mailto:main@medtestinfo.ru">main@medtestinfo.ru</a>
+                                            <a href="http://medtestinfo.info/" target='_blank'>http://medtestinfo.info/</a>
                                         </dd>
                                     </div>
-                                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                    {/* <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                         <dt className="text-sm/6 font-medium">
                                             Генеральный директор
                                         </dt>
                                         <dd className="mt-1 text-sm/6 text-muted-foreground sm:col-span-2 sm:mt-0">
                                             Вячеслав Александрович Липатов, действующий на основании Устава.
                                         </dd>
-                                    </div>
+                                    </div> */}
                                     {/* <div className="px-4 py-6 sm:px-0 mt-1 text-sm/6 sm:mt-0">
                                         <a target="_blank" href="" className="text-brand-darkBlue underline underline-offset-2">
                                             Скачать бланк квитанции для перевода денежных средств на расчетный счет ООО “МедТестИнфо”

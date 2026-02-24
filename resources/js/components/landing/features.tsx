@@ -75,7 +75,7 @@ export default function Features() {
             <div className="max-w-screen-xl mx-auto">
                 <div className="px-4 sm:px-6">
                     <h2 className="text-center text-4xl font-semibold">Сайт конференций</h2>
-                    <p className="text-brand-textSecondary text-center mt-2">Какие блага получает участник научных мероприятий, принимая в них участие?</p>
+                    <p className="text-brand-textSecondary text-center mt-2">Зачем участвовать в конференциях и что это дает</p>
                 </div>
                 <div className="px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-3 gap-6 mt-12">
                     <motion.div
