@@ -48,9 +48,15 @@ class DocumentController extends Controller
      */
     private function escapeForXml(string $text): string
     {
-        // PhpWord's TemplateProcessor expects properly formatted text
-        // We'll let PhpWord handle most escaping, but ensure clean input
-        return $text;
+        if ($text === '') {
+            return '';
+        }
+
+        // Keep only XML 1.0 valid characters.
+        $text = preg_replace('/[^\x{9}\x{A}\x{D}\x{20}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]/u', '', $text) ?? '';
+
+        // Escape XML entities explicitly to avoid malformed DOCX XML.
+        return htmlspecialchars($text, ENT_QUOTES | ENT_XML1 | ENT_SUBSTITUTE, 'UTF-8');
     }
 
     /**
