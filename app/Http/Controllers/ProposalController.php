@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Enums\ConferenceStateEnum;
 use App\Http\Requests\CreateProposalRequest;
 use App\Http\Requests\UpdateProposalRequest;
+use App\Mail\NewProposalMail;
 use App\Models\Conference;
 use App\Models\Proposal;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -41,7 +43,11 @@ class ProposalController extends Controller
             $data['img_path'] = $request->file('img')->store($path, 'ftp');
         }
 
-        Proposal::create($data);
+        $proposal = Proposal::create($data);
+
+        Mail::to(['lipatovva@kursksmu.net', 'sno@kursksmu.net'])->send(
+            new NewProposalMail($proposal)
+        );
 
         return to_route('adm.proposals.index');
     }
@@ -60,7 +66,7 @@ class ProposalController extends Controller
     public function edit(Proposal $proposal)
     {
         Gate::authorize('is-admin');
-        
+
         // Prevent editing if proposal has been converted to a conference
         if ($proposal->conference_id) {
             return redirect()->back()->with('error', 'Нельзя редактировать предложение, из которого уже создана конференция');
@@ -77,7 +83,7 @@ class ProposalController extends Controller
     public function update(UpdateProposalRequest $request, Proposal $proposal)
     {
         Gate::authorize('is-admin');
-        
+
         // Prevent updating if proposal has been converted to a conference
         if ($proposal->conference_id) {
             return redirect()->back()->with('error', 'Нельзя редактировать предложение, из которого уже создана конференция');
@@ -150,10 +156,10 @@ class ProposalController extends Controller
                         break;
                     }
                 }
-                
+
                 if ($sourceDisk) {
                     // Copy the image to conferences directory on FTP
-                    $newPath = 'img/conferences/' . basename($proposal->img_path);
+                    $newPath = 'img/conferences/'.basename($proposal->img_path);
                     $fileContent = Storage::disk($sourceDisk)->get($proposal->img_path);
                     Storage::disk('ftp')->put($newPath, $fileContent);
                     $imgPath = $newPath;
@@ -182,12 +188,12 @@ class ProposalController extends Controller
 
             // Assign proposal author as responsible for the conference
             $proposalAuthor = $proposal->user;
-            
+
             // Ensure the author has the RESPONSIBLE role
-            if (!$proposalAuthor->hasRole(\App\Enums\Role::RESPONSIBLE)) {
+            if (! $proposalAuthor->hasRole(\App\Enums\Role::RESPONSIBLE)) {
                 $proposalAuthor->roles()->attach(\App\Enums\Role::RESPONSIBLE->value);
             }
-            
+
             // Assign the author as responsible for the conference
             $conference->responsible()->attach($proposalAuthor->id);
         });
@@ -215,7 +221,7 @@ class ProposalController extends Controller
     private function deleteImageFromStorage(string $path): void
     {
         $disks = ['ftp', 'public'];
-        
+
         foreach ($disks as $disk) {
             if (Storage::disk($disk)->exists($path)) {
                 try {

@@ -100,6 +100,14 @@ export default function AttendanceAdminDataTable({
             },
         },
         {
+            accessorKey: "email",
+            header: "Адрес электронной почты",
+            filterFn: 'includesString',
+            cell: ({ row }) => {
+                return <div>{row.original.email || ''}</div>
+            },
+        },
+        {
             id: "degree",
             header: "Ученая степень",
             cell: ({ row }) => {
@@ -177,6 +185,13 @@ export default function AttendanceAdminDataTable({
             type: 'text',
             data: {
                 placeholder: 'Фильтр по имени...'
+            }
+        },
+        {
+            name: 'email',
+            type: 'text',
+            data: {
+                placeholder: 'Фильтр по электронной почте...'
             }
         },
         {
