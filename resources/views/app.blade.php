@@ -11,6 +11,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/small_logo1.png') }}">
+    <link rel="shortcut icon" href="{{ asset('img/small_logo1.png') }}">
 
     <div class="gtranslate_wrapper"></div>
     <script>
@@ -23,7 +25,6 @@
         }
     </script>
     <script src="https://cdn.gtranslate.net/widgets/latest/float.js" defer></script>
-    <link rel="icon"  type="image/png" href="{{ asset('img/small_logo1.png') }}">
     @routes
     @viteReactRefresh
     @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])

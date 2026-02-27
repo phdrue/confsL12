@@ -65,6 +65,11 @@ const mainNavItems: NavItem[] = [
         title: 'Контакты',
         url: route('contacts', [], false),
     },
+    {
+        title: 'Архивный сайт',
+        url: 'https://ksmuconfs.org/?cat=9',
+        external: true,
+    }
 ];
 
 const rightNavItems: NavItem[] = [
@@ -130,12 +135,25 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                             </div>
                                             
                                             {/* Other Navigation Items */}
-                                            {mainNavItems.map((item) => (
-                                                <Link key={item.title} href={item.url} className="flex items-center space-x-2 font-medium">
-                                                    {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
-                                                    <span>{item.title}</span>
-                                                </Link>
-                                            ))}
+                                            {mainNavItems.map((item) =>
+                                                item.external ? (
+                                                    <a
+                                                        key={item.title}
+                                                        href={item.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center space-x-2 font-medium"
+                                                    >
+                                                        {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
+                                                        <span>{item.title}</span>
+                                                    </a>
+                                                ) : (
+                                                    <Link key={item.title} href={item.url} className="flex items-center space-x-2 font-medium">
+                                                        {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
+                                                        <span>{item.title}</span>
+                                                    </Link>
+                                                ),
+                                            )}
                                         </div>
 
                                         {!auth.user && (
@@ -169,25 +187,42 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 </NavigationMenuItem>
                                 
                                 {/* Other Navigation Items */}
-                                {mainNavItems.map((item, index) => (
-                                    <NavigationMenuItem key={index} className="relative flex h-full items-center">
-                                        <Link
-                                            prefetch
-                                            href={item.url}
-                                            className={cn(
-                                                navigationMenuTriggerStyle(),
-                                                page.url === item.url && activeItemStyles,
-                                                'h-9 cursor-pointer px-3',
+                                {mainNavItems.map((item, index) => {
+                                    const isActive = !item.external && page.url === item.url;
+                                    const linkClasses = cn(
+                                        navigationMenuTriggerStyle(),
+                                        isActive && activeItemStyles,
+                                        'h-9 cursor-pointer px-3',
+                                    );
+
+                                    return (
+                                        <NavigationMenuItem key={index} className="relative flex h-full items-center">
+                                            {item.external ? (
+                                                <a
+                                                    href={item.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className={linkClasses}
+                                                >
+                                                    {item.icon && <Icon iconNode={item.icon} className="mr-2 h-4 w-4" />}
+                                                    {item.title}
+                                                </a>
+                                            ) : (
+                                                <Link
+                                                    prefetch
+                                                    href={item.url}
+                                                    className={linkClasses}
+                                                >
+                                                    {item.icon && <Icon iconNode={item.icon} className="mr-2 h-4 w-4" />}
+                                                    {item.title}
+                                                </Link>
                                             )}
-                                        >
-                                            {item.icon && <Icon iconNode={item.icon} className="mr-2 h-4 w-4" />}
-                                            {item.title}
-                                        </Link>
-                                        {page.url === item.url && (
-                                            <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white"></div>
-                                        )}
-                                    </NavigationMenuItem>
-                                ))}
+                                            {isActive && (
+                                                <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white"></div>
+                                            )}
+                                        </NavigationMenuItem>
+                                    );
+                                })}
                             </NavigationMenuList>
                             {!auth.user &&
                                 <NavigationMenuList>
