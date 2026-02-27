@@ -7,6 +7,7 @@ export interface Conference {
     date: string;
     img_path: string;
     front_page: boolean;
+    force_enroll: boolean;
     state_id: number;
     type_id: number;
     primary_color: string;

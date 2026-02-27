@@ -242,6 +242,17 @@ class ConferenceController extends Controller
         return to_route('adm.conferences.edit', $conference);
     }
 
+    public function toggleForceEnroll(Conference $conference)
+    {
+        Gate::authorize('is-admin');
+
+        $conference->update([
+            'force_enroll' => ! $conference->force_enroll,
+        ]);
+
+        return to_route('adm.conferences.index');
+    }
+
     /**
      * Remove the specified resource from storage.
      */

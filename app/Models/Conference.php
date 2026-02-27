@@ -6,6 +6,7 @@ use App\Enums\ParticipationTypeEnum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Conference extends Model
 {
+    use HasFactory;
+
     /**
      * Get the attributes that should be cast.
      *
@@ -22,6 +25,7 @@ class Conference extends Model
     {
         return [
             'date' => 'date:d.m.Y',
+            'force_enroll' => 'boolean',
         ];
     }
 

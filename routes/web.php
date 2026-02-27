@@ -102,6 +102,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('conferences', ConferenceController::class)
             ->only('store', 'destroy');
 
+        Route::put('conferences/{conference}/toggle-force-enroll', [ConferenceController::class, 'toggleForceEnroll'])
+            ->name('conferences.toggle-force-enroll');
+
         // предложения - только админ может редактировать
         Route::resource('proposals', ProposalController::class)
             ->only('edit', 'update');

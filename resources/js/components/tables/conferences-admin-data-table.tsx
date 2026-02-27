@@ -41,6 +41,13 @@ const columns: ColumnDef<Conference>[] = [
         }
     },
     {
+        accessorKey: "force_enroll",
+        header: "FE",
+        cell: ({ row }) => {
+            return row.getValue("force_enroll") ? <span className="text-xs font-semibold text-emerald-600">ON</span> : ""
+        }
+    },
+    {
         accessorKey: "state_id",
         header: "Статус",
         filterFn: 'equalsString',
@@ -113,7 +120,7 @@ const columns: ColumnDef<Conference>[] = [
 
 function ConferenceActionsCell({ conference }: { conference: Conference }) {
     const { toast } = useToast()
-    const { delete: destroy, processing } = useForm({})
+    const { delete: destroy, put, processing } = useForm({})
 
     const handleDelete: FormEventHandler = (e) => {
         e.preventDefault()
@@ -150,6 +157,28 @@ function ConferenceActionsCell({ conference }: { conference: Conference }) {
                         <ExternalLink className="mr-2 h-4 w-4" />
                         Перейти к конференции
                     </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                    onClick={() =>
+                        put(route('adm.conferences.toggle-force-enroll', conference.id), {
+                            onSuccess: () => {
+                                toast({
+                                    variant: "success",
+                                    title: conference.force_enroll ? "Принудительная запись отключена" : "Принудительная запись включена",
+                                })
+                            },
+                            onError: () => {
+                                toast({
+                                    variant: "destructive",
+                                    title: "Не удалось изменить режим принудительной записи",
+                                })
+                            },
+                        })
+                    }
+                    disabled={processing}
+                >
+                    {conference.force_enroll ? "Отключить принудительную запись" : "Включить принудительную запись"}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
