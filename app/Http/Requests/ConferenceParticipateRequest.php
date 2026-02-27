@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ConferenceStateEnum;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 
 /**
  * @method \App\Models\Conference|null route($name = null, $parameters = [])
@@ -22,8 +23,34 @@ class ConferenceParticipateRequest extends FormRequest
             return false;
         }
 
-        // Allow if user can participate (new participation) or can manage documents (existing participation)
-        return Gate::allows('can-participate', $conference) || Gate::allows('can-manage-documents', $conference);
+        /** @var \App\Models\User|null $user */
+        $user = $this->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        if ($conference->force_enroll) {
+            return true;
+        }
+
+        $participates = $user->conferences()->where('conference_id', $conference->id)->exists();
+
+        $hasReports = ! empty($this->input('reports', []));
+        $hasThesises = ! empty($this->input('thesises', []));
+        $hasDocuments = $hasReports || $hasThesises;
+
+        if (! $participates) {
+            if (! $hasDocuments) {
+                return Gate::allows('can-participate', $conference);
+            }
+
+            $moreThanMonthAway = now()->addMonth()->lt($conference->date);
+
+            return Gate::allows('can-participate', $conference) && $moreThanMonthAway;
+        }
+
+        return Gate::allows('can-manage-documents', $conference);
     }
 
     protected function failedAuthorization()
@@ -31,7 +58,14 @@ class ConferenceParticipateRequest extends FormRequest
         $user = $this->user();
         $conference = $this->route('conference');
 
-        // Check if profile is incomplete
+        if (! $user || ! $conference) {
+            throw ValidationException::withMessages([
+                'authorization' => 'Вы не можете выполнить это действие.',
+            ]);
+        }
+
+        $participates = $user->conferences()->where('conference_id', $conference->id)->exists();
+
         $requiredFields = [
             'first_name',
             'last_name',
@@ -45,17 +79,48 @@ class ConferenceParticipateRequest extends FormRequest
             'title_id',
         ];
 
+        $profileIsComplete = true;
         foreach ($requiredFields as $field) {
             if (empty($user->$field)) {
-                throw ValidationException::withMessages([
-                    'authorization' => 'Для участия в конференции необходимо заполнить все данные профиля.'
-                ]);
+                $profileIsComplete = false;
+                break;
             }
         }
 
-        // Conference is not active
+        $hasReports = ! empty($this->input('reports', []));
+        $hasThesises = ! empty($this->input('thesises', []));
+        $hasDocuments = $hasReports || $hasThesises;
+
+        $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
+        $conferenceInFuture = now()->lt($conference->date);
+        $moreThanMonthAway = now()->addMonth()->lt($conference->date);
+
+        if (! $participates) {
+            // User is trying to register for the first time
+            if (! $profileIsComplete) {
+                $message = 'Для участия в конференции необходимо заполнить все данные профиля.';
+            } elseif (! $conferenceIsActive || ! $conferenceInFuture) {
+                // Cannot participate at all
+                $message = 'Приём заявок на данную конференцию полностью закрыт. Участвовать в конференции больше нельзя.';
+            } elseif ($hasDocuments && ! $moreThanMonthAway) {
+                // Conference is close: registration possible, but no documents allowed
+                $message = 'Вы можете зарегистрироваться на конференцию, но приём докладов и тезисов уже закрыт (до начала конференции осталось менее месяца).';
+            } else {
+                $message = 'Вы не можете участвовать в этой конференции.';
+            }
+        } else {
+            // User already participates – this is about managing documents
+            if (! $conferenceIsActive || ! $conferenceInFuture) {
+                $message = 'Вы уже участвуете в конференции, но приём изменений документов закрыт, так как конференция завершилась или деактивирована.';
+            } elseif (! $moreThanMonthAway) {
+                $message = 'Вы уже участвуете в конференции, но приём новых докладов и тезисов закрыт (до начала конференции осталось менее месяца).';
+            } else {
+                $message = 'Вы не можете изменять документы участия в этой конференции.';
+            }
+        }
+
         throw ValidationException::withMessages([
-            'authorization' => 'Приём заявок на данную конференцию закрыт.'
+            'authorization' => $message,
         ]);
     }
 

@@ -2,14 +2,14 @@
 
 namespace App\Providers;
 
-use App\Enums\Role;
 use App\Enums\ConferenceStateEnum;
+use App\Enums\Role;
 use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -58,21 +58,27 @@ class AppServiceProvider extends ServiceProvider
     private function participationGates(): void
     {
         Gate::define('can-participate', function ($user, $conference) {
-            // Allow participation if conference is active and profile is complete
-            // User can participate once, but can manage documents after participation
-            // Cannot participate if less than a month before conference date
+            if ($conference->force_enroll) {
+                return true;
+            }
+
             $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
             $profileIsComplete = $this->userHasCompleteProfile($user);
-            $moreThanMonthAway = now()->addMonth()->lt($conference->date);
-            return $conferenceIsActive && $profileIsComplete && $moreThanMonthAway;
+            $conferenceInFuture = now()->lt($conference->date);
+
+            return $conferenceIsActive && $profileIsComplete && $conferenceInFuture;
         });
 
         Gate::define('can-manage-documents', function ($user, $conference) {
-            // User can manage documents if they participate and conference is active
-            // Cannot manage documents if less than a month before conference date
             $participates = $user->conferences()->where('conference_id', $conference->id)->exists();
+
+            if ($conference->force_enroll) {
+                return $participates;
+            }
+
             $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
             $moreThanMonthAway = now()->addMonth()->lt($conference->date);
+
             return $participates && $conferenceIsActive && $moreThanMonthAway;
         });
     }
@@ -114,30 +120,5 @@ class AppServiceProvider extends ServiceProvider
         }
 
         return true;
-    }
-
-    public function old()
-    {
-        Gate::define('can-participate', function ($user, $conference) {
-            $doesNotParticipate = ! $user->conferences()->where('conference_id', $conference->id)->exists();
-            $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
-            return $doesNotParticipate && $conferenceIsActive;
-        });
-
-        Gate::define('can-submit-document', function ($user, $conference, $documentTypeId) {
-            $participation = $user->conferences()->where('conference_id', $conference->id)->first();
-
-            $participates = !is_null($participation);
-            $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
-            $didntSubmitYet = is_null($participation->document_id);
-
-            $thisDocumentIsAllowed = false;
-            if ($documentTypeId === 1 && $conference->allow_report) {
-                $thisDocumentIsAllowed = true;
-            } elseif ($documentTypeId === 2 && $conference->allow_thesis) {
-                $thisDocumentIsAllowed = true;
-            }
-            return $participates && $conferenceIsActive && $thisDocumentIsAllowed && $didntSubmitYet;
-        });
     }
 }

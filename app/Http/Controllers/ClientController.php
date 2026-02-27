@@ -294,17 +294,20 @@ class ClientController extends Controller
         $canParticipate = false;
         $participationReason = null;
 
-        if (Auth::check() && $conference->state_id === ConferenceStateEnum::ACTIVE->value) {
+        if (Auth::check()) {
             $canParticipate = Gate::allows('can-participate', $conference);
 
             if (! $canParticipate) {
-                // Determine the reason
-                $profileIsComplete = $this->userHasCompleteProfile(Auth::user());
-                $moreThanMonthAway = now()->addMonth()->lt($conference->date);
+                $user = Auth::user();
+                $profileIsComplete = $this->userHasCompleteProfile($user);
+                $conferenceInFuture = now()->lt($conference->date);
+                $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
 
                 if (! $profileIsComplete) {
                     $participationReason = 'incomplete_profile';
-                } elseif (! $moreThanMonthAway) {
+                } elseif (! $conferenceInFuture) {
+                    $participationReason = 'too_close';
+                } elseif (! $conferenceIsActive) {
                     $participationReason = 'too_close';
                 }
             }

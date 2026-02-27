@@ -68,8 +68,8 @@ export default function Show({
                                         {participationReason === 'incomplete_profile' && (
                                             <>
                                                 <p className="mb-2">Для участия в конференции необходимо заполнить профиль.</p>
-                                                <Link 
-                                                    href={route('profile.edit')} 
+                                                <Link
+                                                    href={route('profile.edit')}
                                                     className="underline underline-offset-2 font-medium"
                                                 >
                                                     Перейти к редактированию профиля
@@ -77,12 +77,12 @@ export default function Show({
                                             </>
                                         )}
                                         {participationReason === 'too_close' && (
-                                            <p>Регистрация на конференцию закрыта. До начала конференции осталось менее месяца.</p>
+                                            <p>Регистрация на конференцию закрыта. Дата проведения конференции уже прошла или конференция неактивна.</p>
                                         )}
                                     </AlertDescription>
                                 </Alert>
                             )}
-                            
+
                             {!auth.user && (
                                 <div className="absolute inset-0 flex items-center justify-center gap-3 font-semibold backdrop-blur-lg">
                                     <Lock size={20} />
@@ -94,17 +94,20 @@ export default function Show({
                                     </span>
                                 </div>
                             )}
-                            <div className="flex w-full flex-wrap items-center justify-center gap-3 md:flex-row lg:gap-6">
-                                <ParticipationForm
-                                    countries={countries}
-                                    degrees={degrees}
-                                    titles={titles}
-                                    reportTypes={reportTypes}
-                                    conference={conference}
-                                    participation={participation}
-                                    existingDocuments={existingDocuments}
-                                />
-                            </div>
+
+                            {(!auth.user || canParticipate || participation) && (
+                                <div className="flex w-full flex-wrap items-center justify-center gap-3 md:flex-row lg:gap-6">
+                                    <ParticipationForm
+                                        countries={countries}
+                                        degrees={degrees}
+                                        titles={titles}
+                                        reportTypes={reportTypes}
+                                        conference={conference}
+                                        participation={participation}
+                                        existingDocuments={existingDocuments}
+                                    />
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
