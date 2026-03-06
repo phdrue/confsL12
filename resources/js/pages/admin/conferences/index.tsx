@@ -29,7 +29,7 @@ export default function Index({
                     <div className="mb-8">
                         <h1 className="text-3xl font-semibold">Конференции</h1>
                     </div>
-                    <CreateConferenceForm types={types} />
+                    {/* <CreateConferenceForm types={types} /> */}
                     <ConferencesAdminDataTable conferences={conferences} states={states} types={types} />
                 </div>
             </div>
