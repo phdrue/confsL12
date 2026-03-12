@@ -52,7 +52,7 @@ Route::get('subscribe', [ClientController::class, 'subscribe'])
 //     ->name('download.policy');
 
 Route::get('sogl1', function () {
-    $file = Storage::get('sogl1.pdf');
+    $file = Storage::disk('public')->get('sogl1.pdf');
     $mimeType = Storage::mimeType('sogl1.pdf');
 
     return response($file, 200)
@@ -61,7 +61,7 @@ Route::get('sogl1', function () {
 })->name('download.sogl1');
 
 Route::get('sogl2', function () {
-    $file = Storage::get('sogl2.pdf');
+    $file = Storage::disk('public')->get('sogl2.pdf');
     $mimeType = Storage::mimeType('sogl2.pdf');
 
     return response($file, 200)

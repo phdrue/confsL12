@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Proposal;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateProposalRequest extends FormRequest
@@ -22,32 +23,42 @@ class CreateProposalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required|string|max:1000",
-            "shortName" => "required|string|max:1000",
-            "engShortName" => "required|string|max:1000",
-            "engName" => "required|string|max:1000",
-            "level" => "required|string|max:1000",
-            "form" => "required|string|max:1000",
-            "type" => "required|string|max:1000",
-            "lang" => "required|string|max:1000",
-            "date" => "required|string|max:1000",
-            "endDate" => "required|string|max:1000",
-            "place" => "required|string|max:1000",
-            "department" => "required|string|max:1000",
-            "organization" => "required|string|max:1000",
-            "organizationOther" => "required|string|max:1000",
-            "participationsTotal" => "required|string|max:1000",
-            "participationsForeign" => "required|string|max:1000",
-            "audiences" => "required|array",
-            "audiences.*" => "required|string|max:1000",
-            "bookType" => "required|string|max:1000",
-            "topics" => "required|string|max:1000",
-            "budget" => "required|string|max:1000",
-            "budgetSource" => "required|string|max:1000",
-            "coverageInPerson" => "required|string|max:1000",
-            "coverageOnline" => "required|string|max:1000",
-            "coverageProfession" => "required|string|max:1000",
-            "img" => "nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048",
+            'name' => [
+                'required',
+                'string',
+                'max:1000',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $date = $this->input('date');
+                    if ($date && Proposal::where('payload->name', $value)->where('payload->date', $date)->exists()) {
+                        $fail(__('Предложение с таким названием и датой уже существует.'));
+                    }
+                },
+            ],
+            'shortName' => 'required|string|max:1000',
+            'engShortName' => 'required|string|max:1000',
+            'engName' => 'required|string|max:1000',
+            'level' => 'required|string|max:1000',
+            'form' => 'required|string|max:1000',
+            'type' => 'required|string|max:1000',
+            'lang' => 'required|string|max:1000',
+            'date' => 'required|string|max:1000',
+            'endDate' => 'required|string|max:1000',
+            'place' => 'required|string|max:1000',
+            'department' => 'required|string|max:1000',
+            'organization' => 'required|string|max:1000',
+            'organizationOther' => 'required|string|max:1000',
+            'participationsTotal' => 'required|string|max:1000',
+            'participationsForeign' => 'required|string|max:1000',
+            'audiences' => 'required|array',
+            'audiences.*' => 'required|string|max:1000',
+            'bookType' => 'required|string|max:1000',
+            'topics' => 'required|string|max:1000',
+            'budget' => 'required|string|max:1000',
+            'budgetSource' => 'required|string|max:1000',
+            'coverageInPerson' => 'required|string|max:1000',
+            'coverageOnline' => 'required|string|max:1000',
+            'coverageProfession' => 'required|string|max:1000',
+            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ];
     }
 }
