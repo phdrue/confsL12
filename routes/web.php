@@ -98,6 +98,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('toggle-responsible/{user}', [UserController::class, 'toggleResponsible'])
             ->name('users.toggle-responsible');
 
+        Route::put('toggle-admin/{user}', [UserController::class, 'toggleAdmin'])
+            ->name('users.toggle-admin');
+
+        Route::put('toggle-user/{user}', [UserController::class, 'toggleUser'])
+            ->name('users.toggle-user');
+
         // конференции
         Route::resource('conferences', ConferenceController::class)
             ->only('store', 'destroy');

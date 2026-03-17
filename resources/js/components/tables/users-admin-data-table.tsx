@@ -28,13 +28,13 @@ export default function UsersAdminDataTable({
         _method: 'put'
     })
 
-    const submit = (userId: number) => {
-        post(route('adm.users.toggle-responsible', userId), {
-            onBefore: () => confirm("Вы уверены, что хотите переключить ответственность? Ответственности будут удалены"),
+    const submit = (routeName: string, userId: number, confirmMessage: string, successMessage: string) => {
+        post(route(routeName, userId), {
+            onBefore: () => confirm(confirmMessage),
             onSuccess: () => {
                 toast({
                     variant: "success",
-                    title: "Роль переключена!",
+                    title: successMessage,
                 })
             }
         })
@@ -113,11 +113,47 @@ export default function UsersAdminDataTable({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Действия</DropdownMenuLabel>
-                            <DropdownMenuItem asChild>
-                                <DropdownMenuItem onClick={() => submit(row.original.id)} disabled={processing}>
-                                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                    Роль ответсвенного
-                                </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() =>
+                                    submit(
+                                        'adm.users.toggle-user',
+                                        row.original.id,
+                                        "Вы уверены, что хотите переключить роль пользователя?",
+                                        "Роль пользователя переключена!"
+                                    )
+                                }
+                                disabled={processing}
+                            >
+                                {processing && <LoaderCircle className="h-4 w-4 animate-spin mr-2" />}
+                                Роль пользователя
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() =>
+                                    submit(
+                                        'adm.users.toggle-admin',
+                                        row.original.id,
+                                        "Вы уверены, что хотите переключить роль администратора?",
+                                        "Роль администратора переключена!"
+                                    )
+                                }
+                                disabled={processing}
+                            >
+                                {processing && <LoaderCircle className="h-4 w-4 animate-spin mr-2" />}
+                                Роль администратора
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() =>
+                                    submit(
+                                        'adm.users.toggle-responsible',
+                                        row.original.id,
+                                        "Вы уверены, что хотите переключить ответственность? Ответственности будут удалены",
+                                        "Роль ответственного переключена!"
+                                    )
+                                }
+                                disabled={processing}
+                            >
+                                {processing && <LoaderCircle className="h-4 w-4 animate-spin mr-2" />}
+                                Роль ответственного
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

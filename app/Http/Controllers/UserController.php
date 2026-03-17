@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\Role;
 use App\Http\Requests\CreateUserRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -16,7 +15,7 @@ class UserController extends Controller
     public function index()
     {
         return Inertia::render('admin/users/index', [
-            'users' => User::with('roles')->get()
+            'users' => User::with('roles')->get(),
         ]);
     }
 
@@ -28,7 +27,7 @@ class UserController extends Controller
         User::create([
             ...$request->safe(),
             'password' => '111111',
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
         ]);
     }
 
@@ -39,6 +38,28 @@ class UserController extends Controller
             $user->responsibilities()->detach();
         } else {
             $user->roles()->attach(Role::RESPONSIBLE->value);
+        }
+
+        return to_route('adm.users.index');
+    }
+
+    public function toggleAdmin(User $user)
+    {
+        if ($user->hasRole(Role::ADMIN)) {
+            $user->roles()->detach(Role::ADMIN->value);
+        } else {
+            $user->roles()->attach(Role::ADMIN->value);
+        }
+
+        return to_route('adm.users.index');
+    }
+
+    public function toggleUser(User $user)
+    {
+        if ($user->hasRole(Role::USER)) {
+            $user->roles()->detach(Role::USER->value);
+        } else {
+            $user->roles()->attach(Role::USER->value);
         }
 
         return to_route('adm.users.index');
