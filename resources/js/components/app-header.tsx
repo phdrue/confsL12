@@ -66,7 +66,7 @@ const mainNavItems: NavItem[] = [
         url: route('contacts', [], false),
     },
     {
-        title: 'Требования к тезисам',
+        title: 'Участникам',
         url: route('thesis.requirements', [], false),
     },
     {

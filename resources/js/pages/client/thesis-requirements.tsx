@@ -8,16 +8,12 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Стартовая страница',
         href: route('home'),
     },
-    {
-        title: 'Требования к тезисам',
-        href: route('thesis.requirements'),
-    },
 ];
 
 export default function ThesisRequirements() {
     return (
         <ClientLayout breadcrumbs={breadcrumbs}>
-            <Head title="Требования к тезисам" />
+            <Head title="Участникам" />
 
             <div className="mx-auto max-w-screen-xl pt-16 mb-24 w-full">
                 <div className="max-w-2xl mx-auto px-4 sm:px-6 mb-16">

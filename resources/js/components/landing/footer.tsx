@@ -29,7 +29,7 @@ export default function Footer() {
                                 Контакты
                             </Link>
                             <Link className="px-3" href={route('thesis.requirements')}>
-                                Требования к тезисам
+                                Участникам
                             </Link>
                             <a className='px-3' target="_blank" href="https://ksmuconfs.org/?cat=9">
                                 Архивный сайт
