@@ -333,10 +333,9 @@ class ClientController extends Controller
 
     public function participate(ConferenceParticipateRequest $request, Conference $conference)
     {
-        $isNewParticipation = false;
         $participationId = null;
 
-        DB::transaction(function () use ($request, $conference, &$isNewParticipation, &$participationId) {
+        DB::transaction(function () use ($request, $conference, &$participationId) {
             // Check if user already participates
             $participation = ConferenceUser::where('conference_id', $conference->id)
                 ->where('user_id', Auth::id())
@@ -348,7 +347,6 @@ class ClientController extends Controller
                     'conference_id' => $conference->id,
                     'user_id' => Auth::id(),
                 ]);
-                $isNewParticipation = true;
             }
 
             $participationId = $participation->id;
@@ -403,13 +401,15 @@ class ClientController extends Controller
             }
         });
 
-        // Send email only on initial participation (after transaction completes)
-        if ($isNewParticipation && $participationId) {
-            $participation = ConferenceUser::with(['documents.reportType'])->find($participationId);
+        // Send email on both create and update (after transaction completes)
+        if ($participationId) {
+            $participation = ConferenceUser::with(['documents.reportType'])->findOrFail($participationId);
 
-            Mail::to(Auth::user())->send(
-                new ParticipationConfirmationMail(Auth::user(), $conference, $participation)
-            );
+            Mail::to(Auth::user())->send(new ParticipationConfirmationMail(
+                Auth::user(),
+                $conference,
+                $participation,
+            ));
         }
 
         return to_route('conferences.show', $conference);

@@ -8,6 +8,7 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -62,9 +63,10 @@ class AppServiceProvider extends ServiceProvider
                 return true;
             }
 
+            $conferenceDate = Carbon::parse($conference->getRawOriginal('date'));
             $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
             $profileIsComplete = $this->userHasCompleteProfile($user);
-            $conferenceInFuture = now()->lt($conference->date);
+            $conferenceInFuture = now()->lt($conferenceDate);
 
             return $conferenceIsActive && $profileIsComplete && $conferenceInFuture;
         });
@@ -76,8 +78,9 @@ class AppServiceProvider extends ServiceProvider
                 return $participates;
             }
 
+            $conferenceDate = Carbon::parse($conference->getRawOriginal('date'));
             $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
-            $moreThanMonthAway = now()->addMonth()->lt($conference->date);
+            $moreThanMonthAway = now()->addMonth()->lt($conferenceDate);
 
             return $participates && $conferenceIsActive && $moreThanMonthAway;
         });

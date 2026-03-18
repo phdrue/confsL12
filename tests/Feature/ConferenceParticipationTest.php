@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\ConferenceStateEnum;
+use App\Mail\ParticipationConfirmationMail;
 use App\Models\Conference;
 use App\Models\ConferenceState;
 use App\Models\ConferenceUser;
@@ -10,6 +11,7 @@ use App\Models\DocumentType;
 use App\Models\ReportType;
 use App\Models\Title;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\post;
@@ -41,6 +43,8 @@ function ensureDocumentTypesExist(): void
 }
 
 test('user can participate without documents when conference is in the future', function () {
+    Mail::fake();
+
     $user = createUserWithCompleteProfile();
 
     ConferenceState::factory()->create([
@@ -51,11 +55,13 @@ test('user can participate without documents when conference is in the future', 
     /** @var Conference $conference */
     $conference = Conference::factory()->create([
         'state_id' => ConferenceStateEnum::ACTIVE->value,
-        'date' => now()->addDays(5),
+        'date' => now()->addYear(),
         'allow_report' => false,
         'allow_thesis' => false,
-        'force_enroll' => false,
+        'force_enroll' => true,
     ]);
+
+    expect(now()->addMonth()->lt($conference->date))->toBeTrue();
 
     actingAs($user);
 
@@ -72,6 +78,40 @@ test('user can participate without documents when conference is in the future', 
             ->where('user_id', $user->id)
             ->exists()
     )->toBeTrue();
+
+    Mail::assertSent(ParticipationConfirmationMail::class);
+});
+
+test('participation email is sent on both create and update', function () {
+    Mail::fake();
+
+    $user = createUserWithCompleteProfile();
+
+    ConferenceState::factory()->create([
+        'id' => ConferenceStateEnum::ACTIVE->value,
+        'name' => 'Active',
+    ]);
+
+    /** @var Conference $conference */
+    $conference = Conference::factory()->create([
+        'state_id' => ConferenceStateEnum::ACTIVE->value,
+        'date' => now()->addMonths(2),
+        'allow_report' => false,
+        'allow_thesis' => false,
+        'force_enroll' => false,
+    ]);
+
+    actingAs($user);
+
+    post(route('client.conferences.participate', $conference), [
+        'authorization' => '',
+    ])->assertSessionHasNoErrors();
+
+    post(route('client.conferences.participate', $conference), [
+        'authorization' => '',
+    ])->assertSessionHasNoErrors();
+
+    Mail::assertSent(ParticipationConfirmationMail::class, 2);
 });
 
 test('user cannot submit documents within one month before conference when force_enroll is false', function () {

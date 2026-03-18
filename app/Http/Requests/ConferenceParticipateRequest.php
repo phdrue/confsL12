@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\ConferenceStateEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 
@@ -22,6 +23,8 @@ class ConferenceParticipateRequest extends FormRequest
         if (! $conference) {
             return false;
         }
+
+        $conferenceDate = Carbon::parse($conference->getRawOriginal('date'));
 
         /** @var \App\Models\User|null $user */
         $user = $this->user();
@@ -45,7 +48,7 @@ class ConferenceParticipateRequest extends FormRequest
                 return Gate::allows('can-participate', $conference);
             }
 
-            $moreThanMonthAway = now()->addMonth()->lt($conference->date);
+            $moreThanMonthAway = now()->addMonth()->lt($conferenceDate);
 
             return Gate::allows('can-participate', $conference) && $moreThanMonthAway;
         }
@@ -63,6 +66,8 @@ class ConferenceParticipateRequest extends FormRequest
                 'authorization' => 'Вы не можете выполнить это действие.',
             ]);
         }
+
+        $conferenceDate = Carbon::parse($conference->getRawOriginal('date'));
 
         $participates = $user->conferences()->where('conference_id', $conference->id)->exists();
 
@@ -92,8 +97,8 @@ class ConferenceParticipateRequest extends FormRequest
         $hasDocuments = $hasReports || $hasThesises;
 
         $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
-        $conferenceInFuture = now()->lt($conference->date);
-        $moreThanMonthAway = now()->addMonth()->lt($conference->date);
+        $conferenceInFuture = now()->lt($conferenceDate);
+        $moreThanMonthAway = now()->addMonth()->lt($conferenceDate);
 
         if (! $participates) {
             // User is trying to register for the first time
