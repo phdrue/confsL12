@@ -123,6 +123,11 @@ class ProposalController extends Controller
     {
         Gate::authorize('is-admin');
 
+        // Prevent denying if proposal has been converted to a conference
+        if ($proposal->conference_id) {
+            return redirect()->back()->with('error', 'Нельзя отклонить предложение, из которого уже создана конференция');
+        }
+
         $proposal->update([
             'denied' => true,
         ]);
@@ -131,11 +136,35 @@ class ProposalController extends Controller
     }
 
     /**
+     * Return a denied proposal back to pending (admin only)
+     */
+    public function returnToPending(Proposal $proposal)
+    {
+        Gate::authorize('is-admin');
+
+        // Prevent changing status if proposal has been converted to a conference
+        if ($proposal->conference_id) {
+            return redirect()->back()->with('error', 'Нельзя изменить статус предложения, из которого уже создана конференция');
+        }
+
+        $proposal->update([
+            'denied' => false,
+        ]);
+
+        return redirect()->back()->with('success', 'Предложение возвращено в статус ожидания');
+    }
+
+    /**
      * Create conference from proposal (admin only)
      */
     public function approve(Proposal $proposal)
     {
         Gate::authorize('is-admin');
+
+        // Prevent approving if proposal was denied (must be returned to pending first)
+        if ($proposal->denied) {
+            return redirect()->back()->with('error', 'Нельзя одобрить отклонённое предложение. Сначала верните его в ожидание.');
+        }
 
         DB::transaction(function () use ($proposal) {
             // Map proposal fields to conference fields

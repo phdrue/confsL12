@@ -57,6 +57,39 @@ class ProposalAdminTest extends TestCase
         $this->assertEquals(1, $proposal->denied);
     }
 
+    public function test_admin_can_return_denied_proposal_to_pending()
+    {
+        $user = User::factory()->create();
+        $proposal = Proposal::create([
+            'user_id' => $user->id,
+            'denied' => true,
+            'payload' => [
+                'name' => 'Test Conference',
+                'shortName' => 'Test',
+                'level' => 'Международный',
+                'date' => '2024-12-01',
+                'topics' => 'Test topics',
+            ],
+        ]);
+
+        Role::create(['id' => 1, 'name' => 'Участник']);
+        Role::create(['id' => 2, 'name' => 'Администратор']);
+        Role::create(['id' => 3, 'name' => 'Ответственный за конференцию']);
+
+        $admin = User::factory()->create();
+        $admin->roles()->attach(RoleEnum::ADMIN->value);
+
+        $this->actingAs($admin);
+
+        $response = $this->put(route('adm.proposals.return-to-pending', $proposal));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success', 'Предложение возвращено в статус ожидания');
+
+        $proposal->refresh();
+        $this->assertEquals(0, $proposal->denied);
+    }
+
     public function test_admin_can_approve_proposal_and_create_conference()
     {
         // Create test data
@@ -136,6 +169,22 @@ class ProposalAdminTest extends TestCase
         $this->actingAs($user);
 
         $response = $this->put(route('adm.proposals.approve', $proposal));
+
+        $response->assertStatus(403);
+    }
+
+    public function test_non_admin_cannot_return_denied_proposal_to_pending()
+    {
+        $user = User::factory()->create();
+        $proposal = Proposal::create([
+            'user_id' => $user->id,
+            'denied' => true,
+            'payload' => ['name' => 'Test'],
+        ]);
+
+        $this->actingAs($user);
+
+        $response = $this->put(route('adm.proposals.return-to-pending', $proposal));
 
         $response->assertStatus(403);
     }

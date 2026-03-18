@@ -120,6 +120,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('proposals.deny');
         Route::put('proposals/{proposal}/approve', [ProposalController::class, 'approve'])
             ->name('proposals.approve');
+        Route::put('proposals/{proposal}/return-to-pending', [ProposalController::class, 'returnToPending'])
+            ->name('proposals.return-to-pending');
     });
 
     // responsible general

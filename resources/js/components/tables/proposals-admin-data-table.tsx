@@ -1,7 +1,7 @@
 import { Proposal } from "@/types/conferences"
 import { DataTableFilter } from "@/types/other"
 import { Auth } from "@/types"
-import { ArrowUpDown, X, CheckCircle, ExternalLink } from "lucide-react"
+import { ArrowUpDown, X, CheckCircle, ExternalLink, RotateCcw } from "lucide-react"
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@/components/ui/data-table"
 import { ConferenceTypeBadge, ConferenceStateBadge } from "@/components/conferences/utils"
@@ -57,8 +57,8 @@ function DenyConfirmationDialog({ proposal }: { proposal: Proposal }) {
                     <p className="text-sm text-gray-600">
                         Вы уверены, что хотите отклонить предложение <strong>"{proposal.payload.shortName}"</strong>?
                     </p>
-                    <p className="text-sm text-red-600 mt-2">
-                        Это действие нельзя отменить.
+                    <p className="text-sm text-gray-600 mt-2">
+                        При необходимости вы сможете вернуть его в статус ожидания.
                     </p>
                 </div>
                 <DialogFooter>
@@ -67,6 +67,48 @@ function DenyConfirmationDialog({ proposal }: { proposal: Proposal }) {
                     </Button>
                     <Button variant="destructive" onClick={handleDeny}>
                         Отклонить предложение
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+// Confirmation Dialog for Return to Pending Action
+function ReturnToPendingConfirmationDialog({ proposal }: { proposal: Proposal }) {
+    const [open, setOpen] = useState(false);
+
+    const handleReturnToPending = () => {
+        router.put(route('adm.proposals.return-to-pending', proposal.id), {}, {
+            onSuccess: () => setOpen(false)
+        });
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <DropdownMenuItem
+                    onSelect={(e) => e.preventDefault()}
+                >
+                    <RotateCcw className="w-4 h-4 mr-2" />
+                    Вернуть в ожидание
+                </DropdownMenuItem>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Вернуть предложение в ожидание</DialogTitle>
+                </DialogHeader>
+                <div className="py-4">
+                    <p className="text-sm text-gray-600">
+                        Вернуть предложение <strong>"{proposal.payload.shortName}"</strong> в статус ожидания?
+                    </p>
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setOpen(false)}>
+                        Отмена
+                    </Button>
+                    <Button variant="default" onClick={handleReturnToPending}>
+                        Вернуть в ожидание
                     </Button>
                 </DialogFooter>
             </DialogContent>
@@ -476,6 +518,12 @@ export default function ProposalsAdminDataTable({
                                             <DropdownMenuSeparator />
                                             <ApproveConfirmationDialog proposal={proposal} />
                                             <DenyConfirmationDialog proposal={proposal} />
+                                        </>
+                                    )}
+                                    {!proposal.conference_id && proposal.denied && (
+                                        <>
+                                            <DropdownMenuSeparator />
+                                            <ReturnToPendingConfirmationDialog proposal={proposal} />
                                         </>
                                     )}
                                 </>
