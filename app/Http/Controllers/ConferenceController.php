@@ -19,6 +19,7 @@ use App\Models\ImageCategory;
 use App\Models\Proposal;
 use App\Models\Title;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -27,26 +28,27 @@ use Inertia\Response;
 
 class ConferenceController extends Controller
 {
-    public function participations(Conference $conference)
+    public function participations(Request $request, Conference $conference)
     {
-        $users = $conference->users()->get();
+        $perPage = (int) $request->integer('per_page', 50);
+        $perPage = max(1, min(200, $perPage));
 
-        // Transform users to include documents in a structured format
-        $users = $users->map(function ($user) use ($conference) {
-            $participation = ConferenceUser::where('conference_id', $conference->id)
-                ->where('user_id', $user->id)
-                ->with(['documents' => function ($query) {
-                    $query->with('reportType');
-                }])
-                ->first();
+        $participants = ConferenceUser::query()
+            ->where('conference_id', $conference->id)
+            ->with([
+                'user',
+                'documents.reportType',
+            ])
+            ->orderByDesc('id')
+            ->paginate($perPage)
+            ->withQueryString()
+            ->through(function (ConferenceUser $participation) {
+                $documents = [
+                    'reports' => [],
+                    'thesises' => [],
+                ];
 
-            $documents = [
-                'reports' => [],
-                'thesises' => [],
-            ];
-
-            if ($participation && $participation->documents) {
-                $documents['reports'] = $participation->documents
+                $reports = $participation->documents
                     ->where('type_id', 1)
                     ->map(function ($doc) {
                         return [
@@ -61,9 +63,10 @@ class ConferenceController extends Controller
                             'science_guides' => $doc->science_guides ?? [],
                         ];
                     })
-                    ->toArray();
+                    ->values()
+                    ->all();
 
-                $documents['thesises'] = $participation->documents
+                $thesises = $participation->documents
                     ->where('type_id', 2)
                     ->map(function ($doc) {
                         return [
@@ -75,22 +78,30 @@ class ConferenceController extends Controller
                             'science_guides' => $doc->science_guides ?? [],
                         ];
                     })
-                    ->toArray();
-            }
+                    ->values()
+                    ->all();
 
-            $userArray = $user->toArray();
-            $userArray['participation_documents'] = $documents;
-            $userArray['participation'] = $participation ? [
-                'id' => $participation->id,
-                'confirmed' => $participation->confirmed,
-            ] : null;
+                $documents['reports'] = $reports;
+                $documents['thesises'] = $thesises;
 
-            return $userArray;
-        });
+                $userArray = $participation->user?->toArray() ?? [];
+
+                // Keep compatibility with existing frontend usage patterns.
+                $userArray['pivot'] = [
+                    'confirmed' => $participation->confirmed,
+                ];
+                $userArray['participation_documents'] = $documents;
+                $userArray['participation'] = [
+                    'id' => $participation->id,
+                    'confirmed' => $participation->confirmed,
+                ];
+
+                return $userArray;
+            });
 
         return Inertia::render('admin/conferences/participations', [
             'conference' => $conference,
-            'users' => $users,
+            'users' => $participants,
             'degrees' => Degree::select('id', 'name')->get(),
             'titles' => Title::select('id', 'name')->get(),
         ]);

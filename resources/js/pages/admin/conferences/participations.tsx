@@ -2,11 +2,22 @@ import AppLayout from '@/layouts/app-layout';
 import { User, type BreadcrumbItem } from '@/types';
 import { Conference } from '@/types/conferences';
 import { Degree, Title } from '@/types/other';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import AttendanceAdminDataTable from '@/components/tables/attendance-admin-data-table';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from 'react';
+import { Pagination } from '@/components/ui/pagination';
+
+interface PaginatedData<T> {
+    data: Array<T>;
+    current_page: number;
+    last_page: number;
+    total: number;
+    from: number;
+    to: number;
+    per_page?: number;
+}
 
 export default function Participations({
     conference,
@@ -15,7 +26,7 @@ export default function Participations({
     titles,
 }: {
     conference: Conference,
-    users: Array<User>,
+    users: PaginatedData<User>,
     degrees: Array<Degree>,
     titles: Array<Title>,
 }) {
@@ -173,6 +184,15 @@ export default function Participations({
         }
     };
 
+    const handlePageChange = (page: number) => {
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', page.toString());
+        router.get(url.pathname + url.search, {}, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Администрирование" />
@@ -199,10 +219,22 @@ export default function Participations({
                 </div>
                 <AttendanceAdminDataTable 
                     conference={conference}
-                    participants={users} 
+                    participants={users.data} 
                     degrees={degrees}
                     titles={titles}
+                    rowNumberOffset={Math.max((users.from ?? 1) - 1, 0)}
                 />
+                {users.last_page > 1 && (
+                    <div className="flex justify-center pt-4">
+                        <Pagination
+                            currentPage={users.current_page}
+                            totalPages={users.last_page}
+                            onPageChange={handlePageChange}
+                            totalItems={users.total}
+                            itemsPerPage={users.per_page}
+                        />
+                    </div>
+                )}
             </div>
         </AppLayout>
     );

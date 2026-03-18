@@ -21,9 +21,11 @@ import { useToast } from "@/hooks/use-toast"
 export default function ParticipationsAdminDataTable({
     conference,
     participants,
+    rowNumberOffset = 0,
 }: {
     conference: Conference,
     participants: Array<User>,
+    rowNumberOffset?: number,
 }) {
     const { toast } = useToast()
 
@@ -36,7 +38,7 @@ export default function ParticipationsAdminDataTable({
             id: "index",
             header: "#",
             cell: ({ row }) => {
-                const index = row.index + 1
+                const index = rowNumberOffset + row.index + 1
                 return <div className="text-left font-medium">{index}</div>
             },
         },

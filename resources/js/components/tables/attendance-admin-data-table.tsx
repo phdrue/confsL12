@@ -24,11 +24,13 @@ export default function AttendanceAdminDataTable({
     participants,
     degrees,
     titles,
+    rowNumberOffset = 0,
 }: {
     conference: Conference,
     participants: Array<User>,
     degrees: Array<Degree>,
     titles: Array<Title>,
+    rowNumberOffset?: number,
 }) {
     const { toast } = useToast()
     const [selectedUser, setSelectedUser] = useState<User | null>(null)
@@ -71,7 +73,7 @@ export default function AttendanceAdminDataTable({
             id: "index",
             header: "#",
             cell: ({ row }) => {
-                const index = row.index + 1
+                const index = rowNumberOffset + row.index + 1
                 return <div className="text-left font-medium">{index}</div>
             },
         },
