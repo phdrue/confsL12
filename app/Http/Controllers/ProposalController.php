@@ -68,9 +68,9 @@ class ProposalController extends Controller
         Gate::authorize('is-admin');
 
         // Prevent editing if proposal has been converted to a conference
-        if ($proposal->conference_id) {
-            return redirect()->back()->with('error', 'Нельзя редактировать предложение, из которого уже создана конференция');
-        }
+        // if ($proposal->conference_id) {
+        //     return redirect()->back()->with('error', 'Нельзя редактировать предложение, из которого уже создана конференция');
+        // }
 
         return Inertia::render('admin/proposals/edit', [
             'proposal' => $proposal,
@@ -85,9 +85,9 @@ class ProposalController extends Controller
         Gate::authorize('is-admin');
 
         // Prevent updating if proposal has been converted to a conference
-        if ($proposal->conference_id) {
-            return redirect()->back()->with('error', 'Нельзя редактировать предложение, из которого уже создана конференция');
-        }
+        // if ($proposal->conference_id) {
+        //     return redirect()->back()->with('error', 'Нельзя редактировать предложение, из которого уже создана конференция');
+        // }
 
         $data = [
             'payload' => [...$request->safe()->except('img')],

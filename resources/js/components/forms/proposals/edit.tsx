@@ -254,19 +254,15 @@ export default function ProposalEditForm({ proposal, trigger }: ProposalEditForm
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="lang">Язык конференции</Label>
-                            <Select name="lang" value={data.lang} onValueChange={(lang) => setData('lang', lang)}>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Выберите вид конференции" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Виды</SelectLabel>
-                                        {options.langs.map((lang) => (
-                                            <SelectItem key={lang} value={lang}>{lang}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
+                            <Input
+                                id="lang"
+                                name="lang"
+                                type="text"
+                                required
+                                tabIndex={1}
+                                value={data.lang}
+                                onChange={(e) => setData('lang', e.target.value)}
+                            />
                             <InputError message={errors.lang} className="mt-2" />
                         </div>
 
