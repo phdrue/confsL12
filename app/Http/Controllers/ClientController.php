@@ -51,6 +51,11 @@ class ClientController extends Controller
         return Inertia::render('client/contacts');
     }
 
+    public function thesisRequirements()
+    {
+        return Inertia::render('client/thesis-requirements');
+    }
+
     public function subscribe()
     {
         return Inertia::render('client/subscribe');

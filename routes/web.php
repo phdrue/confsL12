@@ -45,6 +45,9 @@ Route::get('blocks/{block}/download/{fileIndex}', [ConferenceBlockController::cl
 Route::get('contacts', [ClientController::class, 'contacts'])
     ->name('contacts');
 
+Route::get('thesis-requirements', [ClientController::class, 'thesisRequirements'])
+    ->name('thesis.requirements');
+
 Route::get('subscribe', [ClientController::class, 'subscribe'])
     ->name('subscribe');
 

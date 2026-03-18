@@ -66,6 +66,10 @@ const mainNavItems: NavItem[] = [
         url: route('contacts', [], false),
     },
     {
+        title: 'Требования к тезисам',
+        url: route('thesis.requirements', [], false),
+    },
+    {
         title: 'Архивный сайт',
         url: 'https://ksmuconfs.org/?cat=9',
         external: true,
