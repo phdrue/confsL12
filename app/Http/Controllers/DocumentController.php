@@ -98,6 +98,7 @@ class DocumentController extends Controller
         $documents = Document::query()
             ->whereRelation('participation', 'conference_id', $conference->id)
             ->where('type_id', 2)
+            ->where('is_approved', true)
             ->get();
 
         if (! $documents->isEmpty()) {
@@ -123,6 +124,7 @@ class DocumentController extends Controller
         $documents = Document::query()
             ->whereRelation('participation', 'conference_id', $conference->id)
             ->where('type_id', 1)
+            ->where('is_approved', true)
             ->with('reportType')
             ->get();
 

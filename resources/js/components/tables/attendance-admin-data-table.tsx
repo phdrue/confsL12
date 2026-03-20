@@ -217,6 +217,7 @@ export default function AttendanceAdminDataTable({
                 <ParticipationDetailsDialog
                     open={dialogOpen}
                     onOpenChange={setDialogOpen}
+                    conferenceId={conference.id}
                     user={selectedUser}
                     degrees={degrees}
                     titles={titles}

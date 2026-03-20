@@ -54,6 +54,7 @@ class ConferenceController extends Controller
                         return [
                             'id' => $doc->id,
                             'topic' => $doc->topic,
+                            'is_approved' => $doc->is_approved,
                             'report_type_id' => $doc->report_type_id,
                             'report_type' => $doc->reportType ? [
                                 'id' => $doc->reportType->id,
@@ -72,6 +73,7 @@ class ConferenceController extends Controller
                         return [
                             'id' => $doc->id,
                             'topic' => $doc->topic,
+                            'is_approved' => $doc->is_approved,
                             'text' => $doc->text,
                             'literature' => $doc->literature,
                             'authors' => $doc->authors,
@@ -137,6 +139,21 @@ class ConferenceController extends Controller
             ->firstOrFail();
 
         $pivot->update(['confirmed' => ! $pivot->confirmed]);
+
+        return to_route('adm.conferences.participations', $conference);
+    }
+
+    public function toggleDocumentApproval(Conference $conference, Document $document)
+    {
+        $participation = $document->participation;
+
+        if (! $participation || $participation->conference_id !== $conference->id) {
+            abort(404);
+        }
+
+        $document->update([
+            'is_approved' => ! $document->is_approved,
+        ]);
 
         return to_route('adm.conferences.participations', $conference);
     }

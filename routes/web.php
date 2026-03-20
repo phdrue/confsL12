@@ -174,6 +174,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('toggle-confirmed/{conference}/{user}', [ConferenceController::class, 'toggleConfirmed'])
             ->name('conferences.toggle-confirmed');
 
+        Route::put('toggle-document-approval/{conference}/{document}', [ConferenceController::class, 'toggleDocumentApproval'])
+            ->name('conferences.toggle-document-approval');
+
         // сборник тезисов
         Route::get('get-book/{conference}', [DocumentController::class, 'getBook'])
             ->name('conferences.get-book');

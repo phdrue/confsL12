@@ -9,11 +9,15 @@ import { User } from '@/types'
 import { Degree, Title } from '@/types/other'
 import { ConferenceParticipationBadge } from '@/components/conferences/utils'
 import { Separator } from '@/components/ui/separator'
+import { Button } from '@/components/ui/button'
+import { useForm } from '@inertiajs/react'
+import { useToast } from '@/hooks/use-toast'
 
 interface ParticipationDocuments {
     reports: Array<{
         id: number
         topic: string
+        is_approved: boolean
         report_type_id: number | null
         report_type?: { id: number; name: string } | null
         authors: Array<any>
@@ -22,6 +26,7 @@ interface ParticipationDocuments {
     thesises: Array<{
         id: number
         topic: string
+        is_approved: boolean
         text: string | null
         literature: string | null
         authors: Array<any>
@@ -37,6 +42,7 @@ interface Participation {
 interface ParticipationDetailsDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
+    conferenceId: number
     user: User & {
         participation_documents?: ParticipationDocuments
         participation?: Participation | null
@@ -48,10 +54,16 @@ interface ParticipationDetailsDialogProps {
 export function ParticipationDetailsDialog({
     open,
     onOpenChange,
+    conferenceId,
     user,
     degrees,
     titles,
 }: ParticipationDetailsDialogProps) {
+    const { toast } = useToast()
+    const { post, processing } = useForm({
+        _method: 'put',
+    })
+
     const getDegreeName = (degreeId: number | null): string => {
         if (!degreeId) return ''
         const degree = degrees.find((d) => d.id === degreeId)
@@ -66,6 +78,17 @@ export function ParticipationDetailsDialog({
 
     const documents = user.participation_documents || { reports: [], thesises: [] }
     const participation = user.participation
+    const toggleDocumentApproval = (documentId: number) => {
+        post(route('adm.conferences.toggle-document-approval', [conferenceId, documentId]), {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast({
+                    variant: 'success',
+                    title: 'Статус публикации переключен!',
+                })
+            },
+        })
+    }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -158,6 +181,27 @@ export function ParticipationDetailsDialog({
                                                     </p>
                                                     <p className="font-medium">{report.topic}</p>
                                                 </div>
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Публикация в сборнике
+                                                    </p>
+                                                    <Button
+                                                        size="sm"
+                                                        variant={
+                                                            report.is_approved
+                                                                ? 'default'
+                                                                : 'secondary'
+                                                        }
+                                                        disabled={processing}
+                                                        onClick={() =>
+                                                            toggleDocumentApproval(report.id)
+                                                        }
+                                                    >
+                                                        {report.is_approved
+                                                            ? 'Одобрено'
+                                                            : 'Не одобрено'}
+                                                    </Button>
+                                                </div>
                                                 {report.report_type && (
                                                     <div>
                                                         <p className="text-sm text-muted-foreground">
@@ -224,6 +268,27 @@ export function ParticipationDetailsDialog({
                                                         Тезис #{index + 1}
                                                     </p>
                                                     <p className="font-medium">{thesis.topic}</p>
+                                                </div>
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Публикация в сборнике
+                                                    </p>
+                                                    <Button
+                                                        size="sm"
+                                                        variant={
+                                                            thesis.is_approved
+                                                                ? 'default'
+                                                                : 'secondary'
+                                                        }
+                                                        disabled={processing}
+                                                        onClick={() =>
+                                                            toggleDocumentApproval(thesis.id)
+                                                        }
+                                                    >
+                                                        {thesis.is_approved
+                                                            ? 'Одобрено'
+                                                            : 'Не одобрено'}
+                                                    </Button>
                                                 </div>
                                                 {thesis.text && (
                                                     <div>
