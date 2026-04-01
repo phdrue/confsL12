@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Role as RoleEnum;
+use App\Models\Conference;
 use App\Models\Proposal;
 use App\Models\Role;
 use App\Models\User;
@@ -131,4 +132,32 @@ test('update accepts when name and date unchanged for same proposal', function (
     $response->assertRedirect(route('adm.proposals.index'));
     $proposal->refresh();
     expect($proposal->payload['topics'])->toBe('Updated topics');
+});
+
+test('update accepts proposal in any status including approved and denied', function () {
+    $user = User::factory()->create();
+    $user->roles()->attach(RoleEnum::ADMIN->value);
+    actingAs($user);
+
+    $conference = Conference::factory()->create();
+    $proposal = Proposal::create([
+        'user_id' => $user->id,
+        'conference_id' => $conference->id,
+        'denied' => true,
+        'payload' => proposalPayload([
+            'name' => 'Any Status',
+            'date' => '2025-07-01',
+            'topics' => 'Before update',
+        ]),
+    ]);
+
+    $response = put(route('adm.proposals.update', $proposal), proposalPayload([
+        'name' => 'Any Status',
+        'date' => '2025-07-01',
+        'topics' => 'Updated in approved+denied status',
+    ]));
+
+    $response->assertRedirect(route('adm.proposals.index'));
+    $proposal->refresh();
+    expect($proposal->payload['topics'])->toBe('Updated in approved+denied status');
 });

@@ -95,7 +95,7 @@ export default function ImagesAdminDataTable({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Действия</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => { setOpenPreview(true); setImage(image) }}>
+                            <DropdownMenuItem onClick={() => { setImage(image); setOpenPreview(true); }}>
                                 Просмотр
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />

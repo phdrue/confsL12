@@ -46,7 +46,7 @@ class CreateProposalRequest extends FormRequest
             'place' => 'required|string|max:1000',
             'department' => 'required|string|max:1000',
             'organization' => 'required|string|max:1000',
-            'organizationOther' => 'required|string|max:1000',
+            'organizationOther' => 'nullable|string|max:1000',
             'participationsTotal' => 'required|string|max:1000',
             'participationsForeign' => 'required|string|max:1000',
             'audiences' => 'required|array',

@@ -239,8 +239,8 @@ class ClientController extends Controller
 
     public function conference(Conference $conference)
     {
-        if ($conference->state_id === ConferenceStateEnum::DRAFT->value) {
-            abort(404, 'Мероприятие не найдено');
+        if (in_array($conference->state_id, [ConferenceStateEnum::DRAFT->value, ConferenceStateEnum::PLANNED->value])) {
+            abort(404, 'Мероприятие не найдено или только в планах');
         }
 
         // Get existing participation if user is authenticated

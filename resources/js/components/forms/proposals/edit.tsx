@@ -1,6 +1,6 @@
-import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, WandSparkles } from 'lucide-react';
-import { FormEventHandler, useState, ChangeEvent, useEffect } from 'react';
+import { useForm } from '@inertiajs/react';
+import { LoaderCircle } from 'lucide-react';
+import { FormEventHandler, useState, ChangeEvent } from 'react';
 import { ConferenceType, Proposal } from '@/types/conferences';
 import { useToast } from "@/hooks/use-toast"
 
@@ -12,9 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from "@/components/ui/textarea"
 import {
     Dialog,
-    DialogClose,
     DialogContent,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -39,42 +37,6 @@ interface ProposalEditFormProps {
 export default function ProposalEditForm({ proposal, trigger }: ProposalEditFormProps) {
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
-
-    // Check if proposal has been converted to a conference
-    if (proposal.conference_id) {
-        return (
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                    {trigger || (
-                        <Button variant="ghost" className="w-full justify-start">
-                            Редактировать
-                        </Button>
-                    )}
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                        <DialogTitle>Редактирование недоступно</DialogTitle>
-                    </DialogHeader>
-                    <div className="py-4">
-                        <p className="text-sm text-gray-600">
-                            Это предложение уже было одобрено и конференция создана. 
-                            Редактирование предложения недоступно.
-                        </p>
-                        <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                            <p className="text-sm font-medium text-blue-900">
-                                Для изменения информации о конференции перейдите к редактированию конференции.
-                            </p>
-                        </div>
-                    </div>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={handleClose}>
-                            Закрыть
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        );
-    }
 
     const [selectedAudiences, setSelectedAudiences] = useState<string[]>(proposal.payload.audiences || [])
 

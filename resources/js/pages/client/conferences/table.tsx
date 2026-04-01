@@ -213,10 +213,22 @@ export default function TablePage({
             cell: ({ row }) => {
                 const proposal = row.original.proposal;
                 if (!proposal?.payload) return '—';
-                const org = proposal.payload.organization || '';
-                const orgOther = proposal.payload.organizationOther || '';
-                const combined = [org, orgOther].filter(Boolean).join(' ');
-                return combined || '—';
+                const primaryOrganization = proposal.payload.organization?.trim() || '';
+                const additionalOrganizations = (proposal.payload.organizationOther || '')
+                    .split(';')
+                    .map((item) => item.trim())
+                    .filter(Boolean);
+                const organizations = [primaryOrganization, ...additionalOrganizations].filter(Boolean);
+
+                if (!organizations.length) return '—';
+
+                return (
+                    <ul className="list-disc space-y-1 pl-5">
+                        {organizations.map((organization, index) => (
+                            <li key={`${organization}-${index}`}>{organization}</li>
+                        ))}
+                    </ul>
+                );
             },
         },
         {
