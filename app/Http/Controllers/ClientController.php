@@ -410,11 +410,11 @@ class ClientController extends Controller
         if ($participationId) {
             $participation = ConferenceUser::with(['documents.reportType'])->findOrFail($participationId);
 
-            Mail::to(Auth::user())->send(new ParticipationConfirmationMail(
-                Auth::user(),
-                $conference,
-                $participation,
-            ));
+            // Mail::to(Auth::user())->send(new ParticipationConfirmationMail(
+            //     Auth::user(),
+            //     $conference,
+            //     $participation,
+            // ));
         }
 
         return to_route('conferences.show', $conference);
