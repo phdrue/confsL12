@@ -53,13 +53,17 @@ export default function Show({
         <ClientLayout breadcrumbs={breadcrumbs}>
             <Head title={conference.name} />
             <ConferenceLayout heading={conference.name} showHeader={false}>
-                <div className="flex w-full flex-col items-center gap-12">
+                <div className="flex w-full flex-col items-center gap-6">
                     <div className="px-4 sm:px-6 lg:px-16 w-full">
                         <ShowConference conference={conference} blocks={blocks} images={images} />
                     </div>
 
+                    <a href={route('download.manual')} className="text-sm/6 text-muted-foreground hover:text-brand-red underline">
+                        Инструкция
+                    </a>
+
                     {conference.state_id == 3 && (
-                        <div className="relative flex w-full flex-col items-center px-4 py-12 sm:px-6 lg:px-16 gap-6">
+                        <div className="relative flex w-full flex-col items-center px-4 sm:px-6 lg:px-16 gap-6">
                             {auth.user && !canParticipate && participationReason && (
                                 <Alert variant="destructive" className="w-full max-w-2xl">
                                     <AlertCircle className="h-4 w-4" />
@@ -96,7 +100,7 @@ export default function Show({
                             )}
 
                             {(!auth.user || canParticipate || participation) && (
-                                <div className="flex w-full flex-wrap items-center justify-center gap-3 md:flex-row lg:gap-6">
+                                <div className="flex w-full flex-col items-center justify-center gap-3 md:flex-row lg:gap-6">
                                     <ParticipationForm
                                         countries={countries}
                                         degrees={degrees}

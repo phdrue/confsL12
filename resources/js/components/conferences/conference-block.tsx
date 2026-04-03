@@ -267,9 +267,9 @@ function KeyValueTextBlockComponent({ primaryColor, block }: { primaryColor: str
         return (
             <ul className="w-full">
                 {block.content.items.map((pair, index) => (
-                    <li key={index} className="odd:bg-brand-neutral flex justify-between px-11 py-4">
+                    <li key={index} className="odd:bg-brand-neutral flex justify-between gap-4 px-11 py-4">
                         <span className="text-pretty">{pair.key}</span>
-                        <span className="whitespace-nowrap">{pair.value}</span>
+                        <span className="md:whitespace-nowrap">{pair.value}</span>
                     </li>
                 ))}
             </ul>

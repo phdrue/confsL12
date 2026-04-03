@@ -45,6 +45,11 @@ Route::get('blocks/{block}/download/{fileIndex}', [ConferenceBlockController::cl
 Route::get('contacts', [ClientController::class, 'contacts'])
     ->name('contacts');
 
+Route::get('manual', function () {
+    $file = public_path('manual.pdf');
+    return response()->download($file);
+})->name('download.manual');
+
 Route::get('thesis-requirements', [ClientController::class, 'thesisRequirements'])
     ->name('thesis.requirements');
 

@@ -23,6 +23,9 @@ export default function ThesisRequirements() {
                     <p className="mt-4 text-center text-sm/6 text-muted-foreground">
                         Тезисы, направляемые для публикации в сборнике материалов конференции.
                     </p>
+                    <a href={route('download.manual')} className="text-sm/6 text-muted-foreground hover:text-brand-red block text-center underline">
+                        Инструкция
+                    </a>
                 </div>
 
                 <div className="max-w-4xl mx-auto px-4 sm:px-6">

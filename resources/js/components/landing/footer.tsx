@@ -20,6 +20,9 @@ export default function Footer() {
                             <Link className="px-3" href={route('subscribe')}>
                                 Рассылка
                             </Link>
+                            <a className="px-3" href={route('download.manual')}>
+                                Инструкция
+                            </a>
                         </div>
                         <div className="flex flex-col gap-2">
                             <Link className="px-3" href={route('dashboard')}>
