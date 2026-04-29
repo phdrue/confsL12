@@ -43,12 +43,12 @@ export default function ConferencesClientDataTable({
                 return <ConferenceTypeBadge type_id={row.getValue("type_id")} />
             }
         },
-        {
-            header: "Участие подтверждено",
-            cell: ({ row }) => {
-                return <ConferenceParticipationBadge confirmed={Boolean(row.original.pivot?.confirmed)} />
-            }
-        },
+        // {
+        //     header: "Участие подтверждено",
+        //     cell: ({ row }) => {
+        //         return <ConferenceParticipationBadge confirmed={Boolean(row.original.pivot?.confirmed)} />
+        //     }
+        // },
         {
             accessorKey: "name",
             header: "Название",
