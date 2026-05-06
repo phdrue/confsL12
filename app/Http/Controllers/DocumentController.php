@@ -173,7 +173,9 @@ class DocumentController extends Controller
 
     public function getCertificatesBook(Request $request, Conference $conference)
     {
-        $users = $conference->users()->get();
+        $users = $conference->users()
+            ->wherePivot('confirmed', true)
+            ->get();
 
         if ($users->isEmpty()) {
             return response()->json([

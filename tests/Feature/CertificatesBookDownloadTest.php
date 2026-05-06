@@ -47,3 +47,24 @@ it('allows admin to override conference name and date for certificates book', fu
     $response->assertOk();
     $response->assertHeader('content-type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
 });
+
+it('returns not found when conference has no confirmed participants for certificates book', function () {
+    Role::create(['id' => 1, 'name' => 'Участник']);
+    Role::create(['id' => 2, 'name' => 'Администратор']);
+    Role::create(['id' => 3, 'name' => 'Ответственный за конференцию']);
+
+    /** @var User $admin */
+    $admin = User::factory()->create();
+    $admin->roles()->attach(RoleEnum::ADMIN->value);
+
+    $conference = Conference::factory()->create();
+    $participant = User::factory()->create();
+    $conference->users()->attach($participant->id, ['confirmed' => false]);
+
+    $response = $this->actingAs($admin)->get(route('adm.conferences.get-certificates-book', $conference));
+
+    $response->assertNotFound();
+    $response->assertJson([
+        'error' => 'Нет участников для генерации сборника сертификатов',
+    ]);
+});

@@ -260,28 +260,28 @@ export default function TablePage({
                     {/* Filters and Sorting Controls */}
                     <div className="w-full flex flex-col gap-4">
                         {/* Search Field */}
-                        <form onSubmit={handleSearchSubmit} className="flex gap-2">
+                        <form onSubmit={handleSearchSubmit} className="flex flex-col gap-2 sm:flex-row">
                             <Input
                                 type="text"
                                 placeholder="Поиск по названию, организации, тематике, кафедре..."
                                 value={searchValue}
                                 onChange={(e) => handleSearchChange(e.target.value)}
-                                className="flex-1"
+                                className="w-full sm:flex-1"
                             />
-                            <Button type="submit">Поиск</Button>
+                            <Button type="submit" className="w-full sm:w-auto">Поиск</Button>
                             {(searchValue || sortBy) && (
-                                <Button type="button" variant="outline" onClick={clearFilters}>
+                                <Button type="button" variant="outline" onClick={clearFilters} className="w-full sm:w-auto">
                                     Очистить
                                 </Button>
                             )}
                         </form>
                         
                         {/* Sorting Controls */}
-                        <div className="flex flex-wrap gap-4 items-center">
-                            <div className="flex items-center gap-2">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+                            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
                                 <label className="text-sm font-medium">Сортировка по:</label>
                                 <Select value={sortBy} onValueChange={handleSortByChange}>
-                                    <SelectTrigger className="w-[180px]">
+                                    <SelectTrigger className="w-full sm:w-[180px]">
                                         <SelectValue placeholder="Выберите поле" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -293,10 +293,10 @@ export default function TablePage({
                             </div>
                             
                             {sortBy && (
-                                <div className="flex items-center gap-2">
+                                <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
                                     <label className="text-sm font-medium">Порядок:</label>
                                     <Select value={sortOrder} onValueChange={handleSortOrderChange}>
-                                        <SelectTrigger className="w-[120px]">
+                                        <SelectTrigger className="w-full sm:w-[140px]">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
