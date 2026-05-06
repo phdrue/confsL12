@@ -34,6 +34,7 @@ export default function Participations({
     const [isDownloadingBook, setIsDownloadingBook] = useState(false);
     const [isDownloadingReports, setIsDownloadingReports] = useState(false);
     const [isDownloadingAttendance, setIsDownloadingAttendance] = useState(false);
+    const [isDownloadingCertificates, setIsDownloadingCertificates] = useState(false);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -184,6 +185,50 @@ export default function Participations({
         }
     };
 
+    const handleDownloadCertificates = async () => {
+        setIsDownloadingCertificates(true);
+        try {
+            const response = await fetch(route('adm.conferences.get-certificates-book', conference.id));
+
+            if (response.ok) {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/')) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `certificates-${conference.id}.docx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    const errorData = await response.json();
+                    toast({
+                        variant: "destructive",
+                        title: "Ошибка",
+                        description: errorData.error || "Произошла ошибка при загрузке файла"
+                    });
+                }
+            } else {
+                const errorData = await response.json();
+                toast({
+                    variant: "destructive",
+                    title: "Ошибка",
+                    description: errorData.error || "Произошла ошибка при загрузке файла"
+                });
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Ошибка",
+                description: "Произошла ошибка при загрузке файла"
+            });
+        } finally {
+            setIsDownloadingCertificates(false);
+        }
+    };
+
     const handlePageChange = (page: number) => {
         const url = new URL(window.location.href);
         url.searchParams.set('page', page.toString());
@@ -215,6 +260,12 @@ export default function Participations({
                         disabled={isDownloadingAttendance}
                     >
                         {isDownloadingAttendance ? 'Загрузка...' : 'Список присутствующих'}
+                    </Button>
+                    <Button
+                        onClick={handleDownloadCertificates}
+                        disabled={isDownloadingCertificates}
+                    >
+                        {isDownloadingCertificates ? 'Загрузка...' : 'Сертификаты'}
                     </Button>
                 </div>
                 <AttendanceAdminDataTable 

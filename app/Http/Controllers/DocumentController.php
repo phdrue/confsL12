@@ -9,7 +9,9 @@ use App\Models\Degree;
 use App\Models\Document;
 use App\Models\Title;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class DocumentController extends Controller
@@ -166,6 +168,81 @@ class DocumentController extends Controller
         return response()->json([
             'error' => 'Нет участников для генерации списка присутствующих',
         ], 404);
+    }
+
+    public function getCertificatesBook(Conference $conference)
+    {
+        $users = $conference->users()->get();
+
+        if ($users->isEmpty()) {
+            return response()->json([
+                'error' => 'Нет участников для генерации сборника сертификатов',
+            ], 404);
+        }
+
+        $templatePath = public_path('certificate.docx');
+        if (! file_exists($templatePath)) {
+            return response()->json([
+                'error' => 'Не найден шаблон сертификатов: certificate.docx',
+            ], 404);
+        }
+
+        try {
+            $file = $this->generateCertificatesBook($conference, $users, $templatePath);
+
+            return response()->download($file)
+                ->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Ошибка при генерации файла: '.$e->getMessage(),
+            ], 500);
+        }
+    }
+
+    private function generateCertificatesBook(Conference $conference, \Illuminate\Support\Collection $users, string $templatePath): string
+    {
+        $templateProcessor = new TemplateProcessor($templatePath);
+
+        $conferenceName = $this->prepareText($conference->name);
+        $translatedDate = $conference->date instanceof Carbon
+            ? $conference->date->locale('ru')->translatedFormat('j F Y').' года'
+            : '';
+        $conferenceDateLong = $this->prepareText($translatedDate);
+
+        $values = [];
+        $index = 1;
+
+        foreach ($users as $user) {
+            $lastName = $this->prepareText($user->last_name ?? '');
+            $firstName = $this->prepareText($user->first_name ?? '');
+            $secondName = $this->prepareText($user->second_name ?? '');
+
+            $fullName = trim(implode(' ', array_filter([$lastName, $firstName, $secondName])));
+
+            $values[] = [
+                'index' => $index,
+                'lastName' => $lastName,
+                'firstName' => $firstName,
+                'secondName' => $secondName,
+                'fullName' => $fullName,
+                'conferenceName' => $conferenceName,
+                'conferenceDate' => $this->prepareText($conference->date?->format('d.m.Y') ?? ''),
+                'conference' => $conferenceName,
+                'participant' => $fullName,
+                'date' => $conferenceDateLong,
+            ];
+
+            $index++;
+        }
+
+        // Clone the Word content control block named "block" once per participant.
+        // Template placeholders inside the block can use: ${index}, ${lastName}, ${firstName}, ${secondName}, ${fullName}, ${conferenceName}, ${conferenceDate}
+        $templateProcessor->cloneBlock('block', 0, true, false, $values);
+
+        $file = storage_path('app/certificates-'.$conference->id.'-'.Str::uuid().'.docx');
+        $templateProcessor->saveAs($file);
+
+        return $file;
     }
 
     private function generate(Collection $documents)

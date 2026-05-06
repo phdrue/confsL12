@@ -47,6 +47,7 @@ Route::get('contacts', [ClientController::class, 'contacts'])
 
 Route::get('manual', function () {
     $file = public_path('manual.pdf');
+
     return response()->download($file);
 })->name('download.manual');
 
@@ -193,6 +194,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // список присутствующих
         Route::get('get-attendance-list/{conference}', [DocumentController::class, 'getAttendanceList'])
             ->name('conferences.get-attendance-list');
+
+        // сборник сертификатов
+        Route::get('get-certificates-book/{conference}', [DocumentController::class, 'getCertificatesBook'])
+            ->name('conferences.get-certificates-book');
 
         // блоки
         Route::put('blocks/reorder/{conference}', [ConferenceBlockController::class, 'reorder'])
