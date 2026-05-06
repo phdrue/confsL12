@@ -9,6 +9,7 @@ use App\Models\Degree;
 use App\Models\Document;
 use App\Models\Title;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -170,7 +171,7 @@ class DocumentController extends Controller
         ], 404);
     }
 
-    public function getCertificatesBook(Conference $conference)
+    public function getCertificatesBook(Request $request, Conference $conference)
     {
         $users = $conference->users()->get();
 
@@ -187,8 +188,32 @@ class DocumentController extends Controller
             ], 404);
         }
 
+        $validated = $request->validate([
+            'conference_name' => ['nullable', 'string', 'max:255'],
+            'data' => ['nullable', 'string', 'max:255'],
+            'date' => ['nullable', 'date'],
+        ]);
+
+        $conferenceName = trim((string) ($validated['conference_name'] ?? ''));
+        if ($conferenceName === '') {
+            $conferenceName = $conference->name;
+        }
+
+        $conferenceDate = $conference->date;
+        if (! empty($validated['date'])) {
+            $conferenceDate = Carbon::parse($validated['date']);
+        }
+
+        $dateText = trim((string) ($validated['data'] ?? ''));
+
         try {
-            $file = $this->generateCertificatesBook($conference, $users, $templatePath);
+            $file = $this->generateCertificatesBook(
+                $users,
+                $templatePath,
+                $conferenceName,
+                $conferenceDate,
+                $dateText,
+            );
 
             return response()->download($file)
                 ->deleteFileAfterSend(true);
@@ -199,15 +224,20 @@ class DocumentController extends Controller
         }
     }
 
-    private function generateCertificatesBook(Conference $conference, \Illuminate\Support\Collection $users, string $templatePath): string
-    {
+    private function generateCertificatesBook(
+        \Illuminate\Support\Collection $users,
+        string $templatePath,
+        string $conferenceNameValue,
+        ?Carbon $conferenceDateValue,
+        string $dateText,
+    ): string {
         $templateProcessor = new TemplateProcessor($templatePath);
 
-        $conferenceName = $this->prepareText($conference->name);
-        $translatedDate = $conference->date instanceof Carbon
-            ? $conference->date->locale('ru')->translatedFormat('j F Y').' года'
+        $conferenceName = $this->prepareText($conferenceNameValue);
+        $translatedDate = $conferenceDateValue instanceof Carbon
+            ? $conferenceDateValue->copy()->locale('ru')->translatedFormat('j F Y').' года'
             : '';
-        $conferenceDateLong = $this->prepareText($translatedDate);
+        $conferenceDateLong = $this->prepareText($dateText !== '' ? $dateText : $translatedDate);
 
         $values = [];
         $index = 1;
@@ -226,10 +256,11 @@ class DocumentController extends Controller
                 'secondName' => $secondName,
                 'fullName' => $fullName,
                 'conferenceName' => $conferenceName,
-                'conferenceDate' => $this->prepareText($conference->date?->format('d.m.Y') ?? ''),
+                'conferenceDate' => $this->prepareText($conferenceDateValue?->format('d.m.Y') ?? ''),
                 'conference' => $conferenceName,
                 'participant' => $fullName,
                 'date' => $conferenceDateLong,
+                'data' => $conferenceDateLong,
             ];
 
             $index++;
@@ -239,7 +270,7 @@ class DocumentController extends Controller
         // Template placeholders inside the block can use: ${index}, ${lastName}, ${firstName}, ${secondName}, ${fullName}, ${conferenceName}, ${conferenceDate}
         $templateProcessor->cloneBlock('block', 0, true, false, $values);
 
-        $file = storage_path('app/certificates-'.$conference->id.'-'.Str::uuid().'.docx');
+        $file = storage_path('app/certificates-'.Str::uuid().'.docx');
         $templateProcessor->saveAs($file);
 
         return $file;

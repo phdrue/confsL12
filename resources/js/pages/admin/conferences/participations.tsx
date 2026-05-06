@@ -5,9 +5,13 @@ import { Degree, Title } from '@/types/other';
 import { Head, router } from '@inertiajs/react';
 import AttendanceAdminDataTable from '@/components/tables/attendance-admin-data-table';
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useToast } from "@/hooks/use-toast";
 import { useState } from 'react';
 import { Pagination } from '@/components/ui/pagination';
+import { parseDateString } from '@/parse-date-string';
 
 interface PaginatedData<T> {
     data: Array<T>;
@@ -35,6 +39,32 @@ export default function Participations({
     const [isDownloadingReports, setIsDownloadingReports] = useState(false);
     const [isDownloadingAttendance, setIsDownloadingAttendance] = useState(false);
     const [isDownloadingCertificates, setIsDownloadingCertificates] = useState(false);
+    const [openCertificatesDialog, setOpenCertificatesDialog] = useState(false);
+    const [certificatesConferenceName, setCertificatesConferenceName] = useState('');
+    const [certificatesDateText, setCertificatesDateText] = useState('');
+
+    const formatRuLongDate = (date: Date): string => {
+        if (Number.isNaN(date.getTime())) {
+            return '';
+        }
+
+        const parts = new Intl.DateTimeFormat('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        }).formatToParts(date);
+
+        const day = parts.find((part) => part.type === 'day')?.value ?? '';
+        const month = parts.find((part) => part.type === 'month')?.value ?? '';
+        const year = parts.find((part) => part.type === 'year')?.value ?? '';
+
+        const core = [day, month, year].filter(Boolean).join(' ').trim();
+        if (!core) {
+            return '';
+        }
+
+        return `${core} года`;
+    };
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -65,6 +95,7 @@ export default function Participations({
                     a.click();
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
+                    setOpenCertificatesDialog(false);
                 } else {
                     // Handle JSON error response
                     const errorData = await response.json();
@@ -188,7 +219,17 @@ export default function Participations({
     const handleDownloadCertificates = async () => {
         setIsDownloadingCertificates(true);
         try {
-            const response = await fetch(route('adm.conferences.get-certificates-book', conference.id));
+            const downloadUrl = new URL(route('adm.conferences.get-certificates-book', conference.id), window.location.origin);
+
+            if (certificatesConferenceName.trim()) {
+                downloadUrl.searchParams.set('conference_name', certificatesConferenceName.trim());
+            }
+
+            if (certificatesDateText.trim()) {
+                downloadUrl.searchParams.set('data', certificatesDateText.trim());
+            }
+
+            const response = await fetch(downloadUrl.toString());
 
             if (response.ok) {
                 const contentType = response.headers.get('content-type');
@@ -229,6 +270,14 @@ export default function Participations({
         }
     };
 
+    const handleOpenCertificatesDialog = () => {
+        const parsedConferenceDate = parseDateString(conference.date);
+
+        setCertificatesConferenceName(conference.name ?? '');
+        setCertificatesDateText(formatRuLongDate(parsedConferenceDate));
+        setOpenCertificatesDialog(true);
+    };
+
     const handlePageChange = (page: number) => {
         const url = new URL(window.location.href);
         url.searchParams.set('page', page.toString());
@@ -262,12 +311,56 @@ export default function Participations({
                         {isDownloadingAttendance ? 'Загрузка...' : 'Список присутствующих'}
                     </Button>
                     <Button
-                        onClick={handleDownloadCertificates}
-                        disabled={isDownloadingCertificates}
+                        onClick={handleOpenCertificatesDialog}
                     >
-                        {isDownloadingCertificates ? 'Загрузка...' : 'Сертификаты'}
+                        Сертификаты
                     </Button>
                 </div>
+                <Dialog open={openCertificatesDialog} onOpenChange={setOpenCertificatesDialog}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Параметры генерации сертификатов</DialogTitle>
+                            <DialogDescription>
+                                По умолчанию подставлены текущие название конференции и дата.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-2">
+                            <div className="grid gap-2">
+                                <Label htmlFor="certificates-conference-name">Название конференции</Label>
+                                <Input
+                                    id="certificates-conference-name"
+                                    value={certificatesConferenceName}
+                                    onChange={(event) => setCertificatesConferenceName(event.target.value)}
+                                    placeholder="Введите название конференции"
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="certificates-date-text">Дата (текст)</Label>
+                                <Input
+                                    id="certificates-date-text"
+                                    value={certificatesDateText}
+                                    onChange={(event) => setCertificatesDateText(event.target.value)}
+                                    placeholder="Например: 13 января 2026 года"
+                                />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button
+                                variant="outline"
+                                onClick={() => setOpenCertificatesDialog(false)}
+                                disabled={isDownloadingCertificates}
+                            >
+                                Отмена
+                            </Button>
+                            <Button
+                                onClick={handleDownloadCertificates}
+                                disabled={isDownloadingCertificates}
+                            >
+                                {isDownloadingCertificates ? 'Загрузка...' : 'Сгенерировать'}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
                 <AttendanceAdminDataTable 
                     conference={conference}
                     participants={users.data} 
