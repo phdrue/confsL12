@@ -24,13 +24,15 @@ export default function Index({
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Администрирование" />
-            <div className="max-w-screen-2xl space-y-10 p-4 pb-16 md:p-6">
-                <div className="space-y-6">
-                    <div className="mb-8">
-                        <h1 className="text-3xl font-semibold">Конференции</h1>
+            <div className="space-y-10 max-w-screen-2xl pb-16 p-4 md:p-6">
+                <div className="grid grid-cols-1 scroll-mt-20 items-start gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:gap-10">
+                    <div className="min-w-0 space-y-6 md:col-span-2 lg:col-span-3">
+                        <div className="mb-8">
+                            <h1 className="text-3xl font-semibold">Конференции</h1>
+                        </div>
+                        {/* <CreateConferenceForm types={types} /> */}
+                        <ConferencesAdminDataTable conferences={conferences} states={states} types={types} />
                     </div>
-                    {/* <CreateConferenceForm types={types} /> */}
-                    <ConferencesAdminDataTable conferences={conferences} states={states} types={types} />
                 </div>
             </div>
         </AppLayout>

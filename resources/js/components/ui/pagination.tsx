@@ -54,14 +54,14 @@ export function Pagination({
     }
 
     return (
-        <div className="flex items-center justify-between">
+        <div className="w-full overflow-x-auto">
             {/* {showInfo && totalItems && itemsPerPage && (
                 <div className="text-sm text-gray-600">
                     Показано {((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} из {totalItems}
                 </div>
             )} */}
-            
-            <div className="flex items-center space-x-1 md:space-x-2">
+
+            <div className="mx-auto flex w-max items-center gap-1 md:gap-2">
                 <Button
                     variant="outline"
                     size="sm"
@@ -72,6 +72,10 @@ export function Pagination({
                     <ChevronLeft className="h-3 w-3 md:h-4 md:w-4" />
                     <span className="hidden sm:inline ml-1">Назад</span>
                 </Button>
+
+                <div className="rounded-md border px-2 py-1 text-xs md:hidden">
+                    {currentPage}/{totalPages}
+                </div>
 
                 {/* Desktop pagination - show more pages */}
                 <div className="hidden md:flex items-center space-x-1">

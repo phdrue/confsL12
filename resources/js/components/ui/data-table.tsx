@@ -76,12 +76,12 @@ export function DataTable<TData, TValue>({
     })
 
     return (
-        <div>
-            <div className="flex items-center flex-wrap gap-4 py-4">
+        <div className="w-full">
+            <div className="flex flex-wrap items-stretch gap-2 py-4 sm:items-center sm:gap-4">
                 {filters &&
                     <>
                         {filters.map((filter) =>
-                            <div key={filter.name}>
+                            <div key={filter.name} className="w-full sm:w-auto">
                                 {filter.type === "text" ?
                                     <Input
                                         placeholder={filter.data.placeholder}
@@ -89,7 +89,7 @@ export function DataTable<TData, TValue>({
                                         onChange={(event) =>
                                             table.getColumn(filter.name)?.setFilterValue(event.target.value)
                                         }
-                                        className="max-w-sm"
+                                        className="w-full sm:max-w-sm"
                                     /> : filter.type === "select" &&
                                     <Select name={filter.name} onValueChange={value => table.getColumn(filter.name)?.setFilterValue(value)}
                                         value={table.getColumn(filter.name)?.getFilterValue() as string ?? ""}>
@@ -107,14 +107,14 @@ export function DataTable<TData, TValue>({
                                     </Select>
                                 }
                             </div>)}
-                        <Button variant={"outline"} onClick={() => table.resetColumnFilters()}>
+                        <Button variant={"outline"} className="w-full sm:w-auto" onClick={() => table.resetColumnFilters()}>
                             Очистить
                         </Button>
                     </>
                 }
             </div>
-            <div className="rounded-md border">
-                <Table>
+            <div className="w-full rounded-md border">
+                <Table className="min-w-max">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
@@ -159,7 +159,7 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 py-4 sm:justify-end">
                 <span className="text-sm">{table.getRowModel().rows.length} из {table.getPrePaginationRowModel().rows.length}</span>
                 <Button
                     variant="outline"
