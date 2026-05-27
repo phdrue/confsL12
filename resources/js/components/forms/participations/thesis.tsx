@@ -4,11 +4,12 @@ import { Conference } from '@/types/conferences';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import { Textarea } from "@/components/ui/textarea"
+import { Textarea } from '@/components/ui/textarea';
 import AuthorsFormPartial from './authors';
 import ScienceGuidesFormPartial from './science-guides';
 import { Country, Degree, ScienceGuide, Thesis, Title } from '@/types/other';
 import { Label } from '@/components/ui/label';
+import RichTextEditor, { getPlainTextLength } from '@/components/rich-text-editor';
 
 export default function ThesisParticipationForm({
     thesises,
@@ -54,11 +55,19 @@ export default function ThesisParticipationForm({
         setData('thesises', newContent);
     }
 
+    const textLength = getPlainTextLength(text);
+    const literatureLength = getPlainTextLength(literature);
+
+    const isTopicValid = topic.length > 0 && topic.length <= 2000;
+    const isTextValid = textLength > 0 && textLength <= 23000;
+    const isLiteratureValid = literatureLength > 0 && literatureLength <= 23000;
+    const canAddThesis = isTopicValid && isTextValid && isLiteratureValid && authors.length > 0;
+
     function getMissingFieldsMessage(): string {
         const missing: string[] = [];
-        if (!topic) missing.push('тему тезисов');
-        if (!text) missing.push('полный текст');
-        if (!literature) missing.push('библиографический список');
+        if (!isTopicValid) missing.push('тему тезисов');
+        if (!isTextValid) missing.push('полный текст');
+        if (!isLiteratureValid) missing.push('библиографический список');
         if (authors.length === 0) missing.push('добавить хотя бы одного автора');
         return missing.length > 0 ? `Для добавления тезисов необходимо заполнить: ${missing.join(', ')}` : '';
     }
@@ -127,32 +136,24 @@ export default function ThesisParticipationForm({
                                         <InputError message={errors.topic} className="mt-2" />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="text">Полный текст {text.length} / 23000 <span className="text-red-500">*</span></Label>
-                                        <Textarea
+                                        <Label htmlFor="text">Полный текст {textLength} / 23000 <span className="text-red-500">*</span></Label>
+                                        <RichTextEditor
                                             id="text"
-                                            maxLength={23000}
-                                            name="text"
                                             value={text}
-                                            className="w-full"
-                                            autoComplete="text"
-                                            required
+                                            height={300}
+                                            onChange={setText}
                                             placeholder="Полный текст должен быть представлен на ОДНОМ ИЗ ЯЗЫКОВ КОНФЕРЕНЦИИ: русском или английском. Для работ, посвященных оригинальным исследованиям, текст должен быть структурирован по разделам: «Актуальность», «Цель исследования» «Материалы и методы», «Результаты», «Выводы». Объем текста тезиса должен быть не менее 6 500 и не более 23 000 символов с пробелом (эквивалентно 2-7 страницам текста, набранного шрифтом Times New Roman, 14, с одинарным межстрочным интервалом). Просьба не вставлять в текст работы дополнительных пробелов, абзацных отступов (особенно сформированных пробелами), межстрочных интервалов. Цитаты сопровождаются ссылками на опубликованные источники в виде нумерации в квадратных скобках. Рисунки и таблицы не принимаются."
-                                            onChange={(e) => setText(e.target.value)}
                                         />
                                         <InputError message={errors.text} className="mt-2" />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="literature">Библиографический список {literature.length} / 23000 <span className="text-red-500">*</span></Label>
-                                        <Textarea
+                                        <Label htmlFor="literature">Библиографический список {literatureLength} / 23000 <span className="text-red-500">*</span></Label>
+                                        <RichTextEditor
                                             id="literature"
-                                            maxLength={23000}
-                                            name="literature"
                                             value={literature}
-                                            className="w-full"
-                                            autoComplete="literature"
-                                            required
+                                            height={300}
+                                            onChange={setLiterature}
                                             placeholder="Количество ссылок должно быть не менее 3, но не более 20. Вставляемый перечень ссылок просьба НЕ ОБОЗНАЧАТЬ заголовком типа 'Список литературы', 'Литература' и тому подобным - вставлять необходимо только ссылки."
-                                            onChange={(e) => setLiterature(e.target.value)}
                                         />
                                         <InputError message={errors.literature} className="mt-2" />
                                     </div>
@@ -163,11 +164,11 @@ export default function ThesisParticipationForm({
                                         onClick={addToContent}
                                         type="button"
                                         variant={"outline"}
-                                        disabled={!topic || !text || !literature || authors.length === 0}
+                                        disabled={!canAddThesis}
                                     >
                                         Добавить
                                     </Button>
-                                    {(!topic || !text || !literature || authors.length === 0) && (
+                                    {!canAddThesis && (
                                         <p className="text-sm text-muted-foreground">
                                             {getMissingFieldsMessage()}
                                         </p>

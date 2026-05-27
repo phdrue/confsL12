@@ -8,6 +8,7 @@ use App\Models\Country;
 use App\Models\Degree;
 use App\Models\Document;
 use App\Models\Title;
+use App\Support\DocxText;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -336,8 +337,8 @@ class DocumentController extends Controller
                 'authors' => rtrim($authorsString, ', '),
                 'authorsFull' => rtrim($authorsFullString, '; '),
                 'scienceGuidesFull' => rtrim($scienceGuidesFullString, '; '),
-                'text' => $this->prepareText($document->text),
-                'literature' => $this->prepareText($document->literature),
+                'text' => DocxText::prepareForTemplate($document->text),
+                'literature' => DocxText::prepareForTemplate($document->literature),
             ];
         });
 
