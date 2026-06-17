@@ -212,6 +212,7 @@ export default function AttendanceAdminDataTable({
                 data={participants} 
                 filters={filters}
                 onRowClick={handleRowClick}
+                disablePagination
             />
             {selectedUser && (
                 <ParticipationDetailsDialog

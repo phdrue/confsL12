@@ -12,6 +12,7 @@ it('paginates admin conference participations', function () {
     Role::create(['id' => 2, 'name' => 'Администратор']);
     Role::create(['id' => 3, 'name' => 'Ответственный за конференцию']);
 
+    /** @var User $admin */
     $admin = User::factory()->create();
     $admin->roles()->attach(RoleEnum::ADMIN->value);
 
@@ -22,7 +23,7 @@ it('paginates admin conference participations', function () {
         $conference->users()->attach($participant->id, ['confirmed' => false]);
     }
 
-    $response = $this->actingAs($admin)->get(route('adm.conferences.participations', $conference).'?per_page=20');
+    $response = $this->actingAs($admin)->get(route('adm.conferences.participations', $conference));
     $response->assertOk();
 
     $props = $response->viewData('page')['props'];
@@ -33,7 +34,7 @@ it('paginates admin conference participations', function () {
     expect($props['users']['last_page'])->toBe(3);
     expect($props['users']['data'])->toHaveCount(20);
 
-    $response = $this->actingAs($admin)->get(route('adm.conferences.participations', $conference).'?per_page=20&page=3');
+    $response = $this->actingAs($admin)->get(route('adm.conferences.participations', $conference).'?page=3');
     $response->assertOk();
 
     $props = $response->viewData('page')['props'];

@@ -41,6 +41,7 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
     filters?: Array<DataTableFilter>
     onRowClick?: (row: TData) => void
+    disablePagination?: boolean
 }
 
 export function DataTable<TData, TValue>({
@@ -48,6 +49,7 @@ export function DataTable<TData, TValue>({
     data,
     filters,
     onRowClick,
+    disablePagination = false,
 }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
@@ -59,12 +61,12 @@ export function DataTable<TData, TValue>({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        getPaginationRowModel: disablePagination ? undefined : getPaginationRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
-        initialState: {
+        initialState: disablePagination ? undefined : {
             pagination: {
                 pageSize: 15,
             },
@@ -159,25 +161,27 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-2 py-4 sm:justify-end">
-                <span className="text-sm">{table.getRowModel().rows.length} из {table.getPrePaginationRowModel().rows.length}</span>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Назад
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Вперед
-                </Button>
-            </div>
+            {!disablePagination && (
+                <div className="flex flex-wrap items-center justify-between gap-2 py-4 sm:justify-end">
+                    <span className="text-sm">{table.getRowModel().rows.length} из {table.getPrePaginationRowModel().rows.length}</span>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Назад
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Вперед
+                    </Button>
+                </div>
+            )}
         </div >
     )
 }

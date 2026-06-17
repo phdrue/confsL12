@@ -195,6 +195,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('get-attendance-list/{conference}', [DocumentController::class, 'getAttendanceList'])
             ->name('conferences.get-attendance-list');
 
+        // список участников в excel
+        Route::get('get-participants-excel/{conference}', [DocumentController::class, 'getParticipantsExcel'])
+            ->name('conferences.get-participants-excel');
+
         // сборник сертификатов
         Route::get('get-certificates-book/{conference}', [DocumentController::class, 'getCertificatesBook'])
             ->name('conferences.get-certificates-book');

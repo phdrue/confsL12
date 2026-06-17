@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class DocumentController extends Controller
@@ -170,6 +172,27 @@ class DocumentController extends Controller
         return response()->json([
             'error' => 'Нет участников для генерации списка присутствующих',
         ], 404);
+    }
+
+    public function getParticipantsExcel(Conference $conference)
+    {
+        $users = $conference->users()->get();
+
+        if ($users->isEmpty()) {
+            return response()->json([
+                'error' => 'Нет участников для экспорта',
+            ], 404);
+        }
+
+        $spreadsheet = $this->generateParticipantsExcel($users);
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'participants-'.$conference->id.'.xlsx';
+
+        return response()->streamDownload(function () use ($writer): void {
+            $writer->save('php://output');
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
 
     public function getCertificatesBook(Request $request, Conference $conference)
@@ -462,5 +485,53 @@ class DocumentController extends Controller
         $fileName = $templateProcessor->saveAs($file);
 
         return $file;
+    }
+
+    private function generateParticipantsExcel(Collection $users): Spreadsheet
+    {
+        $degrees = Degree::pluck('name', 'id')->toArray();
+        $titles = Title::pluck('name', 'id')->toArray();
+
+        $spreadsheet = new Spreadsheet;
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Участники');
+
+        $headers = [
+            '#',
+            'Фамилия',
+            'Имя',
+            'Отчество',
+            'Адрес электронной почты',
+            'Ученая степень',
+            'Ученое звание',
+            'Телефон',
+        ];
+
+        foreach ($headers as $columnIndex => $header) {
+            $sheet->setCellValueByColumnAndRow($columnIndex + 1, 1, $header);
+        }
+
+        $rowNumber = 2;
+        $index = 1;
+
+        foreach ($users as $user) {
+            $sheet->setCellValueByColumnAndRow(1, $rowNumber, $index);
+            $sheet->setCellValueByColumnAndRow(2, $rowNumber, $user->last_name ?? '');
+            $sheet->setCellValueByColumnAndRow(3, $rowNumber, $user->first_name ?? '');
+            $sheet->setCellValueByColumnAndRow(4, $rowNumber, $user->second_name ?? '');
+            $sheet->setCellValueByColumnAndRow(5, $rowNumber, $user->email ?? '');
+            $sheet->setCellValueByColumnAndRow(6, $rowNumber, $degrees[$user->degree_id] ?? '');
+            $sheet->setCellValueByColumnAndRow(7, $rowNumber, $titles[$user->title_id] ?? '');
+            $sheet->setCellValueByColumnAndRow(8, $rowNumber, $user->phone ?? '');
+
+            $rowNumber++;
+            $index++;
+        }
+
+        foreach (range(1, count($headers)) as $column) {
+            $sheet->getColumnDimensionByColumn($column)->setAutoSize(true);
+        }
+
+        return $spreadsheet;
     }
 }

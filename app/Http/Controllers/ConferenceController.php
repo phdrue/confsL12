@@ -30,8 +30,7 @@ class ConferenceController extends Controller
 {
     public function participations(Request $request, Conference $conference)
     {
-        $perPage = (int) $request->integer('per_page', 50);
-        $perPage = max(1, min(200, $perPage));
+        $perPage = 20;
 
         $participants = ConferenceUser::query()
             ->where('conference_id', $conference->id)
@@ -140,7 +139,7 @@ class ConferenceController extends Controller
 
         $pivot->update(['confirmed' => ! $pivot->confirmed]);
 
-        return to_route('adm.conferences.participations', $conference);
+        return redirect()->back();
     }
 
     public function toggleDocumentApproval(Conference $conference, Document $document)

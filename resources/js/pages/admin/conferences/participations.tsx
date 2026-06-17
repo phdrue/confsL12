@@ -39,6 +39,7 @@ export default function Participations({
     const [isDownloadingBook, setIsDownloadingBook] = useState(false);
     const [isDownloadingReports, setIsDownloadingReports] = useState(false);
     const [isDownloadingAttendance, setIsDownloadingAttendance] = useState(false);
+    const [isDownloadingParticipantsExcel, setIsDownloadingParticipantsExcel] = useState(false);
     const [isDownloadingCertificates, setIsDownloadingCertificates] = useState(false);
     const [openCertificatesDialog, setOpenCertificatesDialog] = useState(false);
     const [certificatesConferenceName, setCertificatesConferenceName] = useState('');
@@ -217,6 +218,50 @@ export default function Participations({
         }
     };
 
+    const handleDownloadParticipantsExcel = async () => {
+        setIsDownloadingParticipantsExcel(true);
+        try {
+            const response = await fetch(route('adm.conferences.get-participants-excel', conference.id));
+
+            if (response.ok) {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/')) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `participants-${conference.id}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    const errorData = await response.json();
+                    toast({
+                        variant: "destructive",
+                        title: "Ошибка",
+                        description: errorData.error || "Произошла ошибка при загрузке файла"
+                    });
+                }
+            } else {
+                const errorData = await response.json();
+                toast({
+                    variant: "destructive",
+                    title: "Ошибка",
+                    description: errorData.error || "Произошла ошибка при загрузке файла"
+                });
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Ошибка",
+                description: "Произошла ошибка при загрузке файла"
+            });
+        } finally {
+            setIsDownloadingParticipantsExcel(false);
+        }
+    };
+
     const handleDownloadCertificates = async () => {
         setIsDownloadingCertificates(true);
         try {
@@ -312,6 +357,9 @@ export default function Participations({
                                 <DropdownMenuItem onClick={handleDownloadAttendance} disabled={isDownloadingAttendance}>
                                     {isDownloadingAttendance ? 'Загрузка...' : 'Список присутствующих'}
                                 </DropdownMenuItem>
+                                <DropdownMenuItem onClick={handleDownloadParticipantsExcel} disabled={isDownloadingParticipantsExcel}>
+                                    {isDownloadingParticipantsExcel ? 'Загрузка...' : 'Участники (Excel)'}
+                                </DropdownMenuItem>
                                 <DropdownMenuItem onClick={handleOpenCertificatesDialog}>
                                     Сертификаты
                                 </DropdownMenuItem>
@@ -342,6 +390,12 @@ export default function Participations({
                             disabled={isDownloadingAttendance}
                         >
                             {isDownloadingAttendance ? 'Загрузка...' : 'Список присутствующих'}
+                        </Button>
+                        <Button
+                            onClick={handleDownloadParticipantsExcel}
+                            disabled={isDownloadingParticipantsExcel}
+                        >
+                            {isDownloadingParticipantsExcel ? 'Загрузка...' : 'Участники (Excel)'}
                         </Button>
                         <Button
                             onClick={handleOpenCertificatesDialog}
