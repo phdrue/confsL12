@@ -15,6 +15,7 @@ use App\Models\Document;
 use App\Models\Image;
 use App\Models\ReportType;
 use App\Models\Title;
+use App\Queries\PlannedConferencesQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -139,12 +140,7 @@ class ClientController extends Controller
         $sortOrder = $request->query('sort_order', 'asc');
         $search = $request->query('search');
 
-        $query = Conference::query()
-            ->whereIn('state_id', [ConferenceStateEnum::PLANNED, ConferenceStateEnum::ACTIVE])
-            ->with('proposal');
-
-        // Join with proposals for sorting and searching
-        $query->leftJoin('proposals', 'conferences.id', '=', 'proposals.conference_id');
+        $query = PlannedConferencesQuery::base();
 
         // Apply search filter
         if ($search) {
@@ -212,20 +208,8 @@ class ClientController extends Controller
                 }
             }
         } else {
-            // Default sorting by date ascending
-            $dbDriver = config('database.default');
-            if ($dbDriver === 'sqlite') {
-                $query->orderByRaw("date(json_extract(proposals.payload, '$.date')) ASC");
-            } elseif ($dbDriver === 'mysql') {
-                $query->orderByRaw("CAST(JSON_UNQUOTE(JSON_EXTRACT(proposals.payload, '$.date')) AS DATE) ASC");
-            } else {
-                $query->orderByRaw("CAST(proposals.payload->>'date' AS DATE) ASC");
-            }
+            PlannedConferencesQuery::applyDefaultOrdering($query);
         }
-
-        // Select distinct conferences to avoid duplicates from join
-        $query->select('conferences.*');
-        $query->distinct();
 
         $conferences = $query->paginate(15);
 

@@ -136,6 +136,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // responsible general
     Route::middleware([EnsureUserIsResponsible::class])->as('adm.')->prefix('adm')->group(function () {
         // конференции
+        Route::get('conferences/planned/export/docx', [ConferenceController::class, 'exportPlannedDocx'])
+            ->name('conferences.export-planned-docx');
+        Route::get('conferences/planned/export/pdf', [ConferenceController::class, 'exportPlannedPdf'])
+            ->name('conferences.export-planned-pdf');
+
         Route::resource('conferences', ConferenceController::class)
             ->only('index');
 

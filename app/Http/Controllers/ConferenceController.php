@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Role;
+use App\Exports\PlannedConferencesExporter;
 use App\Http\Requests\ChangeConferenceStateRequest;
 use App\Http\Requests\CreateConferenceRequest;
 use App\Http\Requests\UpdateConferenceRequest;
@@ -175,6 +176,22 @@ class ConferenceController extends Controller
     public function statistics(): Response
     {
         return Inertia::render('admin/statistics/index');
+    }
+
+    public function exportPlannedDocx(PlannedConferencesExporter $exporter)
+    {
+        $file = $exporter->toDocxFile();
+
+        return response()->download($file, 'planned-conferences.docx')
+            ->deleteFileAfterSend(true);
+    }
+
+    public function exportPlannedPdf(PlannedConferencesExporter $exporter)
+    {
+        return response($exporter->toPdfBinary(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="planned-conferences.pdf"',
+        ]);
     }
 
     /**
