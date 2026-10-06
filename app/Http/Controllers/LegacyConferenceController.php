@@ -18,7 +18,7 @@ class LegacyConferenceController extends Controller
         $year = $request->validated('year');
 
         $query = LegacyConference::query()
-            ->with(['featuredFile', 'categories'])
+            ->with(['featuredFile'])
             ->orderByDesc('published_at');
 
         if (is_string($name) && $name !== '') {
@@ -47,7 +47,7 @@ class LegacyConferenceController extends Controller
 
     public function show(LegacyConference $legacyConference): Response
     {
-        $legacyConference->load(['files', 'categories', 'featuredFile']);
+        $legacyConference->load(['files', 'featuredFile']);
 
         return Inertia::render('archive/conferences/show', [
             'conference' => $legacyConference,

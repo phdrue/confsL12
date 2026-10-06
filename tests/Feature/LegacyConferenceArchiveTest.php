@@ -18,7 +18,8 @@ it('renders the archive index', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->component('archive/conferences/index')
             ->has('conferences.data', 1)
-            ->where('conferences.data.0.title', 'Архивная конференция'));
+            ->where('conferences.data.0.title', 'Архивная конференция')
+            ->missing('conferences.data.0.categories'));
 });
 
 it('renders sanitized html on the archive show page', function () {
@@ -33,7 +34,8 @@ it('renders sanitized html on the archive show page', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->component('archive/conferences/show')
             ->where('conference.title', 'Конференция по хирургии')
-            ->where('conference.content_html', '<p>Hello</p><img src="/legacy-files/2021/08/photo.jpg" alt="">'));
+            ->where('conference.content_html', '<p>Hello</p><img src="/legacy-files/2021/08/photo.jpg" alt="">')
+            ->missing('conference.categories'));
 });
 
 it('downloads an archive file', function () {

@@ -25,21 +25,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('legacy_conference_categories', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('wp_term_id')->unique();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->timestamps();
-        });
-
-        Schema::create('legacy_conference_category', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('legacy_conference_id')->constrained('legacy_conferences')->cascadeOnDelete();
-            $table->foreignId('legacy_conference_category_id')->constrained('legacy_conference_categories')->cascadeOnDelete();
-            $table->unique(['legacy_conference_id', 'legacy_conference_category_id'], 'legacy_conference_category_unique');
-        });
-
         Schema::create('legacy_conference_files', function (Blueprint $table) {
             $table->id();
             $table->foreignId('legacy_conference_id')->constrained('legacy_conferences')->cascadeOnDelete();
@@ -62,8 +47,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('legacy_conference_files');
-        Schema::dropIfExists('legacy_conference_category');
-        Schema::dropIfExists('legacy_conference_categories');
         Schema::dropIfExists('legacy_conferences');
     }
 };

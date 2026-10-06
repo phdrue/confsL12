@@ -8,12 +8,6 @@ export type LegacyConferenceFile = {
     is_featured: boolean;
 };
 
-export type LegacyConferenceCategory = {
-    id: number;
-    name: string;
-    slug: string;
-};
-
 export type LegacyConference = {
     id: number;
     wp_id: number;
@@ -26,5 +20,4 @@ export type LegacyConference = {
     source_url: string | null;
     featured_file?: LegacyConferenceFile | null;
     files?: LegacyConferenceFile[];
-    categories?: LegacyConferenceCategory[];
 };

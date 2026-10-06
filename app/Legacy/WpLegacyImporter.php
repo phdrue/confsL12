@@ -3,7 +3,6 @@
 namespace App\Legacy;
 
 use App\Models\LegacyConference;
-use App\Models\LegacyConferenceCategory;
 use App\Models\LegacyConferenceFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -33,8 +32,6 @@ class WpLegacyImporter
      *     dropped_posts: list<array{id: int, title: string, reason: string}>,
      *     attachments: array<int, array<string, mixed>>,
      *     meta_by_post: array<int, array<string, list<string>>>,
-     *     categories: array<int, array{term_id: int, name: string, slug: string}>,
-     *     post_category_ids: array<int, list<int>>,
      *     referenced_paths: list<string>,
      *     medium_paths: array<string, string>
      * }
@@ -54,9 +51,6 @@ class WpLegacyImporter
     {
         $posts = $tables['wp_posts'] ?? [];
         $postmeta = $tables['wp_postmeta'] ?? [];
-        $relationships = $tables['wp_term_relationships'] ?? [];
-        $taxonomies = $tables['wp_term_taxonomy'] ?? [];
-        $terms = $tables['wp_terms'] ?? [];
         $galleryImages = $tables['wp_finaltiles_gallery_images'] ?? [];
 
         $keptPosts = [];
@@ -185,48 +179,12 @@ class WpLegacyImporter
         $referencedPaths = array_keys($referencedPaths);
         sort($referencedPaths);
 
-        $termTaxonomy = [];
-        foreach ($taxonomies as $taxonomy) {
-            $termTaxonomy[(int) $taxonomy['term_taxonomy_id']] = $taxonomy;
-        }
-
-        $termsById = [];
-        foreach ($terms as $term) {
-            $termsById[(int) $term['term_id']] = $term;
-        }
-
-        $postCategoryIds = [];
-        $categories = [];
-        foreach ($relationships as $relationship) {
-            $objectId = (int) $relationship['object_id'];
-            if (! isset($keptIds[$objectId])) {
-                continue;
-            }
-            $tt = $termTaxonomy[(int) $relationship['term_taxonomy_id']] ?? null;
-            if ($tt === null || ($tt['taxonomy'] ?? '') !== 'category') {
-                continue;
-            }
-            $termId = (int) $tt['term_id'];
-            $term = $termsById[$termId] ?? null;
-            if ($term === null) {
-                continue;
-            }
-            $categories[$termId] = [
-                'term_id' => $termId,
-                'name' => (string) $term['name'],
-                'slug' => (string) $term['slug'],
-            ];
-            $postCategoryIds[$objectId][] = $termId;
-        }
-
         return [
             'tables' => $tables,
             'kept_posts' => $keptPosts,
             'dropped_posts' => $droppedPosts,
             'attachments' => $keptAttachments,
             'meta_by_post' => $metaByPost,
-            'categories' => $categories,
-            'post_category_ids' => $postCategoryIds,
             'referenced_paths' => $referencedPaths,
             'medium_paths' => $mediumByOriginal,
             'thumbnail_ids' => $thumbnailIds,
@@ -356,17 +314,6 @@ class WpLegacyImporter
      */
     public function import(array $plan, ?string $uploadsDir): array
     {
-        $categoryModels = [];
-        foreach ($plan['categories'] as $termId => $category) {
-            $categoryModels[$termId] = LegacyConferenceCategory::query()->updateOrCreate(
-                ['wp_term_id' => $termId],
-                [
-                    'name' => $category['name'],
-                    'slug' => $this->uniqueCategorySlug($category['slug'], $termId),
-                ],
-            );
-        }
-
         $usedSlugs = LegacyConference::query()->pluck('slug', 'wp_id')->all();
         $imported = 0;
         $filesCount = 0;
@@ -402,12 +349,6 @@ class WpLegacyImporter
                     ]),
                 ],
             );
-
-            $termIds = $plan['post_category_ids'][$wpId] ?? [];
-            $conference->categories()->sync(array_map(
-                fn (int $termId): int => $categoryModels[$termId]->id,
-                array_values(array_filter($termIds, fn (int $termId): bool => isset($categoryModels[$termId]))),
-            ));
 
             $fileResult = $this->syncFiles($conference, $post, $plan, $uploadsDir);
             $filesCount += $fileResult['count'];
@@ -628,18 +569,6 @@ class WpLegacyImporter
         }
 
         return $slug;
-    }
-
-    private function uniqueCategorySlug(string $slug, int $termId): string
-    {
-        $decoded = urldecode($slug);
-        $normalized = Str::slug($decoded, '-', 'ru') ?: 'category-'.$termId;
-        $existing = LegacyConferenceCategory::query()
-            ->where('slug', $normalized)
-            ->where('wp_term_id', '!=', $termId)
-            ->exists();
-
-        return $existing ? $normalized.'-'.$termId : $normalized;
     }
 
     private function parseDate(string $date): ?string

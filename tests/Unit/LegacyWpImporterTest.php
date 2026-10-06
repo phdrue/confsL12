@@ -3,6 +3,7 @@
 use App\Legacy\WpLegacyImporter;
 use App\Models\LegacyConference;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 uses(Tests\TestCase::class, RefreshDatabase::class);
@@ -24,7 +25,9 @@ it('imports kept posts from a mini dump and skips spam', function () {
     $result = $importer->import($plan, $uploads);
 
     expect($result['imported'])->toBe(1)
-        ->and(LegacyConference::query()->count())->toBe(1);
+        ->and(LegacyConference::query()->count())->toBe(1)
+        ->and(Schema::hasTable('legacy_conference_categories'))->toBeFalse()
+        ->and(Schema::hasTable('legacy_conference_category'))->toBeFalse();
 
     $conference = LegacyConference::query()->first();
     expect($conference->title)->toBe('Конференция по хирургии')
