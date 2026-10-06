@@ -261,3 +261,75 @@ test('force_enroll allows participation and documents regardless of date and sta
             ->exists()
     )->toBeTrue();
 });
+
+function participationPayloadWith(array $kinds, int $countryId, int $reportTypeId): array
+{
+    $authors = [[
+        'name' => 'Author Name',
+        'organization' => 'Org',
+        'city' => 'City',
+        'country_id' => $countryId,
+    ]];
+    $payload = ['authorization' => ''];
+
+    if (in_array('reports', $kinds, true)) {
+        $payload['reports'] = [[
+            'topic' => 'Report topic',
+            'report_type_id' => $reportTypeId,
+            'authors' => $authors,
+            'science_guides' => [],
+        ]];
+    }
+
+    if (in_array('thesises', $kinds, true)) {
+        $payload['thesises'] = [[
+            'topic' => 'Thesis topic',
+            'text' => 'Thesis text',
+            'literature' => 'Literature',
+            'authors' => $authors,
+            'science_guides' => [],
+        ]];
+    }
+
+    return $payload;
+}
+
+test('when both thesises and reports are allowed, reports alone are rejected', function (array $kinds, bool $isValid) {
+    $user = createUserWithCompleteProfile();
+    ensureDocumentTypesExist();
+
+    ConferenceState::factory()->create([
+        'id' => ConferenceStateEnum::ACTIVE->value,
+        'name' => 'Active',
+    ]);
+
+    $country = Country::firstOrCreate(['name' => 'Rule Country']);
+    $reportType = ReportType::create(['name' => 'Доклад']);
+
+    /** @var Conference $conference */
+    $conference = Conference::factory()->create([
+        'state_id' => ConferenceStateEnum::ACTIVE->value,
+        'date' => now()->addMonths(2),
+        'allow_report' => true,
+        'allow_thesis' => true,
+        'force_enroll' => false,
+    ]);
+
+    actingAs($user);
+
+    $response = $this->from(route('conferences.show', $conference))
+        ->post(
+            route('client.conferences.participate', $conference),
+            participationPayloadWith($kinds, $country->id, $reportType->id)
+        );
+
+    if ($isValid) {
+        $response->assertSessionHasNoErrors();
+    } else {
+        $response->assertSessionHasErrors('reports');
+    }
+})->with([
+    'thesises only' => [['thesises'], true],
+    'thesises and reports' => [['thesises', 'reports'], true],
+    'reports only' => [['reports'], false],
+]);

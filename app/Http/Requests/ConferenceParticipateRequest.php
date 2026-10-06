@@ -7,6 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Validator;
 
 /**
  * @method \App\Models\Conference|null route($name = null, $parameters = [])
@@ -188,5 +189,27 @@ class ConferenceParticipateRequest extends FormRequest
         }
 
         return $rules;
+    }
+
+    /**
+     * Reports alone are not accepted when both reports and thesises are allowed.
+     */
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            /** @var \App\Models\Conference|null $conference */
+            $conference = $this->route('conference');
+
+            if (! $conference || ! $conference->allow_thesis || ! $conference->allow_report) {
+                return;
+            }
+
+            $hasReports = ! empty($this->input('reports', []));
+            $hasThesises = ! empty($this->input('thesises', []));
+
+            if ($hasReports && ! $hasThesises) {
+                $validator->errors()->add('reports', 'Подать только доклад нельзя: необходимо также подать тезис.');
+            }
+        });
     }
 }
