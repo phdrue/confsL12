@@ -24,9 +24,10 @@ function ConferencesDropdown() {
         { id: 3, name: 'Актуальные', url: route('conferences.index', { state: 3 }) },
         { id: 4, name: 'Архив', url: route('conferences.index', { state: 4 }) },
         { id: 2, name: 'В плане', url: route('conferences.table') },
+        { id: 9, name: 'Архив сайта', url: route('archive.conferences.index') },
     ];
 
-    const isConferencesPage = page.url.startsWith('/conferences');
+    const isConferencesPage = page.url.startsWith('/conferences') || page.url.startsWith('/archive');
 
     return (
         <DropdownMenu>
@@ -70,9 +71,8 @@ const mainNavItems: NavItem[] = [
         url: route('thesis.requirements', [], false),
     },
     {
-        title: 'Архивный сайт',
-        url: 'https://ksmuconfs.org/?cat=9',
-        external: true,
+        title: 'Архив сайта',
+        url: route('archive.conferences.index', [], false),
     }
 ];
 
@@ -134,6 +134,9 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                     </Link>
                                                     <Link href={route('conferences.table')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
                                                         В плане
+                                                    </Link>
+                                                    <Link href={route('archive.conferences.index')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                                                        Архив сайта
                                                     </Link>
                                                 </div>
                                             </div>

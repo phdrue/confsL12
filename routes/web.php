@@ -6,6 +6,7 @@ use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\LegacyConferenceController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureCanAccessConference;
@@ -31,6 +32,21 @@ Route::get('conferences/plan', [ClientController::class, 'conferencesTable'])
 
 Route::get('conferences/{conference}', [ClientController::class, 'conference'])
     ->name('conferences.show');
+
+Route::redirect('archive', '/archive/conferences');
+
+Route::get('archive/conferences', [LegacyConferenceController::class, 'index'])
+    ->name('archive.conferences.index');
+
+Route::get('archive/conferences/{legacyConference:slug}', [LegacyConferenceController::class, 'show'])
+    ->name('archive.conferences.show');
+
+Route::get('archive/files/{file}', [LegacyConferenceController::class, 'downloadFile'])
+    ->name('archive.files.download');
+
+Route::get('legacy-files/{path}', [LegacyConferenceController::class, 'serveFile'])
+    ->where('path', '.*')
+    ->name('archive.legacy-files');
 
 // Serve images from storage (supports FTP and local storage)
 // Using 'files' instead of 'storage' to avoid conflict with public/storage symlink
