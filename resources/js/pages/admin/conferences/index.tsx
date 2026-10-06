@@ -79,6 +79,16 @@ export default function Index({
                         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                             <h1 className="text-3xl font-semibold">Конференции</h1>
                             <div className="flex flex-col gap-2 sm:flex-row">
+                                <Button variant="outline" asChild>
+                                    <a href="/manual1.pdf" download>
+                                        Пособие
+                                    </a>
+                                </Button>
+                                <Button variant="outline" asChild>
+                                    <a href="/manual2.pdf" download>
+                                        Инструкция
+                                    </a>
+                                </Button>
                                 <Button
                                     type="button"
                                     variant="outline"

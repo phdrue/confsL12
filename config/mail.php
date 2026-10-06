@@ -37,16 +37,16 @@ return [
 
     'mailers' => [
 
-        'smtp' => [
-            'transport' => 'smtp',
-            'host' => 'smtps.dashasender.ru', //smtp-pulse.com
-            'port' =>  2525,
-            'encryption' =>  'tls',
-            'username' => "tatarinovaa@kursksmu.net", //teleginaa@kursksmu.net
-            'password' => "55125fcd4ce9d5c21868b32f82a5bbd3", //44driZ9erSLcMo
-            'timeout' => null,
-            'auth_mode' => null,
-        ],
+    'smtp' => [
+        'transport' => 'smtp',
+        'host' => 'smtps.dashasender.ru',//smtp-pulse.com
+        'port' =>  2525,
+        'encryption' =>  'tls',
+        'username' => "dm134587-2e74e7",//teleginaa@kursksmu.net
+        'password' => "4978adbd2e5d10d9f3ee80cc91433e3b",//44driZ9erSLcMo
+        'timeout' => null,
+        'auth_mode' => null,
+    ],
 
     ],
 
