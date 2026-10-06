@@ -31,6 +31,7 @@ class ConferenceFactory extends Factory
             'allow_thesis' => false,
             'allow_report' => false,
             'img_path' => 'img/placeholders/image.png',
+            'video_url' => null,
             'primary_color' => '#548FC7',
             'force_enroll' => false,
         ];

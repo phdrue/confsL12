@@ -1,6 +1,6 @@
 import { Conference } from '@/types/conferences';
 import { Link, useForm, usePage } from '@inertiajs/react';
-import { MoveRight, Star } from 'lucide-react';
+import { MoveRight, Star, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { type SharedData } from '@/types';
@@ -118,9 +118,10 @@ export function ConferenceCard({ conference }: { conference: Conference }) {
                 </div>
                 <div className="w-full pt-5 lg:pt-6">
                     <div className="space-y-3">
-                        <span className="text-brand-textSecondary flex items-baseline gap-2 text-center text-sm font-semibold uppercase">
+                        <span className="text-brand-textSecondary flex items-center gap-2 text-center text-sm font-semibold uppercase">
                             <ConferenceTypeSpan />
                             <span>{conference.date}</span>
+                            {conference.video_url && <Video size={16} aria-label="Есть видео" />}
                         </span>
                         <h3 className="text-xl leading-tight font-semibold text-black transition-colors duration-300 sm:text-2xl">{conference.name}</h3>
                         <p className="text-slate-600 dark:text-slate-300">{conference.description}</p>

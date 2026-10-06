@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Auth\Access\AuthorizationException;
 
 class UpdateConferenceRequest extends FormRequest
 {
@@ -19,7 +18,7 @@ class UpdateConferenceRequest extends FormRequest
     protected function failedAuthorization()
     {
         throw ValidationException::withMessages([
-            'authorization' => 'You are not authorized to update this post.'
+            'authorization' => 'You are not authorized to update this post.',
         ]);
     }
 
@@ -34,6 +33,7 @@ class UpdateConferenceRequest extends FormRequest
             'name' => 'required|string|max:1000',
             'description' => 'required|string|max:1500',
             'img' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'video_url' => ['nullable', 'url', 'max:500', 'regex:'.CreateConferenceRequest::VK_VIDEO_URL_PATTERN],
             'primary_color' => 'required|string|max:7',
             'type_id' => 'required|exists:conference_types,id',
             'date' => 'required|date',

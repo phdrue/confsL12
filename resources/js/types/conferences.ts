@@ -6,6 +6,7 @@ export interface Conference {
     description: string;
     date: string;
     img_path: string;
+    video_url?: string | null;
     front_page: boolean;
     force_enroll: boolean;
     state_id: number;

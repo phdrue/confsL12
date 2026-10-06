@@ -22,6 +22,7 @@ return new class extends Migration
             $table->boolean('allow_thesis')->default(false);
             $table->boolean('allow_report')->default(false);
             $table->string('img_path')->default('img/placeholders/image.png');
+            $table->string('video_url', 500)->nullable();
             $table->string('primary_color', 100)->default('#548FC7');
             $table->timestamps();
         });

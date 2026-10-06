@@ -34,6 +34,7 @@ export default function EditConferenceForm({
         name: conference.name,
         description: conference.description,
         primary_color: conference.primary_color,
+        video_url: conference.video_url ?? '',
         type_id: conference.type_id,
         date: `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`,
         allow_thesis: conference.allow_thesis,
@@ -180,6 +181,18 @@ export default function EditConferenceForm({
                                         onChange={handleFileChange}
                                     />
                                     <InputError message={errors.img} className="mt-2" />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="video_url">Видео ВКонтакте (ссылка из кода iframe)</Label>
+                                    <Input
+                                        id="video_url"
+                                        name="video_url"
+                                        type="url"
+                                        placeholder="https://vk.ru/video_ext.php?oid=-22822305&id=456241864"
+                                        value={data.video_url}
+                                        onChange={(e) => setData('video_url', e.target.value)}
+                                    />
+                                    <InputError message={errors.video_url} className="mt-2" />
                                 </div>
                                 <div className="flex items-center space-x-3">
                                     <Checkbox id="allow_report" checked={Boolean(data.allow_report)} onCheckedChange={(e) => setData('allow_report', e === true)} name="allow_report" tabIndex={3} />

@@ -115,6 +115,17 @@ export default function Show({
             <div className="self-center aspect-[584/384] w-full max-w-[584px] bg-white rounded-md overflow-hidden">
                 <img className="size-full object-cover" alt={conference.name} src={`/files/${conference.img_path}`} />
             </div>
+            {conference.video_url && (
+                <div className="self-center aspect-[584/384] w-full max-w-[584px] bg-black rounded-md overflow-hidden">
+                    <iframe
+                        className="size-full"
+                        src={conference.video_url}
+                        title={conference.name}
+                        allow="autoplay; encrypted-media; fullscreen; picture-in-picture;"
+                        allowFullScreen
+                    />
+                </div>
+            )}
             <div>
                 {blocks.map((block) => (
                     <ConferenceBlock 
