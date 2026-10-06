@@ -109,7 +109,7 @@ class ParticipationWizardController extends Controller
         $this->ensureWizardAccessible($conference);
         $this->draft->reset(Auth::user(), $conference);
 
-        return back();
+        return to_route('conferences.show', $conference);
     }
 
     /**

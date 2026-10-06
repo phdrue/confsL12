@@ -24,7 +24,7 @@ class AddReportToDraftRequest extends FormRequest
     protected function failedAuthorization(): void
     {
         throw ValidationException::withMessages([
-            'authorization' => 'Вы не можете добавлять доклады в черновик этой заявки.',
+            'authorization' => 'Вы не можете добавлять доклады в эту заявку.',
         ]);
     }
 

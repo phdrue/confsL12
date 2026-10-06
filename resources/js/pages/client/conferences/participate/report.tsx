@@ -23,6 +23,7 @@ import { ParticipationWizardPageProps } from './types';
 export default function ParticipationReportPage({
     conference,
     draft,
+    participation,
     countries,
     degrees,
     titles,
@@ -82,11 +83,11 @@ export default function ParticipationReportPage({
 
             <h1 className="mt-4 text-2xl font-semibold">Добавить доклад</h1>
             <p className="mt-3 text-sm text-muted-foreground">
-                После добавления доклад попадёт в черновик. Чтобы изменить документ, удалите его и добавьте заново.
+                После добавления доклад попадёт в заявку. Чтобы изменить документ, удалите его и добавьте заново.
             </p>
 
             <div className="mt-6">
-                <h2 className="mb-2 text-base font-semibold">Уже в черновике</h2>
+                <h2 className="mb-2 text-base font-semibold">Уже в заявке</h2>
                 <DraftDocumentList
                     items={draft.reports}
                     canDelete
@@ -141,7 +142,7 @@ export default function ParticipationReportPage({
                 <InputError message={errors.authorization} />
                 <div className="space-y-2">
                     <Button type="submit" disabled={processing || !canAddReport}>
-                        Добавить в черновик
+                        Добавить в заявку
                     </Button>
                     {!canAddReport && (
                         <p className="text-sm text-muted-foreground">
@@ -158,8 +159,12 @@ export default function ParticipationReportPage({
                         setDeleteItem(null);
                     }
                 }}
-                title="Удалить доклад из черновика?"
-                description="Этот доклад будет удалён только из черновика. Сохранённая заявка не изменится, пока вы не закончите подачу."
+                title="Удалить доклад из заявки?"
+                description={
+                    participation
+                        ? 'Этот доклад будет удалён из текущей версии заявки. Сохранённая заявка не изменится, пока вы не закончите подачу.'
+                        : 'Этот доклад будет удалён из заявки.'
+                }
                 confirmLabel="Удалить"
                 confirmVariant="destructive"
                 onConfirm={() => {
@@ -176,7 +181,7 @@ export default function ParticipationReportPage({
                 open={leaveOpen}
                 onOpenChange={setLeaveOpen}
                 title="Покинуть форму?"
-                description="Введённые данные не будут сохранены в черновик."
+                description="Введённые данные не будут добавлены в заявку."
                 confirmLabel="Покинуть"
                 confirmVariant="destructive"
                 onConfirm={goBack}

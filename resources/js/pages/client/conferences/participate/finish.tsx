@@ -12,6 +12,7 @@ const FINISH_DELAY_SECONDS = 10;
 export default function ParticipationFinishPage({
     conference,
     draft,
+    participation,
 }: ParticipationWizardPageProps) {
     const { errors } = usePage().props as { errors: Record<string, string> };
     const [remaining, setRemaining] = useState(FINISH_DELAY_SECONDS);
@@ -59,7 +60,9 @@ export default function ParticipationFinishPage({
 
             <h1 className="mt-4 text-2xl font-semibold">Закончить подачу</h1>
             <p className="mt-3 text-sm text-muted-foreground">
-                Проверьте черновик. После подтверждения заявка будет сохранена, и черновик очистится.
+                {participation
+                    ? 'Проверьте заявку. После подтверждения изменения будут сохранены.'
+                    : 'Проверьте заявку. После подтверждения она будет отправлена.'}
             </p>
 
             {Boolean(conference.allow_thesis) && (
@@ -90,7 +93,11 @@ export default function ParticipationFinishPage({
                 open={consentOpen}
                 onOpenChange={setConsentOpen}
                 title="Закончить подачу?"
-                description="Черновик будет сохранён как заявка на конференцию."
+                description={
+                    participation
+                        ? 'Изменения заявки будут сохранены.'
+                        : 'Заявка будет отправлена.'
+                }
                 confirmLabel="Закончить подачу"
                 onConfirm={() => router.post(route('client.conferences.participation.finish.store', conference.id))}
             />

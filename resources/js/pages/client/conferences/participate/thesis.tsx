@@ -15,6 +15,7 @@ import { ParticipationWizardPageProps } from './types';
 export default function ParticipationThesisPage({
     conference,
     draft,
+    participation,
     countries,
     degrees,
     titles,
@@ -82,11 +83,11 @@ export default function ParticipationThesisPage({
 
             <h1 className="mt-4 text-2xl font-semibold">Добавить тезис</h1>
             <p className="mt-3 text-sm text-muted-foreground">
-                После добавления тезис попадёт в черновик. Чтобы изменить документ, удалите его и добавьте заново.
+                После добавления тезис попадёт в заявку. Чтобы изменить документ, удалите его и добавьте заново.
             </p>
 
             <div className="mt-6">
-                <h2 className="mb-2 text-base font-semibold">Уже в черновике</h2>
+                <h2 className="mb-2 text-base font-semibold">Уже в заявке</h2>
                 <DraftDocumentList
                     items={draft.thesises}
                     canDelete
@@ -146,7 +147,7 @@ export default function ParticipationThesisPage({
                 <InputError message={errors.authorization} />
                 <div className="space-y-2">
                     <Button type="submit" disabled={processing || !canAddThesis}>
-                        Добавить в черновик
+                        Добавить в заявку
                     </Button>
                     {!canAddThesis && (
                         <p className="text-sm text-muted-foreground">
@@ -163,8 +164,12 @@ export default function ParticipationThesisPage({
                         setDeleteItem(null);
                     }
                 }}
-                title="Удалить тезис из черновика?"
-                description="Этот тезис будет удалён только из черновика. Сохранённая заявка не изменится, пока вы не закончите подачу."
+                title="Удалить тезис из заявки?"
+                description={
+                    participation
+                        ? 'Этот тезис будет удалён из текущей версии заявки. Сохранённая заявка не изменится, пока вы не закончите подачу.'
+                        : 'Этот тезис будет удалён из заявки.'
+                }
                 confirmLabel="Удалить"
                 confirmVariant="destructive"
                 onConfirm={() => {
@@ -181,7 +186,7 @@ export default function ParticipationThesisPage({
                 open={leaveOpen}
                 onOpenChange={setLeaveOpen}
                 title="Покинуть форму?"
-                description="Введённые данные не будут сохранены в черновик."
+                description="Введённые данные не будут добавлены в заявку."
                 confirmLabel="Покинуть"
                 confirmVariant="destructive"
                 onConfirm={goBack}

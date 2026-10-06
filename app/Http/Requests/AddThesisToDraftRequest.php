@@ -24,7 +24,7 @@ class AddThesisToDraftRequest extends FormRequest
     protected function failedAuthorization(): void
     {
         throw ValidationException::withMessages([
-            'authorization' => 'Вы не можете добавлять тезисы в черновик этой заявки.',
+            'authorization' => 'Вы не можете добавлять тезисы в эту заявку.',
         ]);
     }
 

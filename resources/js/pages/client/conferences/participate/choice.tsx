@@ -19,12 +19,15 @@ export default function ParticipationChoicePage({
     const [resetOpen, setResetOpen] = useState(false);
     const thesisCount = draft.thesises.length;
     const reportCount = draft.reports.length;
+    const isEditing = Boolean(participation);
 
     return (
-        <ParticipationWizardLayout conference={conference} title={participation ? 'Управление заявкой' : 'Участие'}>
+        <ParticipationWizardLayout conference={conference} title={isEditing ? 'Управление заявкой' : 'Подача заявки'}>
             <h1 className="text-2xl font-semibold">{conference.name}</h1>
             <p className="mt-3 text-sm text-muted-foreground">
-                Выберите действие. Ничего не отправляется организаторам, пока вы не закончите подачу.
+                {isEditing
+                    ? 'Выберите действие. Сохранённая заявка не изменится, пока вы не закончите подачу.'
+                    : 'Выберите действие. Заявка не будет отправлена, пока вы не закончите подачу.'}
             </p>
 
             {(canAddThesis || canAddReport || canFinish) && (
@@ -36,7 +39,7 @@ export default function ParticipationChoicePage({
                     >
                         <div>
                             <p className="font-medium">Добавить тезис</p>
-                            <p className="text-sm text-muted-foreground">В черновике: {thesisCount}</p>
+                            <p className="text-sm text-muted-foreground">В заявке: {thesisCount}</p>
                         </div>
                         <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
                     </Link>
@@ -48,7 +51,7 @@ export default function ParticipationChoicePage({
                     >
                         <div>
                             <p className="font-medium">Добавить доклад</p>
-                            <p className="text-sm text-muted-foreground">В черновике: {reportCount}</p>
+                            <p className="text-sm text-muted-foreground">В заявке: {reportCount}</p>
                         </div>
                         <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
                     </Link>
@@ -60,7 +63,9 @@ export default function ParticipationChoicePage({
                     >
                         <div>
                             <p className="font-medium">Закончить подачу</p>
-                            <p className="text-sm text-muted-foreground">Отправить заявку по текущему черновику</p>
+                            <p className="text-sm text-muted-foreground">
+                                {isEditing ? 'Сохранить изменения заявки' : 'Отправить заявку'}
+                            </p>
                         </div>
                         <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
                     </Link>
@@ -91,17 +96,20 @@ export default function ParticipationChoicePage({
 
             {canEditDocuments && (
                 <Button type="button" variant="outline" className="mt-8" onClick={() => setResetOpen(true)}>
-                    Отменить черновик
+                    {isEditing ? 'Выйти из редактирования' : 'Выйти без сохранения'}
                 </Button>
             )}
 
             <ConsentDialog
                 open={resetOpen}
                 onOpenChange={setResetOpen}
-                title="Отменить черновик?"
-                description="Черновик будет возвращён к последней сохранённой заявке. Несохранённые изменения будут потеряны."
-                confirmLabel="Отменить черновик"
-                confirmVariant="destructive"
+                title={isEditing ? 'Выйти из редактирования?' : 'Выйти без сохранения?'}
+                description={
+                    isEditing
+                        ? 'Несохранённые изменения будут потеряны. Сохранённая заявка останется без изменений.'
+                        : 'Заявка не будет отправлена. Добавленные документы не сохранятся.'
+                }
+                confirmLabel="Выйти"
                 onConfirm={() => router.post(route('client.conferences.participation.draft.reset', conference.id))}
             />
         </ParticipationWizardLayout>

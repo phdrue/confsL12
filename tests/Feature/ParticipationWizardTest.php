@@ -198,12 +198,38 @@ test('delete and draft reset stay in the session', function () {
 
     post(route('client.conferences.participation.draft.reset', $conference))
         ->assertSessionHasNoErrors()
-        ->assertRedirect();
+        ->assertRedirect(route('conferences.show', $conference));
 
     $sessionDraft = session($draft->sessionKey($user, $conference));
     expect($sessionDraft['thesises'])->toHaveCount(1)
         ->and($sessionDraft['thesises'][0]['topic'])->toBe('Thesis topic');
     expect(Document::query()->count())->toBe(1);
+});
+
+test('leaving without saving discards an unsaved application', function () {
+    $user = createUserWithCompleteProfile();
+    $conference = createActiveConference();
+    ensureDocumentTypesExist();
+
+    actingAs($user);
+
+    post(route('client.conferences.participation.thesis.store', $conference), draftThesisPayload())
+        ->assertSessionHasNoErrors();
+
+    post(route('client.conferences.participation.draft.reset', $conference))
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('conferences.show', $conference));
+
+    $sessionDraft = session((new ParticipationDraft)->sessionKey($user, $conference));
+
+    expect($sessionDraft['thesises'])->toBeEmpty()
+        ->and(Document::query()->count())->toBe(0)
+        ->and(
+            ConferenceUser::query()
+                ->where('conference_id', $conference->id)
+                ->where('user_id', $user->id)
+                ->exists()
+        )->toBeFalse();
 });
 
 test('finish creates the participation and clears the draft', function () {

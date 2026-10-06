@@ -24,7 +24,7 @@ class ModifyParticipationDraftRequest extends FormRequest
     protected function failedAuthorization(): void
     {
         throw ValidationException::withMessages([
-            'authorization' => 'Вы не можете изменять черновик этой заявки.',
+            'authorization' => 'Вы не можете изменять эту заявку.',
         ]);
     }
 
