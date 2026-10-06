@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\LegacyConferenceController;
+use App\Http\Controllers\ParticipationWizardController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureCanAccessConference;
@@ -237,6 +238,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // участвовать
         Route::post('participate/{conference}', [ClientController::class, 'participate'])
             ->name('conferences.participate');
+
+        Route::get('participate/{conference}', [ParticipationWizardController::class, 'choice'])
+            ->name('conferences.participation');
+        Route::post('participate/{conference}/draft/reset', [ParticipationWizardController::class, 'reset'])
+            ->name('conferences.participation.draft.reset');
+        Route::get('participate/{conference}/thesis', [ParticipationWizardController::class, 'thesis'])
+            ->name('conferences.participation.thesis');
+        Route::post('participate/{conference}/thesis', [ParticipationWizardController::class, 'storeThesis'])
+            ->name('conferences.participation.thesis.store');
+        Route::delete('participate/{conference}/thesis/{item}', [ParticipationWizardController::class, 'destroyThesis'])
+            ->name('conferences.participation.thesis.destroy');
+        Route::get('participate/{conference}/report', [ParticipationWizardController::class, 'report'])
+            ->name('conferences.participation.report');
+        Route::post('participate/{conference}/report', [ParticipationWizardController::class, 'storeReport'])
+            ->name('conferences.participation.report.store');
+        Route::delete('participate/{conference}/report/{item}', [ParticipationWizardController::class, 'destroyReport'])
+            ->name('conferences.participation.report.destroy');
+        Route::get('participate/{conference}/finish', [ParticipationWizardController::class, 'finish'])
+            ->name('conferences.participation.finish');
+        Route::post('participate/{conference}/finish', [ParticipationWizardController::class, 'storeFinish'])
+            ->name('conferences.participation.finish.store');
 
         Route::get('my-thesis/{conference}', [DocumentController::class, 'myThesis'])
             ->name('conferences.my-thesis');

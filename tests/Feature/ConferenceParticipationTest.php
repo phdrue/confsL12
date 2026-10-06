@@ -6,41 +6,11 @@ use App\Models\Conference;
 use App\Models\ConferenceState;
 use App\Models\ConferenceUser;
 use App\Models\Country;
-use App\Models\Degree;
-use App\Models\DocumentType;
 use App\Models\ReportType;
-use App\Models\Title;
-use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\post;
-
-function createUserWithCompleteProfile(): User
-{
-    $country = Country::create(['name' => 'Test Country']);
-    $degree = Degree::create(['name' => 'Test Degree']);
-    $title = Title::create(['name' => 'Test Title']);
-
-    return User::factory()->create([
-        'first_name' => 'First',
-        'last_name' => 'Last',
-        'second_name' => 'Middle',
-        'organization' => 'Org',
-        'position' => 'Position',
-        'city' => 'City',
-        'phone' => '+10000000000',
-        'country_id' => $country->id,
-        'degree_id' => $degree->id,
-        'title_id' => $title->id,
-    ]);
-}
-
-function ensureDocumentTypesExist(): void
-{
-    DocumentType::firstOrCreate(['id' => 1], ['name' => 'Доклад']);
-    DocumentType::firstOrCreate(['id' => 2], ['name' => 'Тезисы']);
-}
 
 test('user can participate without documents when conference is in the future', function () {
     Mail::fake();
@@ -115,6 +85,8 @@ test('participation email is sent on both create and update', function () {
 });
 
 test('user cannot submit documents within one month before conference when force_enroll is false', function () {
+    Mail::fake();
+
     $user = createUserWithCompleteProfile();
 
     ensureDocumentTypesExist();
@@ -163,6 +135,8 @@ test('user cannot submit documents within one month before conference when force
 });
 
 test('user can submit documents more than one month before conference', function () {
+    Mail::fake();
+
     $user = createUserWithCompleteProfile();
 
     ensureDocumentTypesExist();
@@ -210,6 +184,8 @@ test('user can submit documents more than one month before conference', function
 });
 
 test('force_enroll allows participation and documents regardless of date and state', function () {
+    Mail::fake();
+
     $user = createUserWithCompleteProfile();
 
     ensureDocumentTypesExist();
@@ -295,6 +271,8 @@ function participationPayloadWith(array $kinds, int $countryId, int $reportTypeI
 }
 
 test('when both thesises and reports are allowed, reports alone are rejected', function (array $kinds, bool $isValid) {
+    Mail::fake();
+
     $user = createUserWithCompleteProfile();
     ensureDocumentTypesExist();
 

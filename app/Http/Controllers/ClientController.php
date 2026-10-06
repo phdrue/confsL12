@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\ConferenceStateEnum;
 use App\Http\Requests\ConferenceParticipateRequest;
 use App\Http\Requests\CreateDocumentRequest;
-use App\Mail\ParticipationConfirmationMail;
 use App\Models\Conference;
 use App\Models\ConferenceType;
 use App\Models\ConferenceUser;
@@ -16,11 +15,11 @@ use App\Models\Image;
 use App\Models\ReportType;
 use App\Models\Title;
 use App\Queries\PlannedConferencesQuery;
+use App\Services\ConferenceParticipationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class ClientController extends Controller
@@ -320,86 +319,9 @@ class ClientController extends Controller
         ]);
     }
 
-    public function participate(ConferenceParticipateRequest $request, Conference $conference)
+    public function participate(ConferenceParticipateRequest $request, Conference $conference, ConferenceParticipationService $participations)
     {
-        $participationId = null;
-
-        DB::transaction(function () use ($request, $conference, &$participationId) {
-            // Check if user already participates
-            $participation = ConferenceUser::where('conference_id', $conference->id)
-                ->where('user_id', Auth::id())
-                ->first();
-
-            // If no participation exists, create one
-            if (! $participation) {
-                $participation = ConferenceUser::create([
-                    'conference_id' => $conference->id,
-                    'user_id' => Auth::id(),
-                ]);
-            }
-
-            $participationId = $participation->id;
-
-            // Handle reports - replace all existing reports with new ones
-            // Only process if reports are allowed
-            if ($conference->allow_report) {
-                // Delete existing reports
-                Document::where('conference_user_id', $participationId)
-                    ->where('type_id', 1)
-                    ->delete();
-
-                // Create new reports if any are provided
-                $reports = $request->validated('reports');
-                if ($reports && ! empty($reports)) {
-                    collect($reports)->each(function ($report) use ($participationId) {
-                        Document::create([
-                            'conference_user_id' => $participationId,
-                            'type_id' => 1,
-                            'report_type_id' => $report['report_type_id'],
-                            'topic' => $report['topic'],
-                            'authors' => $report['authors'],
-                            'science_guides' => $report['science_guides'] ?? [],
-                        ]);
-                    });
-                }
-            }
-
-            // Handle thesises - replace all existing thesises with new ones
-            // Only process if thesises are allowed
-            if ($conference->allow_thesis) {
-                // Delete existing thesises
-                Document::where('conference_user_id', $participationId)
-                    ->where('type_id', 2)
-                    ->delete();
-
-                // Create new thesises if any are provided
-                $thesises = $request->validated('thesises');
-                if ($thesises && ! empty($thesises)) {
-                    collect($thesises)->each(function ($thesis) use ($participationId) {
-                        Document::create([
-                            'conference_user_id' => $participationId,
-                            'type_id' => 2,
-                            'topic' => $thesis['topic'],
-                            'text' => $thesis['text'],
-                            'literature' => $thesis['literature'],
-                            'authors' => $thesis['authors'],
-                            'science_guides' => $thesis['science_guides'] ?? [],
-                        ]);
-                    });
-                }
-            }
-        });
-
-        // Send email on both create and update (after transaction completes)
-        if ($participationId) {
-            $participation = ConferenceUser::with(['documents.reportType'])->findOrFail($participationId);
-
-            // Mail::to(Auth::user())->send(new ParticipationConfirmationMail(
-            //     Auth::user(),
-            //     $conference,
-            //     $participation,
-            // ));
-        }
+        $participations->save($request, $conference);
 
         return to_route('conferences.show', $conference);
     }

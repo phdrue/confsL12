@@ -41,7 +41,28 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function createUserWithCompleteProfile(): App\Models\User
 {
-    // ..
+    $country = App\Models\Country::create(['name' => 'Test Country']);
+    $degree = App\Models\Degree::create(['name' => 'Test Degree']);
+    $title = App\Models\Title::create(['name' => 'Test Title']);
+
+    return App\Models\User::factory()->create([
+        'first_name' => 'First',
+        'last_name' => 'Last',
+        'second_name' => 'Middle',
+        'organization' => 'Org',
+        'position' => 'Position',
+        'city' => 'City',
+        'phone' => '+10000000000',
+        'country_id' => $country->id,
+        'degree_id' => $degree->id,
+        'title_id' => $title->id,
+    ]);
+}
+
+function ensureDocumentTypesExist(): void
+{
+    App\Models\DocumentType::firstOrCreate(['id' => 1], ['name' => 'Доклад']);
+    App\Models\DocumentType::firstOrCreate(['id' => 2], ['name' => 'Тезисы']);
 }

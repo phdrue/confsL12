@@ -5,8 +5,7 @@ import Footer from '@/components/landing/footer';
 import ClientLayout from '@/layouts/client-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { ConferenceBlock as ConferenceBlockType, Image } from '@/types/blocks';
-import { Conference, ReportType } from '@/types/conferences';
-import { Country, Degree, Title } from '@/types/other';
+import { Conference } from '@/types/conferences';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Lock, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -15,24 +14,14 @@ export default function Show({
     conference,
     blocks,
     images,
-    countries,
-    degrees,
-    titles,
-    reportTypes,
     participation,
-    existingDocuments,
     canParticipate,
     participationReason,
 }: {
     conference: Conference;
     blocks: Array<ConferenceBlockType>;
     images: Array<Image>;
-    countries: Array<Country>;
-    degrees: Array<Degree>;
-    titles: Array<Title>;
-    reportTypes: Array<ReportType>;
     participation?: { id: number; confirmed: boolean } | null;
-    existingDocuments?: { reports: Array<any>; thesises: Array<any> };
     canParticipate?: boolean;
     participationReason?: 'incomplete_profile' | 'too_close' | null;
 }) {
@@ -102,13 +91,8 @@ export default function Show({
                             {(!auth.user || canParticipate || participation) && (
                                 <div className="flex w-full flex-col items-center justify-center gap-3 md:flex-row lg:gap-6">
                                     <ParticipationForm
-                                        countries={countries}
-                                        degrees={degrees}
-                                        titles={titles}
-                                        reportTypes={reportTypes}
                                         conference={conference}
                                         participation={participation}
-                                        existingDocuments={existingDocuments}
                                     />
                                 </div>
                             )}
