@@ -87,6 +87,21 @@ it('does not list spam posts that were never imported', function () {
             ->where('conferences.data.0.title', 'Настоящая конференция'));
 });
 
+it('renders the archive show page with a long conference title', function () {
+    $conference = LegacyConference::factory()->create([
+        'slug' => 'obshchestvennoe-zdorove',
+        'title' => 'Проблемы общественного здоровья, организации здравоохранения и фармации',
+        'content_html' => '<p>Программа</p>',
+        'published_at' => '2021-08-19 09:39:50',
+    ]);
+
+    get('/archive/conferences/'.$conference->slug)
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('archive/conferences/show')
+            ->where('conference.title', 'Проблемы общественного здоровья, организации здравоохранения и фармации'));
+});
+
 it('redirects archive to the conferences list', function () {
 get('/archive')->assertRedirect('/archive/conferences');
     });
