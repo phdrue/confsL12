@@ -4,6 +4,7 @@ import { BreadcrumbItem } from "@/types";
 import { Head } from '@inertiajs/react';
 import EditConferenceForm from "@/components/forms/conferences/edit";
 import ToggleFrontPageForm from "@/components/forms/conferences/toggle-front-page";
+import ToggleYandexCalendarForm from "@/components/forms/conferences/toggle-yandex-calendar";
 import ChangeConferenceStateForm from "@/components/forms/conferences/change-state";
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -30,6 +31,7 @@ export default function Edit({
                     <EditConferenceForm conference={conference} types={types} />
                     <div className="flex flex-col gap-10">
                         <ToggleFrontPageForm conference={conference} />
+                        <ToggleYandexCalendarForm conference={conference} />
                         <ChangeConferenceStateForm conference={conference} states={states} />
                     </div>
                 </div>

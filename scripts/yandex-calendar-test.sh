@@ -7,6 +7,20 @@
 # Optional:
 #   YANDEX_EMAIL          default: ksmu.dns@yandex.ru
 #   YANDEX_CALENDAR_PATH  default: events-388516218900156
+#   CONF_TYPE             default: Научная конференция   -> CATEGORIES (conference_types.name)
+#   CONF_START            default: +7 days (YYYYMMDD)    -> DTSTART (proposal payload.date, fallback conferences.date)
+#   CONF_END              default: = CONF_START          -> DTEND   (proposal payload.endDate, fallback conferences.date; inclusive)
+#   CONF_URL              default: APP_URL/conferences/1 -> URL (route conferences.show)
+#
+# Field mapping (conference -> calendar event):
+#   UID          conf-{conferences.id}@<app host>
+#   SUMMARY      conferences.name
+#   DESCRIPTION  conferences.description
+#   CATEGORIES   conference_types.name (conferences.type_id)
+#   DTSTART      proposal.payload.date, else conferences.date   (all-day)
+#   DTEND        proposal.payload.endDate (else conferences.date) + 1 day (iCal DTEND is exclusive)
+#   URL          route('conferences.show', conference) - public page
+#   LOCATION     not stored on conference (proposal payload organization, optional)
 #
 # Usage:
 #   export YANDEX_APP_PASSWORD='xxxx-xxxx-xxxx-xxxx'
@@ -122,8 +136,11 @@ if [[ "$MODE" == "delete" ]]; then
 fi
 
 EVENT_UID="test-$(date +%s)"
-START_DATE="$(date -u -d '+7 days' +%Y%m%d 2>/dev/null || date -u -v+7d +%Y%m%d)"
-END_DATE="$(date -u -d '+8 days' +%Y%m%d 2>/dev/null || date -u -v+8d +%Y%m%d)"
+CONF_TYPE="${CONF_TYPE:-Научная конференция}"
+CONF_URL="${CONF_URL:-https://example.com/conferences/1}"
+START_DATE="${CONF_START:-$(date -u -d '+7 days' +%Y%m%d 2>/dev/null || date -u -v+7d +%Y%m%d)}"
+LAST_DAY="${CONF_END:-$START_DATE}"
+END_DATE="$(date -u -d "${LAST_DAY} +1 day" +%Y%m%d 2>/dev/null || date -u -v+1d -j -f %Y%m%d "${LAST_DAY}" +%Y%m%d)"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 EVENT_URL="${CAL_BASE}/${EVENT_UID}.ics"
 
@@ -139,6 +156,8 @@ DTEND;VALUE=DATE:${END_DATE}
 SUMMARY:Test conference from API
 DESCRIPTION:Dummy event for CalDAV push test
 LOCATION:Test hall
+CATEGORIES:${CONF_TYPE}
+URL:${CONF_URL}
 END:VEVENT
 END:VCALENDAR
 EOF

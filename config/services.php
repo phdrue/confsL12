@@ -28,6 +28,13 @@ return [
         'key' => env('RESEND_KEY'),
     ],
 
+    'yandex_calendar' => [
+        'email' => env('YANDEX_EMAIL'),
+        'app_password' => env('YANDEX_APP_PASSWORD'),
+        'calendar_path' => env('YANDEX_CALENDAR_PATH'),
+        'caldav_url' => env('YANDEX_CALDAV_URL'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

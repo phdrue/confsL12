@@ -48,6 +48,15 @@ const columns: ColumnDef<Conference>[] = [
         }
     },
     {
+        accessorKey: "yandex_calendar_uid",
+        header: "Яндекс",
+        cell: ({ row }) => {
+            return row.getValue("yandex_calendar_uid")
+                ? <span className="text-xs font-semibold text-emerald-600">Да</span>
+                : <span className="text-sm text-gray-400">—</span>
+        }
+    },
+    {
         accessorKey: "state_id",
         header: "Статус",
         filterFn: 'equalsString',

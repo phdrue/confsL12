@@ -179,6 +179,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('toggle-front-page/{conference}', [ConferenceController::class, 'toggleFrontPage'])
             ->name('conferences.toggle-front-page');
 
+        Route::put('toggle-yandex-calendar/{conference}', [ConferenceController::class, 'toggleYandexCalendar'])
+            ->name('conferences.toggle-yandex-calendar');
+
         Route::put('change-state/{conference}', [ConferenceController::class, 'changeState'])
             ->name('conferences.change-state');
 

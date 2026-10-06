@@ -9,6 +9,7 @@ export interface Conference {
     video_url?: string | null;
     front_page: boolean;
     force_enroll: boolean;
+    yandex_calendar_uid?: string | null;
     state_id: number;
     type_id: number;
     primary_color: string;

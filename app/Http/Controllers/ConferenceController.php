@@ -20,6 +20,7 @@ use App\Models\ImageCategory;
 use App\Models\Proposal;
 use App\Models\Title;
 use App\Models\User;
+use App\Services\YandexCalendarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -273,6 +274,24 @@ class ConferenceController extends Controller
         $conference->update([
             'front_page' => $conference->front_page ? false : true,
         ]);
+
+        return to_route('adm.conferences.edit', $conference);
+    }
+
+    public function toggleYandexCalendar(Conference $conference, YandexCalendarService $calendar)
+    {
+        try {
+            if ($conference->yandex_calendar_uid) {
+                $calendar->delete($conference);
+            } else {
+                $calendar->push($conference);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            return to_route('adm.conferences.edit', $conference)
+                ->withErrors(['yandex_calendar' => 'Не удалось синхронизировать событие с Яндекс Календарём']);
+        }
 
         return to_route('adm.conferences.edit', $conference);
     }
