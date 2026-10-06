@@ -118,6 +118,9 @@ class ImportWpLegacyCommand extends Command
             $uploadsArg = is_dir($uploads) ? $uploads : null;
             $result = $importer->import($plan, $uploadsArg);
             $this->info('Imported '.$result['imported'].' conferences, '.$result['files'].' files.');
+            if (($result['pruned']['deleted'] ?? 0) > 0) {
+                $this->info('Pruned '.$result['pruned']['deleted'].' unused files ('.$this->formatMb($result['pruned']['bytes']).').');
+            }
             if ($result['missing'] !== []) {
                 $this->warn('Missing files during import: '.count($result['missing']));
             }

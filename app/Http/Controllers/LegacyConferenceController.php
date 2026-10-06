@@ -47,7 +47,15 @@ class LegacyConferenceController extends Controller
 
     public function show(LegacyConference $legacyConference): Response
     {
-        $legacyConference->load(['files', 'featuredFile']);
+        $legacyConference->load(['featuredFile']);
+        $legacyConference->setRelation(
+            'files',
+            $legacyConference->files()
+                ->where('is_featured', false)
+                ->whereIn('kind', ['document', 'video', 'other'])
+                ->orderBy('original_name')
+                ->get(),
+        );
 
         return Inertia::render('archive/conferences/show', [
             'conference' => $legacyConference,

@@ -34,6 +34,9 @@ function kindLabel(file: LegacyConferenceFile): string {
     if (file.kind === 'image') {
         return 'изображение';
     }
+    if (file.kind === 'video') {
+        return 'видео';
+    }
     if (file.kind === 'document') {
         return file.mime || 'документ';
     }
@@ -61,9 +64,12 @@ export default function Show({ conference }: { conference: LegacyConference }) {
             <ConferenceLayout heading={conference.title} showHeader={false}>
                 <div className="flex w-full flex-col items-center gap-6">
                     <div className="w-full px-4 sm:px-6 lg:px-16">
-                        <p className="text-brand-textSecondary mb-6 text-sm font-semibold uppercase">{formatDate(conference.published_at)}</p>
+                        <h1 className="text-3xl font-semibold text-slate-900 sm:text-4xl dark:text-slate-50">{conference.title}</h1>
+                        {conference.published_at && (
+                            <p className="text-brand-textSecondary mt-3 text-sm font-semibold uppercase">{formatDate(conference.published_at)}</p>
+                        )}
                         <div
-                            className="max-w-none space-y-4 text-slate-800 [&_a]:text-brand-red [&_a]:underline [&_h1]:text-3xl [&_h1]:font-semibold [&_h2]:text-2xl [&_h2]:font-semibold [&_h3]:text-xl [&_h3]:font-semibold [&_img]:h-auto [&_img]:max-w-full [&_li]:ml-4 [&_ol]:list-decimal [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:p-2 [&_th]:border [&_th]:p-2 [&_ul]:list-disc dark:text-slate-200"
+                            className="legacy-archive-content mt-8"
                             dangerouslySetInnerHTML={{ __html: conference.content_html }}
                         />
                         {files.length > 0 && (

@@ -51,11 +51,17 @@ class WpSqlDumpParser
                     continue;
                 }
 
-                if (! preg_match('/^INSERT INTO `([^`]+)` VALUES /', $line, $matches)) {
+                if (! preg_match('/^INSERT INTO `([^`]+)`(?:\s*\(([^)]+)\))?\s*VALUES /', $line, $matches)) {
                     continue;
                 }
 
                 $table = $matches[1];
+                $insertColumns = [];
+                if (($matches[2] ?? '') !== '') {
+                    foreach (explode(',', $matches[2]) as $column) {
+                        $insertColumns[] = trim($column, " \t`");
+                    }
+                }
                 $valuesPart = substr($line, strlen($matches[0]));
                 $valuesPart = rtrim($valuesPart);
                 if (str_ends_with($valuesPart, ';')) {
@@ -63,7 +69,7 @@ class WpSqlDumpParser
                 }
 
                 $rows = $this->parseValueGroups($valuesPart);
-                $named = array_map(fn (array $row): array => $this->nameRow($table, $row), $rows);
+                $named = array_map(fn (array $row): array => $this->nameRow($table, $row, $insertColumns), $rows);
                 $tables[$table] = array_merge($tables[$table] ?? [], $named);
             }
         } finally {
@@ -75,11 +81,12 @@ class WpSqlDumpParser
 
     /**
      * @param  list<mixed>  $row
+     * @param  list<string>  $insertColumns
      * @return array<string, mixed>
      */
-    private function nameRow(string $table, array $row): array
+    private function nameRow(string $table, array $row, array $insertColumns = []): array
     {
-        $columns = self::TABLE_COLUMNS[$table] ?? null;
+        $columns = $insertColumns !== [] ? $insertColumns : (self::TABLE_COLUMNS[$table] ?? null);
 
         if ($columns === null) {
             return $row;
