@@ -72,7 +72,7 @@ export function NotificationBell() {
                 <Button variant="ghost" size="icon" className="relative" aria-label="Уведомления">
                     <Bell />
                     {unreadCount > 0 && (
-                        <Badge className="absolute -top-1 -right-1 h-5 min-w-5 px-1">
+                        <Badge className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center px-1 py-0 leading-none tabular-nums">
                             {unreadCount > 9 ? '9+' : unreadCount}
                         </Badge>
                     )}
@@ -145,7 +145,7 @@ export function NotificationBell() {
                                             )}
                                         </div>
                                         {notification.body && (
-                                            <p className="mt-0.5 line-clamp-2 text-xs leading-4 text-muted-foreground">
+                                            <p className="mt-0.5 text-xs leading-4 text-muted-foreground">
                                                 {notification.body}
                                             </p>
                                         )}

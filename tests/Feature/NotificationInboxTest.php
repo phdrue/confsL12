@@ -31,6 +31,10 @@ test('index lists only the authenticated users notifications', function () {
         ->assertJsonPath('unread_count', 1)
         ->assertJsonCount(1, 'notifications')
         ->assertJsonPath('notifications.0.title', 'Подтверждение регистрации на конференцию')
+        ->assertJsonPath(
+            'notifications.0.body',
+            "Вы успешно зарегистрировались в качестве участника (слушателя) конференции «{$conference->name}». В случае явки на конференцию / онлайн-подключения к секции, Вы получите именной сертификат участника.",
+        )
         ->assertJsonPath('notifications.0.conference_id', $conference->id)
         ->assertJsonPath('notifications.0.read_at', null);
 });

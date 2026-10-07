@@ -1,4 +1,5 @@
 import { router } from '@inertiajs/react';
+import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 
 export type InboxNotification = {
@@ -22,37 +23,20 @@ const emptyInbox: NotificationInbox = {
 
 const pollIntervalMs = 30_000;
 
-function xsrfToken(): string {
-    const match = document.cookie.match(/(?:^|; )XSRF-TOKEN=([^;]*)/);
-
-    return match ? decodeURIComponent(match[1]) : '';
-}
-
 async function requestInbox(
     url: string,
     method: 'GET' | 'POST' = 'GET',
 ): Promise<NotificationInbox> {
-    const headers: Record<string, string> = {
-        Accept: 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-    };
-
-    if (method !== 'GET') {
-        headers['Content-Type'] = 'application/json';
-        headers['X-XSRF-TOKEN'] = xsrfToken();
-    }
-
-    const response = await fetch(url, {
+    const response = await axios.request<NotificationInbox>({
+        url,
         method,
-        credentials: 'same-origin',
-        headers,
+        headers: {
+            Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
     });
 
-    if (!response.ok) {
-        throw new Error(`Failed to load notifications (${response.status})`);
-    }
-
-    return (await response.json()) as NotificationInbox;
+    return response.data;
 }
 
 export function useNotificationInbox() {
