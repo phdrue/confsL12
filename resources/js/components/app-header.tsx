@@ -1,6 +1,7 @@
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Icon } from '@/components/icon';
+import { NotificationBell } from '@/components/notification-bell';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -257,24 +258,25 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                     </div>
 
                     <div className="ml-auto flex items-center space-x-2">
-                        <div className="relative flex items-center space-x-1">
-                        </div>
                         {auth.user && (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" className="size-10 rounded-full p-1">
-                                        <Avatar className="size-8 overflow-hidden rounded-full">
-                                            <AvatarImage src={auth.user.avatar} alt="" />
-                                            <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                                                {getInitials(auth.user.email ?? "")}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-56" align="end">
-                                    <UserMenuContent user={auth.user} />
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            <>
+                                <NotificationBell />
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" className="size-10 rounded-full p-1">
+                                            <Avatar className="size-8 overflow-hidden rounded-full">
+                                                <AvatarImage src={auth.user.avatar} alt="" />
+                                                <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                                                    {getInitials(auth.user.email ?? "")}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className="w-56" align="end">
+                                        <UserMenuContent user={auth.user} />
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </>
                         )}
                     </div>
                 </div>

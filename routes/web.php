@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\LegacyConferenceController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ParticipationWizardController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\UserController;
@@ -114,6 +115,12 @@ Route::get('sogl2', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
+
+    Route::controller(NotificationController::class)->prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('read-all', 'readAll')->name('read-all');
+        Route::post('{notification}/read', 'read')->name('read');
+    });
 
     // admin
     Route::middleware([EnsureUserIsAdmin::class])->as('adm.')->prefix('adm')->group(function () {

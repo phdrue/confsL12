@@ -3,13 +3,12 @@
 namespace App\Services;
 
 use App\Http\Requests\ConferenceParticipateRequest;
-use App\Mail\ParticipationConfirmationMail;
 use App\Models\Conference;
 use App\Models\ConferenceUser;
 use App\Models\Document;
+use App\Notifications\ParticipationConfirmed;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class ConferenceParticipationService
 {
@@ -77,13 +76,7 @@ class ConferenceParticipationService
         });
 
         if ($participationId) {
-            $participation = ConferenceUser::with(['documents.reportType'])->findOrFail($participationId);
-
-            Mail::to(Auth::user())->send(new ParticipationConfirmationMail(
-                Auth::user(),
-                $conference,
-                $participation,
-            ));
+            Auth::user()->notify(new ParticipationConfirmed($conference));
         }
     }
 }

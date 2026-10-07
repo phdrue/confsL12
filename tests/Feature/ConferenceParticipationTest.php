@@ -1,18 +1,20 @@
 <?php
 
 use App\Enums\ConferenceStateEnum;
-use App\Mail\ParticipationConfirmationMail;
 use App\Models\Conference;
 use App\Models\ConferenceState;
 use App\Models\ConferenceUser;
 use App\Models\Country;
 use App\Models\ReportType;
+use App\Notifications\ParticipationConfirmed;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\post;
 
 test('user can participate without documents when conference is in the future', function () {
+    Notification::fake();
     Mail::fake();
 
     $user = createUserWithCompleteProfile();
@@ -49,10 +51,12 @@ test('user can participate without documents when conference is in the future', 
             ->exists()
     )->toBeTrue();
 
-    Mail::assertSent(ParticipationConfirmationMail::class);
+    Notification::assertSentTo($user, ParticipationConfirmed::class);
+    Mail::assertNothingSent();
 });
 
-test('participation email is sent on both create and update', function () {
+test('participation notification is sent on both create and update', function () {
+    Notification::fake();
     Mail::fake();
 
     $user = createUserWithCompleteProfile();
@@ -81,12 +85,11 @@ test('participation email is sent on both create and update', function () {
         'authorization' => '',
     ])->assertSessionHasNoErrors();
 
-    Mail::assertSent(ParticipationConfirmationMail::class, 2);
+    Notification::assertSentToTimes($user, ParticipationConfirmed::class, 2);
+    Mail::assertNothingSent();
 });
 
 test('user cannot submit documents within one month before conference when force_enroll is false', function () {
-    Mail::fake();
-
     $user = createUserWithCompleteProfile();
 
     ensureDocumentTypesExist();
@@ -135,8 +138,6 @@ test('user cannot submit documents within one month before conference when force
 });
 
 test('user can submit documents more than one month before conference', function () {
-    Mail::fake();
-
     $user = createUserWithCompleteProfile();
 
     ensureDocumentTypesExist();
@@ -184,8 +185,6 @@ test('user can submit documents more than one month before conference', function
 });
 
 test('force_enroll allows participation and documents regardless of date and state', function () {
-    Mail::fake();
-
     $user = createUserWithCompleteProfile();
 
     ensureDocumentTypesExist();
@@ -271,8 +270,6 @@ function participationPayloadWith(array $kinds, int $countryId, int $reportTypeI
 }
 
 test('when both thesises and reports are allowed, reports alone are rejected', function (array $kinds, bool $isValid) {
-    Mail::fake();
-
     $user = createUserWithCompleteProfile();
     ensureDocumentTypesExist();
 
