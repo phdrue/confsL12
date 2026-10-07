@@ -65,13 +65,13 @@ export default function ParticipationFinishPage({
                     : 'Проверьте заявку. После подтверждения она будет отправлена.'}
             </p>
 
-            {Boolean(conference.allow_thesis) && (
+            {Boolean(conference.allow_thesis) && draft.thesises.length > 0 && (
                 <div className="mt-8">
                     <h2 className="mb-2 text-base font-semibold">Тезисы</h2>
                     <DraftDocumentList items={draft.thesises} canDelete={false} onDelete={() => undefined} />
                 </div>
             )}
-            {Boolean(conference.allow_report) && (
+            {Boolean(conference.allow_report) && draft.reports.length > 0 && (
                 <div className="mt-8">
                     <h2 className="mb-2 text-base font-semibold">Доклады</h2>
                     <DraftDocumentList items={draft.reports} canDelete={false} onDelete={() => undefined} />

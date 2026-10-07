@@ -19,6 +19,9 @@ export default function ParticipationChoicePage({
     const [resetOpen, setResetOpen] = useState(false);
     const thesisCount = draft.thesises.length;
     const reportCount = draft.reports.length;
+    const hasDocuments = thesisCount > 0 || reportCount > 0;
+    const showTheses = Boolean(conference.allow_thesis) && thesisCount > 0;
+    const showReports = Boolean(conference.allow_report) && reportCount > 0;
     const isEditing = Boolean(participation);
 
     return (
@@ -75,24 +78,30 @@ export default function ParticipationChoicePage({
 
             {!canEditDocuments && (
                 <p className="mt-4 text-sm text-muted-foreground">
-                    Приём докладов и тезисов закрыт. Ниже показаны уже сохранённые документы.
+                    {hasDocuments
+                        ? 'Приём докладов и тезисов закрыт. Ниже показаны уже сохранённые документы.'
+                        : isEditing
+                            ? 'Приём докладов и тезисов закрыт.'
+                            : 'Приём докладов и тезисов закрыт. Вы можете зарегистрироваться без подачи документов.'}
                 </p>
             )}
 
+            {(showTheses || showReports) && (
             <div className="mt-8 space-y-6">
-                {Boolean(conference.allow_thesis) && (
+                {showTheses && (
                     <div>
                         <h2 className="mb-2 text-base font-semibold">Приложенные тезисы</h2>
                         <DraftDocumentList items={draft.thesises} canDelete={false} onDelete={() => undefined} />
                     </div>
                 )}
-                {Boolean(conference.allow_report) && (
+                {showReports && (
                     <div>
                         <h2 className="mb-2 text-base font-semibold">Приложенные доклады</h2>
                         <DraftDocumentList items={draft.reports} canDelete={false} onDelete={() => undefined} />
                     </div>
                 )}
             </div>
+            )}
 
             {canEditDocuments && (
                 <Button type="button" variant="outline" className="mt-8" onClick={() => setResetOpen(true)}>

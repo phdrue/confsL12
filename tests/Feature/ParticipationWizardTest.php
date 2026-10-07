@@ -105,6 +105,33 @@ test('participation choice and form pages render', function () {
         );
 });
 
+test('within one month before conference document options are closed', function () {
+    $user = createUserWithCompleteProfile();
+    $conference = createActiveConference([
+        'date' => now()->addDays(10),
+    ]);
+
+    actingAs($user);
+
+    get(route('client.conferences.participation', $conference))
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('client/conferences/participate/choice')
+            ->where('canEditDocuments', false)
+            ->where('canAddThesis', false)
+            ->where('canAddReport', false)
+            ->where('canFinish', true)
+            ->where('draft.thesises', [])
+            ->where('draft.reports', [])
+        );
+
+    get(route('client.conferences.participation.thesis', $conference))
+        ->assertForbidden();
+
+    get(route('client.conferences.participation.report', $conference))
+        ->assertForbidden();
+});
+
 test('adding a thesis without required fields is rejected', function () {
     $user = createUserWithCompleteProfile();
     $conference = createActiveConference();
