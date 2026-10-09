@@ -1,11 +1,9 @@
+import AuthorsFormPartial from '@/components/forms/participations/authors';
 import ConsentDialog from '@/components/forms/participations/consent-dialog';
 import DraftDocumentList, { DraftDocumentItem } from '@/components/forms/participations/draft-document-list';
-import AuthorsFormPartial from '@/components/forms/participations/authors';
 import ScienceGuidesFormPartial from '@/components/forms/participations/science-guides';
-import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
     Select,
     SelectContent,
@@ -15,28 +13,49 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { router, useForm } from '@inertiajs/react';
+import { Textarea } from '@/components/ui/textarea';
+import { ReportType } from '@/types/conferences';
+import { Country, Degree, Report, ScienceGuide, Title } from '@/types/other';
 import { FormEventHandler, useState } from 'react';
-import ParticipationWizardLayout from './layout';
-import { ParticipationWizardPageProps } from './types';
 
-export default function ParticipationReportPage({
-    conference,
-    draft,
+type ReportForm = {
+    topic: string;
+    report_type_id: string;
+    authors: Array<never>;
+    science_guides: Array<ScienceGuide>;
+};
+
+const emptyReport = (): ReportForm => ({
+    topic: '',
+    report_type_id: '',
+    authors: [],
+    science_guides: [],
+});
+
+export default function ReportStep({
     participation,
     countries,
     degrees,
     titles,
     reportTypes,
-}: ParticipationWizardPageProps) {
+    reports,
+    onBack,
+    onAdd,
+    onDelete,
+}: {
+    participation?: { id: number; confirmed: boolean } | null;
+    countries: Array<Country>;
+    degrees: Array<Degree>;
+    titles: Array<Title>;
+    reportTypes: Array<ReportType>;
+    reports: Array<Report & { key: string }>;
+    onBack: () => void;
+    onAdd: (report: ReportForm) => void;
+    onDelete: (key: string) => void;
+}) {
     const [deleteItem, setDeleteItem] = useState<DraftDocumentItem | null>(null);
     const [leaveOpen, setLeaveOpen] = useState(false);
-    const { data, setData, post, processing, errors, reset } = useForm({
-        topic: '',
-        report_type_id: '',
-        authors: [] as Array<never>,
-        science_guides: [] as Array<never>,
-    });
+    const [data, setData] = useState<ReportForm>(emptyReport);
 
     const isTopicValid = data.topic.trim().length > 0 && data.topic.length <= 2000;
     const canAddReport = isTopicValid && data.report_type_id.length > 0 && data.authors.length > 0;
@@ -61,22 +80,21 @@ export default function ParticipationReportPage({
         return missing.length > 0 ? `Для добавления доклада необходимо заполнить: ${missing.join(', ')}` : '';
     }
 
-    const goBack = () => router.visit(route('client.conferences.participation', conference.id));
-
     const submit: FormEventHandler = (event) => {
         event.preventDefault();
-        post(route('client.conferences.participation.report.store', conference.id), {
-            preserveScroll: true,
-            onSuccess: () => reset(),
-        });
+        if (!canAddReport) {
+            return;
+        }
+        onAdd(data);
+        setData(emptyReport());
     };
 
     return (
-        <ParticipationWizardLayout conference={conference} title="Добавить доклад">
+        <>
             <button
                 type="button"
                 className="text-sm text-muted-foreground underline-offset-2 hover:underline"
-                onClick={() => (isDirty ? setLeaveOpen(true) : goBack())}
+                onClick={() => (isDirty ? setLeaveOpen(true) : onBack())}
             >
                 Назад
             </button>
@@ -89,30 +107,35 @@ export default function ParticipationReportPage({
             <div className="mt-6">
                 <h2 className="mb-2 text-base font-semibold">Уже в заявке</h2>
                 <DraftDocumentList
-                    items={draft.reports}
+                    items={reports}
                     canDelete
                     onDelete={(item) => setDeleteItem(item)}
                 />
             </div>
 
             <form className="mt-8 space-y-6" onSubmit={submit}>
-                <AuthorsFormPartial countries={countries} setData={(authors) => setData('authors', authors)} authors={data.authors} errors={errors} />
-                <InputError message={errors.authors} />
+                <AuthorsFormPartial
+                    countries={countries}
+                    setData={(authors) => setData((current) => ({ ...current, authors }))}
+                    authors={data.authors}
+                    errors={{}}
+                />
                 <ScienceGuidesFormPartial
                     scienceGuides={data.science_guides}
-                    setData={(guides) => setData('science_guides', guides)}
-                    error={errors.science_guides}
+                    setData={(guides) => setData((current) => ({ ...current, science_guides: guides }))}
                     countries={countries}
                     degrees={degrees}
                     titles={titles}
                 />
                 <div className="grid gap-2">
-                    <Label htmlFor="report_type_id">Вид доклада <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="report_type_id">
+                        Вид доклада <span className="text-red-500">*</span>
+                    </Label>
                     <Select
                         required
                         name="report_type_id"
                         value={data.report_type_id}
-                        onValueChange={(value) => setData('report_type_id', value)}
+                        onValueChange={(value) => setData((current) => ({ ...current, report_type_id: value }))}
                     >
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Выберите вид доклада" />
@@ -121,33 +144,32 @@ export default function ParticipationReportPage({
                             <SelectGroup>
                                 <SelectLabel>Виды</SelectLabel>
                                 {reportTypes.map((type) => (
-                                    <SelectItem key={type.id} value={String(type.id)}>{type.name}</SelectItem>
+                                    <SelectItem key={type.id} value={String(type.id)}>
+                                        {type.name}
+                                    </SelectItem>
                                 ))}
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    <InputError message={errors.report_type_id} />
                 </div>
                 <div className="grid gap-2">
-                    <Label htmlFor="topic">Тема доклада <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="topic">
+                        Тема доклада <span className="text-red-500">*</span>
+                    </Label>
                     <Textarea
                         id="topic"
                         maxLength={2000}
                         value={data.topic}
                         required
-                        onChange={(event) => setData('topic', event.target.value)}
+                        onChange={(event) => setData((current) => ({ ...current, topic: event.target.value }))}
                     />
-                    <InputError message={errors.topic} />
                 </div>
-                <InputError message={errors.authorization} />
                 <div className="space-y-2">
-                    <Button type="submit" disabled={processing || !canAddReport}>
+                    <Button type="submit" disabled={!canAddReport}>
                         Добавить в заявку
                     </Button>
                     {!canAddReport && (
-                        <p className="text-sm text-muted-foreground">
-                            {getMissingFieldsMessage()}
-                        </p>
+                        <p className="text-sm text-muted-foreground">{getMissingFieldsMessage()}</p>
                     )}
                 </div>
             </form>
@@ -171,10 +193,8 @@ export default function ParticipationReportPage({
                     if (!deleteItem) {
                         return;
                     }
-                    router.delete(route('client.conferences.participation.report.destroy', {
-                        conference: conference.id,
-                        item: deleteItem.key,
-                    }));
+                    onDelete(deleteItem.key);
+                    setDeleteItem(null);
                 }}
             />
             <ConsentDialog
@@ -184,8 +204,8 @@ export default function ParticipationReportPage({
                 description="Введённые данные не будут добавлены в заявку."
                 confirmLabel="Покинуть"
                 confirmVariant="destructive"
-                onConfirm={goBack}
+                onConfirm={onBack}
             />
-        </ParticipationWizardLayout>
+        </>
     );
 }

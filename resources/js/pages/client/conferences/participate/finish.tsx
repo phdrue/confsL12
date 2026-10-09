@@ -2,19 +2,29 @@ import ConsentDialog from '@/components/forms/participations/consent-dialog';
 import DraftDocumentList from '@/components/forms/participations/draft-document-list';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import { Link, router, usePage } from '@inertiajs/react';
+import { Conference } from '@/types/conferences';
 import { useEffect, useState } from 'react';
-import ParticipationWizardLayout from './layout';
-import { ParticipationWizardPageProps } from './types';
+import { WizardDraft } from './types';
 
-const FINISH_DELAY_SECONDS = 10;
+const FINISH_DELAY_SECONDS = 5;
 
-export default function ParticipationFinishPage({
+export default function FinishStep({
     conference,
     draft,
     participation,
-}: ParticipationWizardPageProps) {
-    const { errors } = usePage().props as { errors: Record<string, string> };
+    processing,
+    errors,
+    onBack,
+    onFinish,
+}: {
+    conference: Conference;
+    draft: WizardDraft;
+    participation?: { id: number; confirmed: boolean } | null;
+    processing: boolean;
+    errors: Partial<Record<string, string>>;
+    onBack: () => void;
+    onFinish: () => void;
+}) {
     const [remaining, setRemaining] = useState(FINISH_DELAY_SECONDS);
     const [consentOpen, setConsentOpen] = useState(false);
 
@@ -50,13 +60,14 @@ export default function ParticipationFinishPage({
     }, [remaining]);
 
     return (
-        <ParticipationWizardLayout conference={conference} title="Закончить подачу">
-            <Link
-                href={route('client.conferences.participation', conference.id)}
+        <>
+            <button
+                type="button"
                 className="text-sm text-muted-foreground underline-offset-2 hover:underline"
+                onClick={onBack}
             >
                 Назад
-            </Link>
+            </button>
 
             <h1 className="mt-4 text-2xl font-semibold">Закончить подачу</h1>
             <p className="mt-3 text-sm text-muted-foreground">
@@ -82,8 +93,9 @@ export default function ParticipationFinishPage({
 
             <Button
                 type="button"
+                variant="destructive"
                 className="mt-8 w-full"
-                disabled={remaining > 0}
+                disabled={remaining > 0 || processing}
                 onClick={() => setConsentOpen(true)}
             >
                 {remaining > 0 ? `Закончить подачу (${remaining})` : 'Закончить подачу'}
@@ -99,8 +111,9 @@ export default function ParticipationFinishPage({
                         : 'Заявка будет отправлена.'
                 }
                 confirmLabel="Закончить подачу"
-                onConfirm={() => router.post(route('client.conferences.participation.finish.store', conference.id))}
+                confirmVariant="destructive"
+                onConfirm={onFinish}
             />
-        </ParticipationWizardLayout>
+        </>
     );
 }

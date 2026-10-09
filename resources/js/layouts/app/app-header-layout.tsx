@@ -1,8 +1,9 @@
 import { AppContent } from '@/components/app-content';
 import { AppHeader } from '@/components/app-header';
 import { AppShell } from '@/components/app-shell';
+import FlashToasts from '@/components/flash-toasts';
+import { Toaster } from '@/components/ui/toaster';
 import { type BreadcrumbItem } from '@/types';
-import { Toaster } from "@/components/ui/toaster"
 
 interface AppHeaderLayoutProps {
     children: React.ReactNode;
@@ -14,6 +15,7 @@ export default function AppHeaderLayout({ children, breadcrumbs }: AppHeaderLayo
         <AppShell>
             <AppHeader breadcrumbs={breadcrumbs} />
             <AppContent>{children}</AppContent>
+            <FlashToasts />
             <Toaster />
         </AppShell>
     );

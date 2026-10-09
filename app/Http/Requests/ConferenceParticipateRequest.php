@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ConferenceStateEnum;
+use App\Services\ParticipationEligibility;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
@@ -57,7 +57,7 @@ class ConferenceParticipateRequest extends FormRequest
         return Gate::allows('can-manage-documents', $conference);
     }
 
-    protected function failedAuthorization()
+    protected function failedAuthorization(): void
     {
         $user = $this->user();
         $conference = $this->route('conference');
@@ -68,65 +68,14 @@ class ConferenceParticipateRequest extends FormRequest
             ]);
         }
 
-        $conferenceDate = Carbon::parse($conference->getRawOriginal('date'));
-
-        $participates = $user->conferences()->where('conference_id', $conference->id)->exists();
-
-        $requiredFields = [
-            'first_name',
-            'last_name',
-            'second_name',
-            'organization',
-            'position',
-            'city',
-            'phone',
-            'country_id',
-            'degree_id',
-            'title_id',
-        ];
-
-        $profileIsComplete = true;
-        foreach ($requiredFields as $field) {
-            if (empty($user->$field)) {
-                $profileIsComplete = false;
-                break;
-            }
-        }
-
-        $hasReports = ! empty($this->input('reports', []));
-        $hasThesises = ! empty($this->input('thesises', []));
-        $hasDocuments = $hasReports || $hasThesises;
-
-        $conferenceIsActive = $conference->state_id === ConferenceStateEnum::ACTIVE->value;
-        $conferenceInFuture = now()->lt($conferenceDate);
-        $moreThanMonthAway = now()->addMonth()->lt($conferenceDate);
-
-        if (! $participates) {
-            // User is trying to register for the first time
-            if (! $profileIsComplete) {
-                $message = 'Для участия в конференции необходимо заполнить все данные профиля.';
-            } elseif (! $conferenceIsActive || ! $conferenceInFuture) {
-                // Cannot participate at all
-                $message = 'Приём заявок на данную конференцию полностью закрыт. Участвовать в конференции больше нельзя.';
-            } elseif ($hasDocuments && ! $moreThanMonthAway) {
-                // Conference is close: registration possible, but no documents allowed
-                $message = 'Вы можете зарегистрироваться на конференцию, но приём докладов и тезисов уже закрыт (до начала конференции осталось менее месяца).';
-            } else {
-                $message = 'Вы не можете участвовать в этой конференции.';
-            }
-        } else {
-            // User already participates – this is about managing documents
-            if (! $conferenceIsActive || ! $conferenceInFuture) {
-                $message = 'Вы уже участвуете в конференции, но приём изменений документов закрыт, так как конференция завершилась или деактивирована.';
-            } elseif (! $moreThanMonthAway) {
-                $message = 'Вы уже участвуете в конференции, но приём новых докладов и тезисов закрыт (до начала конференции осталось менее месяца).';
-            } else {
-                $message = 'Вы не можете изменять документы участия в этой конференции.';
-            }
-        }
+        $hasDocuments = ! empty($this->input('reports', [])) || ! empty($this->input('thesises', []));
 
         throw ValidationException::withMessages([
-            'authorization' => $message,
+            'authorization' => app(ParticipationEligibility::class)->denialMessage(
+                $user,
+                $conference,
+                $hasDocuments,
+            ),
         ]);
     }
 

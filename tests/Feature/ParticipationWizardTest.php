@@ -7,7 +7,6 @@ use App\Models\ConferenceUser;
 use App\Models\Country;
 use App\Models\Document;
 use App\Models\ReportType;
-use App\Services\ParticipationDraft;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -71,7 +70,7 @@ function draftReportPayload(?int $countryId = null, ?int $reportTypeId = null): 
     ];
 }
 
-test('participation choice and form pages render', function () {
+test('participation wizard page renders with document prefill props', function () {
     $user = createUserWithCompleteProfile();
     $conference = createActiveConference();
 
@@ -80,28 +79,12 @@ test('participation choice and form pages render', function () {
     get(route('client.conferences.participation', $conference))
         ->assertSuccessful()
         ->assertInertia(fn (Assert $page) => $page
-            ->component('client/conferences/participate/choice')
+            ->component('client/conferences/participate/index')
             ->where('canAddThesis', true)
             ->where('canAddReport', true)
             ->where('canFinish', true)
-        );
-
-    get(route('client.conferences.participation.thesis', $conference))
-        ->assertSuccessful()
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('client/conferences/participate/thesis')
-        );
-
-    get(route('client.conferences.participation.report', $conference))
-        ->assertSuccessful()
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('client/conferences/participate/report')
-        );
-
-    get(route('client.conferences.participation.finish', $conference))
-        ->assertSuccessful()
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('client/conferences/participate/finish')
+            ->where('documents.thesises', [])
+            ->where('documents.reports', [])
         );
 });
 
@@ -116,150 +99,81 @@ test('within one month before conference document options are closed', function 
     get(route('client.conferences.participation', $conference))
         ->assertSuccessful()
         ->assertInertia(fn (Assert $page) => $page
-            ->component('client/conferences/participate/choice')
+            ->component('client/conferences/participate/index')
             ->where('canEditDocuments', false)
             ->where('canAddThesis', false)
             ->where('canAddReport', false)
             ->where('canFinish', true)
-            ->where('draft.thesises', [])
-            ->where('draft.reports', [])
+            ->where('documents.thesises', [])
+            ->where('documents.reports', [])
         );
-
-    get(route('client.conferences.participation.thesis', $conference))
-        ->assertForbidden();
-
-    get(route('client.conferences.participation.report', $conference))
-        ->assertForbidden();
 });
 
-test('adding a thesis without required fields is rejected', function () {
-    $user = createUserWithCompleteProfile();
-    $conference = createActiveConference();
-
-    actingAs($user);
-
-    post(route('client.conferences.participation.thesis.store', $conference), [])
-        ->assertSessionHasErrors(['topic', 'text', 'literature', 'authors']);
-});
-
-test('adding a report without required fields is rejected', function () {
-    $user = createUserWithCompleteProfile();
-    $conference = createActiveConference();
-
-    actingAs($user);
-
-    post(route('client.conferences.participation.report.store', $conference), [])
-        ->assertSessionHasErrors(['topic', 'report_type_id', 'authors']);
-});
-
-test('adding a thesis writes the session and not documents', function () {
-    $user = createUserWithCompleteProfile();
-    $conference = createActiveConference();
-    ensureDocumentTypesExist();
-
-    actingAs($user);
-
-    post(route('client.conferences.participation.thesis.store', $conference), draftThesisPayload())
-        ->assertSessionHasNoErrors()
-        ->assertRedirect();
-
-    $draft = session((new ParticipationDraft)->sessionKey($user, $conference));
-
-    expect($draft['thesises'])->toHaveCount(1)
-        ->and($draft['thesises'][0]['topic'])->toBe('Thesis topic')
-        ->and($draft['thesises'][0]['key'])->not->toBeEmpty()
-        ->and(Document::query()->count())->toBe(0)
-        ->and(
-            ConferenceUser::query()
-                ->where('conference_id', $conference->id)
-                ->where('user_id', $user->id)
-                ->exists()
-        )->toBeFalse();
-});
-
-test('delete and draft reset stay in the session', function () {
-    Mail::fake();
-
-    $user = createUserWithCompleteProfile();
-    $conference = createActiveConference();
-    ensureDocumentTypesExist();
-    $countryId = Country::firstOrCreate(['name' => 'Wizard Country'])->id;
-
-    actingAs($user);
-
-    post(route('client.conferences.participate', $conference), [
-        'authorization' => '',
-        'thesises' => [draftThesisPayload($countryId)],
-    ])->assertSessionHasNoErrors();
-
-    expect(Document::query()->count())->toBe(1);
-
-    get(route('client.conferences.participation', $conference))->assertSuccessful();
-
-    post(route('client.conferences.participation.thesis.store', $conference), [
-        ...draftThesisPayload($countryId),
-        'topic' => 'Second thesis',
-    ])->assertSessionHasNoErrors();
-
-    $draft = new ParticipationDraft;
-    $sessionDraft = session($draft->sessionKey($user, $conference));
-    expect($sessionDraft['thesises'])->toHaveCount(2);
-    expect(Document::query()->count())->toBe(1);
-
-    $addedKey = collect($sessionDraft['thesises'])->firstWhere('topic', 'Second thesis')['key'];
-
-    $this->delete(route('client.conferences.participation.thesis.destroy', [
-        'conference' => $conference,
-        'item' => $addedKey,
-    ]))->assertRedirect();
-
-    $sessionDraft = session($draft->sessionKey($user, $conference));
-    expect($sessionDraft['thesises'])->toHaveCount(1)
-        ->and($sessionDraft['thesises'][0]['topic'])->toBe('Thesis topic');
-    expect(Document::query()->count())->toBe(1);
-
-    post(route('client.conferences.participation.thesis.store', $conference), [
-        ...draftThesisPayload($countryId),
-        'topic' => 'Temporary thesis',
+test('wizard access without complete profile redirects with a toastable error flash', function () {
+    $user = \App\Models\User::factory()->create([
+        'first_name' => null,
+        'last_name' => null,
+        'second_name' => null,
+        'organization' => null,
+        'position' => null,
+        'city' => null,
+        'phone' => null,
+        'country_id' => null,
+        'degree_id' => null,
+        'title_id' => null,
     ]);
+    $conference = createActiveConference();
 
-    post(route('client.conferences.participation.draft.reset', $conference))
-        ->assertSessionHasNoErrors()
-        ->assertRedirect(route('conferences.show', $conference));
+    actingAs($user);
 
-    $sessionDraft = session($draft->sessionKey($user, $conference));
-    expect($sessionDraft['thesises'])->toHaveCount(1)
-        ->and($sessionDraft['thesises'][0]['topic'])->toBe('Thesis topic');
-    expect(Document::query()->count())->toBe(1);
+    get(route('client.conferences.participation', $conference))
+        ->assertRedirect(route('conferences.show', $conference))
+        ->assertSessionHas(
+            'error',
+            'Для участия в конференции необходимо заполнить все данные профиля.',
+        );
 });
 
-test('leaving without saving discards an unsaved application', function () {
+test('finish is rejected with an authorization error when documents are closed', function () {
     $user = createUserWithCompleteProfile();
-    $conference = createActiveConference();
+    $conference = createActiveConference([
+        'date' => now()->addDays(10),
+    ]);
     ensureDocumentTypesExist();
 
     actingAs($user);
 
-    post(route('client.conferences.participation.thesis.store', $conference), draftThesisPayload())
-        ->assertSessionHasNoErrors();
-
-    post(route('client.conferences.participation.draft.reset', $conference))
-        ->assertSessionHasNoErrors()
-        ->assertRedirect(route('conferences.show', $conference));
-
-    $sessionDraft = session((new ParticipationDraft)->sessionKey($user, $conference));
-
-    expect($sessionDraft['thesises'])->toBeEmpty()
-        ->and(Document::query()->count())->toBe(0)
-        ->and(
-            ConferenceUser::query()
-                ->where('conference_id', $conference->id)
-                ->where('user_id', $user->id)
-                ->exists()
-        )->toBeFalse();
+    $this->from(route('client.conferences.participation', $conference))
+        ->post(route('client.conferences.participation.finish.store', $conference), [
+            'thesises' => [draftThesisPayload()],
+            'reports' => [],
+        ])
+        ->assertSessionHasErrors([
+            'authorization' => 'Вы можете зарегистрироваться на конференцию, но приём докладов и тезисов уже закрыт (до начала конференции осталось менее месяца).',
+        ]);
 });
 
-test('finish creates the participation and clears the draft', function () {
+test('legacy draft add and delete endpoints are gone', function () {
+    $user = createUserWithCompleteProfile();
+    $conference = createActiveConference();
+
+    actingAs($user);
+
+    foreach ([
+        fn () => post("/participate/{$conference->id}/thesis", draftThesisPayload()),
+        fn () => post("/participate/{$conference->id}/report", draftReportPayload()),
+        fn () => $this->delete("/participate/{$conference->id}/thesis/some-key"),
+        fn () => $this->delete("/participate/{$conference->id}/report/some-key"),
+        fn () => post("/participate/{$conference->id}/draft/reset"),
+        fn () => get("/participate/{$conference->id}/thesis"),
+        fn () => get("/participate/{$conference->id}/report"),
+        fn () => get("/participate/{$conference->id}/finish"),
+    ] as $request) {
+        expect($request()->status())->toBeIn([404, 405]);
+    }
+});
+
+test('finish with body creates the participation and documents', function () {
     Mail::fake();
 
     $user = createUserWithCompleteProfile();
@@ -267,12 +181,10 @@ test('finish creates the participation and clears the draft', function () {
     ensureDocumentTypesExist();
 
     actingAs($user);
-
-    post(route('client.conferences.participation.thesis.store', $conference), draftThesisPayload())
-        ->assertSessionHasNoErrors();
 
     post(route('client.conferences.participation.finish.store', $conference), [
-        'reports' => [['topic' => 'Client should not be able to inject this']],
+        'thesises' => [draftThesisPayload()],
+        'reports' => [],
     ])
         ->assertSessionHasNoErrors()
         ->assertRedirect(route('conferences.show', $conference));
@@ -285,7 +197,34 @@ test('finish creates the participation and clears the draft', function () {
     )->toBeTrue();
     expect(Document::query()->where('type_id', 2)->count())->toBe(1);
     expect(Document::query()->where('type_id', 1)->count())->toBe(0);
-    expect(session()->has((new ParticipationDraft)->sessionKey($user, $conference)))->toBeFalse();
+});
+
+test('finish strips client meta keys and ignores injected session state', function () {
+    Mail::fake();
+
+    $user = createUserWithCompleteProfile();
+    $conference = createActiveConference();
+    ensureDocumentTypesExist();
+    $countryId = Country::firstOrCreate(['name' => 'Wizard Country'])->id;
+
+    actingAs($user);
+
+    post(route('client.conferences.participation.finish.store', $conference), [
+        'thesises' => [[
+            ...draftThesisPayload($countryId),
+            'key' => 'client-key',
+            'id' => 999999,
+        ]],
+        'reports' => [],
+    ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('conferences.show', $conference));
+
+    $document = Document::query()->where('type_id', 2)->first();
+
+    expect($document)->not->toBeNull()
+        ->and($document->topic)->toBe('Thesis topic')
+        ->and($document->id)->not->toBe(999999);
 });
 
 test('report without thesis still fails on finish', function () {
@@ -295,11 +234,11 @@ test('report without thesis still fails on finish', function () {
 
     actingAs($user);
 
-    post(route('client.conferences.participation.report.store', $conference), draftReportPayload())
-        ->assertSessionHasNoErrors();
-
-    $this->from(route('client.conferences.participation.finish', $conference))
-        ->post(route('client.conferences.participation.finish.store', $conference))
+    $this->from(route('client.conferences.participation', $conference))
+        ->post(route('client.conferences.participation.finish.store', $conference), [
+            'reports' => [draftReportPayload()],
+            'thesises' => [],
+        ])
         ->assertSessionHasErrors('reports');
 
     expect(Document::query()->count())->toBe(0)
@@ -311,7 +250,7 @@ test('report without thesis still fails on finish', function () {
         )->toBeFalse();
 });
 
-test('an abandoned draft does not change an existing application', function () {
+test('opening the wizard without finishing leaves an existing application unchanged', function () {
     Mail::fake();
 
     $user = createUserWithCompleteProfile();
@@ -326,13 +265,43 @@ test('an abandoned draft does not change an existing application', function () {
         'thesises' => [draftThesisPayload($countryId)],
     ])->assertSessionHasNoErrors();
 
-    get(route('client.conferences.participation', $conference))->assertSuccessful();
-
-    post(route('client.conferences.participation.thesis.store', $conference), [
-        ...draftThesisPayload($countryId),
-        'topic' => 'Unsaved thesis',
-    ])->assertSessionHasNoErrors();
+    get(route('client.conferences.participation', $conference))
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('client/conferences/participate/index')
+            ->has('documents.thesises', 1)
+            ->where('documents.thesises.0.topic', 'Thesis topic')
+        );
 
     expect(Document::query()->count())->toBe(1)
         ->and(Document::query()->first()->topic)->toBe('Thesis topic');
+});
+
+test('finish updates an existing participation from the request body', function () {
+    Mail::fake();
+
+    $user = createUserWithCompleteProfile();
+    $conference = createActiveConference();
+    ensureDocumentTypesExist();
+    $countryId = Country::firstOrCreate(['name' => 'Wizard Country'])->id;
+
+    actingAs($user);
+
+    post(route('client.conferences.participate', $conference), [
+        'authorization' => '',
+        'thesises' => [draftThesisPayload($countryId)],
+    ])->assertSessionHasNoErrors();
+
+    post(route('client.conferences.participation.finish.store', $conference), [
+        'thesises' => [[
+            ...draftThesisPayload($countryId),
+            'topic' => 'Updated thesis',
+        ]],
+        'reports' => [],
+    ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('conferences.show', $conference));
+
+    expect(Document::query()->count())->toBe(1)
+        ->and(Document::query()->first()->topic)->toBe('Updated thesis');
 });

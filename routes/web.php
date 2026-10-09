@@ -246,24 +246,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('participate/{conference}', [ClientController::class, 'participate'])
             ->name('conferences.participate');
 
-        Route::get('participate/{conference}', [ParticipationWizardController::class, 'choice'])
+        Route::get('participate/{conference}', [ParticipationWizardController::class, 'show'])
             ->name('conferences.participation');
-        Route::post('participate/{conference}/draft/reset', [ParticipationWizardController::class, 'reset'])
-            ->name('conferences.participation.draft.reset');
-        Route::get('participate/{conference}/thesis', [ParticipationWizardController::class, 'thesis'])
-            ->name('conferences.participation.thesis');
-        Route::post('participate/{conference}/thesis', [ParticipationWizardController::class, 'storeThesis'])
-            ->name('conferences.participation.thesis.store');
-        Route::delete('participate/{conference}/thesis/{item}', [ParticipationWizardController::class, 'destroyThesis'])
-            ->name('conferences.participation.thesis.destroy');
-        Route::get('participate/{conference}/report', [ParticipationWizardController::class, 'report'])
-            ->name('conferences.participation.report');
-        Route::post('participate/{conference}/report', [ParticipationWizardController::class, 'storeReport'])
-            ->name('conferences.participation.report.store');
-        Route::delete('participate/{conference}/report/{item}', [ParticipationWizardController::class, 'destroyReport'])
-            ->name('conferences.participation.report.destroy');
-        Route::get('participate/{conference}/finish', [ParticipationWizardController::class, 'finish'])
-            ->name('conferences.participation.finish');
         Route::post('participate/{conference}/finish', [ParticipationWizardController::class, 'storeFinish'])
             ->name('conferences.participation.finish.store');
 

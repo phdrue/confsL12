@@ -1,6 +1,8 @@
 import { Conference, ReportType } from '@/types/conferences';
 import { Country, Degree, Report, Thesis, Title } from '@/types/other';
 
+export type WizardStep = 'choice' | 'thesis' | 'report' | 'finish';
+
 export type WizardDraft = {
     reports: Array<Report & { key: string }>;
     thesises: Array<Thesis & { key: string }>;
@@ -8,7 +10,7 @@ export type WizardDraft = {
 
 export type ParticipationWizardPageProps = {
     conference: Conference;
-    draft: WizardDraft;
+    documents: WizardDraft;
     countries: Array<Country>;
     degrees: Array<Degree>;
     titles: Array<Title>;

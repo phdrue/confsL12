@@ -352,7 +352,7 @@ export default function Participations({
                                     {isDownloadingBook ? 'Загрузка...' : 'Сборник тезисов'}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={handleDownloadReports} disabled={isDownloadingReports}>
-                                    {isDownloadingReports ? 'Загрузка...' : 'Сборник докладов'}
+                                    {isDownloadingReports ? 'Загрузка...' : 'Программа'}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={handleDownloadAttendance} disabled={isDownloadingAttendance}>
                                     {isDownloadingAttendance ? 'Загрузка...' : 'Список присутствующих'}
@@ -383,7 +383,7 @@ export default function Participations({
                             onClick={handleDownloadReports}
                             disabled={isDownloadingReports}
                         >
-                            {isDownloadingReports ? 'Загрузка...' : 'Сборник докладов'}
+                            {isDownloadingReports ? 'Загрузка...' : 'Программа'}
                         </Button>
                         <Button
                             onClick={handleDownloadAttendance}

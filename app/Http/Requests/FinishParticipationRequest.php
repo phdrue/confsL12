@@ -2,24 +2,33 @@
 
 namespace App\Http\Requests;
 
-use App\Services\ParticipationDraft;
-
 class FinishParticipationRequest extends ConferenceParticipateRequest
 {
     protected function prepareForValidation(): void
     {
-        $conference = $this->route('conference');
-        $user = $this->user();
+        $this->merge([
+            'reports' => $this->stripDocumentMeta($this->input('reports')),
+            'thesises' => $this->stripDocumentMeta($this->input('thesises')),
+        ]);
+    }
 
-        if (! $conference || ! $user) {
-            return;
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function stripDocumentMeta(mixed $items): array
+    {
+        if (! is_array($items)) {
+            return [];
         }
 
-        $payload = app(ParticipationDraft::class)->submissionPayload($user, $conference);
+        return array_values(array_map(function (mixed $item): array {
+            if (! is_array($item)) {
+                return [];
+            }
 
-        $this->merge([
-            'reports' => $payload['reports'],
-            'thesises' => $payload['thesises'],
-        ]);
+            unset($item['key'], $item['id']);
+
+            return $item;
+        }, $items));
     }
 }

@@ -50,7 +50,8 @@ export default function RegularParticipationForm({
             onError: (err) => {
                 toast({
                     variant: 'destructive',
-                    title: 'Вы уже участвуете в конференции',
+                    title: 'Нет доступа к участию',
+                    description: err.authorization ?? 'Вы не можете участвовать в этой конференции.',
                 })
             },
             onSuccess: () => {
