@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('conferences', 'force_enroll')) {
+            return;
+        }
+
         Schema::table('conferences', function (Blueprint $table) {
             $table->boolean('force_enroll')->default(false)->after('allow_report');
         });
@@ -21,6 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (! Schema::hasColumn('conferences', 'force_enroll')) {
+            return;
+        }
+
         Schema::table('conferences', function (Blueprint $table) {
             $table->dropColumn('force_enroll');
         });

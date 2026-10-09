@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('documents', 'is_approved')) {
+            return;
+        }
+
         Schema::table('documents', function (Blueprint $table) {
             $table->boolean('is_approved')->default(true)->after('science_guides');
         });
@@ -21,6 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (! Schema::hasColumn('documents', 'is_approved')) {
+            return;
+        }
+
         Schema::table('documents', function (Blueprint $table) {
             $table->dropColumn('is_approved');
         });
