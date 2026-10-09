@@ -1,6 +1,5 @@
 import ConsentDialog from '@/components/forms/participations/consent-dialog';
 import DraftDocumentList from '@/components/forms/participations/draft-document-list';
-import { Button } from '@/components/ui/button';
 import { Conference } from '@/types/conferences';
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
@@ -43,7 +42,15 @@ export default function ChoiceStep({
 
     return (
         <>
-            <h1 className="text-2xl font-semibold">{conference.name}</h1>
+            <button
+                type="button"
+                className="text-sm text-muted-foreground underline-offset-2 hover:underline"
+                onClick={() => (isDirty ? setLeaveOpen(true) : onExit())}
+            >
+                {isEditing ? 'Назад' : 'Выйти без сохранения'}
+            </button>
+
+            <h1 className="mt-4 text-2xl font-semibold">{conference.name}</h1>
             <p className="mt-3 text-sm text-muted-foreground">
                 {isEditing
                     ? 'Выберите действие. Сохранённая заявка не изменится, пока вы не закончите подачу.'
@@ -51,7 +58,7 @@ export default function ChoiceStep({
             </p>
 
             {(canAddThesis || canAddReport || canFinish) && (
-                <div className="mt-8 divide-y rounded-xl border bg-white">
+                <div className="mt-8 divide-y overflow-hidden rounded-xl border bg-white">
                     {canAddThesis && (
                         <button
                             type="button"
@@ -122,15 +129,6 @@ export default function ChoiceStep({
                     )}
                 </div>
             )}
-
-            <Button
-                type="button"
-                variant="outline"
-                className="mt-8"
-                onClick={() => (isDirty ? setLeaveOpen(true) : onExit())}
-            >
-                {isEditing ? 'Выйти из редактирования' : 'Выйти без сохранения'}
-            </Button>
 
             <ConsentDialog
                 open={leaveOpen}

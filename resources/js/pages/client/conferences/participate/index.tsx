@@ -125,6 +125,7 @@ export default function ParticipationWizardPage({
                     onBack={() => setStep('choice')}
                     onAdd={(thesis) => {
                         setData('thesises', [...data.thesises, { ...thesis, key: newKey() }]);
+                        setStep('choice');
                     }}
                     onDelete={(key) => {
                         setData(
@@ -145,6 +146,7 @@ export default function ParticipationWizardPage({
                     onBack={() => setStep('choice')}
                     onAdd={(report) => {
                         setData('reports', [...data.reports, { ...report, key: newKey() }]);
+                        setStep('choice');
                     }}
                     onDelete={(key) => {
                         setData(
